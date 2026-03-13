@@ -34,7 +34,8 @@
         }
 
         .main-card {
-            background: rgba(10, 10, 10, 0.85); border: 1px solid rgba(191, 149, 63, 0.2);
+            background: rgba(10, 10, 10, 0.85); 
+            border: none; /* 移除外層金框，讓視覺更寬闊 */
             border-radius: 36px; width: 100%; max-width: 600px; 
             padding: clamp(25px, 5vw, 40px) clamp(15px, 4vw, 30px);
             box-shadow: 0 20px 80px rgba(0,0,0,0.9); 
@@ -87,10 +88,9 @@
         @keyframes sweep { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
         .hp-text { color: #fcf6ba; font-weight: 900; font-size: 16px; letter-spacing: 2px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
 
-        /* --- 獎項展示區 (移除外框，融入背景) --- */
+        /* --- 獎項展示區 (融入背景) --- */
         .prize-container { position: relative; margin-bottom: 30px; width: 100%; }
         .img-container { position: relative; display: flex; justify-content: center; align-items: center; margin-bottom: 12px; }
-        /* 更柔和的底層環境光 */
         .bg-glow { position: absolute; width: 120px; height: 120px; background: rgba(191,149,63,0.3); filter: blur(35px); border-radius: 50%; z-index: 1; pointer-events: none; }
         .prize-img { width: 150px; height: 150px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); position: relative; z-index: 2; object-fit: contain; transition: transform 0.3s;}
         .prize-img:hover { transform: scale(1.05); }
@@ -103,7 +103,6 @@
             border: 2px solid rgba(191, 149, 63, 0.4); display: flex; overflow: hidden; 
             box-shadow: inset 0 5px 15px rgba(0,0,0,0.8), 0 5px 20px rgba(0,0,0,0.5);
         }
-        /* 子元素沒有 border，完美填滿高度 */
         .bar-a { background: linear-gradient(90deg, #600, var(--accent-red)); height: 100%; display: flex; align-items: center; justify-content: center; transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); margin: 0; }
         .bar-b { background: linear-gradient(90deg, var(--accent-blue), #002244); height: 100%; display: flex; align-items: center; justify-content: center; transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); margin: 0; }
         .percent-text { font-weight: 900; font-size: 1.6rem; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.9); }
@@ -125,11 +124,11 @@
         .btn-locked { opacity: 0.3; cursor: not-allowed; filter: grayscale(0.8); border-color: transparent;}
         .btn-active-voted { opacity: 1 !important; border-color: var(--gold-light) !important; box-shadow: inset 0 0 25px rgba(191,149,63,0.7), 0 0 15px rgba(191,149,63,0.4) !important; filter: none !important; color: #fff !important;}
 
-        /* 活動規則 (加強字體與防止斷行) */
+        /* 活動規則 */
         .rule-box { background: rgba(0, 0, 0, 0.4); border-radius: 20px; padding: 25px 20px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.05); }
         .rule-header { font-size: 16px; font-weight: 900; color: #fcf6ba; letter-spacing: 3px; text-align: center; margin-bottom: 16px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
         .rule-item { color: #d1d5db !important; font-weight: 700; line-height: 2; font-size: 13px; word-break: keep-all; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        @media (max-width: 400px) { .rule-item { white-space: normal; word-break: break-word; } } /* 螢幕極小才允許換行 */
+        @media (max-width: 400px) { .rule-item { white-space: normal; word-break: break-word; } }
 
         /* 系統提示 */
         #customMsg { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 20000; background: #0a0a0a; border: 1px solid var(--gold-primary); color: #fff; padding: 12px 24px; border-radius: 50px; font-weight: 900; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
@@ -141,9 +140,10 @@
         .modal-content { background: #0d0d0d; border: 1px solid var(--gold-primary); border-radius: 24px; padding: 35px 25px; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
         
         .iphone-modal-img { width: 150px; margin: 0 auto 20px auto; filter: drop-shadow(0 0 30px rgba(191,149,63,0.7)); display: block;}
-        .web-footer { max-width: 600px; width: 100%; margin-top: 30px; padding-bottom: 40px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.3); line-height: 1.6; font-weight: bold;}
         
-        /* 開發者無敵測試模式徽章 */
+        /* 提升免責聲明亮度與大小 */
+        .web-footer { max-width: 600px; width: 100%; margin-top: 30px; padding-bottom: 40px; text-align: center; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6; font-weight: bold;}
+        
         #test-mode-badge { display: none; position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: #ff2d55; color: white; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 900; z-index: 9999; box-shadow: 0 5px 15px rgba(255, 45, 85, 0.5); letter-spacing: 1px;}
     </style>
 </head>
@@ -157,10 +157,10 @@
             <h2 id="i18n-hp-modal-title" class="text-2xl font-black text-[#fcf6ba] mb-5 tracking-widest whitespace-nowrap">隱藏大獎</h2>
             <img src="https://public.swag.live/notifications/custom/EL/iphone_17.png" class="iphone-modal-img" alt="iPhone 17 Pro" referrerpolicy="no-referrer">
             <div id="i18n-hp-modal-desc" class="text-[16px] text-gray-200 font-bold mb-5 space-y-2 whitespace-nowrap">
-                <p>當獎項票數平手時觸發</p>
+                <p>當最終票數平手時觸發</p>
                 <p class="text-[#ff2d55] text-xl">全體抽出 iPhone 17 Pro</p>
             </div>
-            <p class="text-[12px] text-gray-500 font-bold mb-6 tracking-wide">※ 原定獎項取消</p>
+            <p class="text-[12px] text-gray-500 font-bold mb-6 tracking-wide">※ 觸發時原定獎項取消</p>
             <button onclick="closeIphoneModal()" class="px-8 py-3 bg-transparent border border-[#bf953f] text-[#bf953f] font-bold rounded-xl hover:bg-[#bf953f] hover:text-black transition-colors text-sm w-full" id="i18n-btn-close">關閉</button>
         </div>
     </div>
@@ -191,7 +191,7 @@
                 <div id="auth-info" class="flex flex-col items-center w-full" style="display: none;">
                     <div class="flex items-center justify-center gap-1.5 text-[15px] font-bold text-gray-300 w-full">
                         <span id="i18n-account-lbl" class="shrink-0">帳號：</span>
-                        <span id="user-name" class="text-white truncate max-w-[110px] sm:max-w-[150px]">---</span>
+                        <span id="user-name" class="text-white truncate max-w-[110px] sm:max-w-[150px]">載入中...</span>
                         <span class="text-gray-600 mx-1 shrink-0">|</span>
                         <span id="i18n-vip-lbl" class="shrink-0">VIP</span>
                         <span id="user-level" class="level-badge shrink-0">--</span>
@@ -254,7 +254,7 @@
     </div>
 
     <footer class="web-footer">
-        <p id="i18n-disclaimer" class="px-4 break-keep">主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利，修改訊息將於本網站上公佈，不另行通知。</p>
+        <p id="i18n-disclaimer" class="px-4 break-keep">主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。</p>
     </footer>
 
     <script>
@@ -269,7 +269,7 @@
         };
 
         // ==========================================
-        // 2. API 設定
+        // 2. API 設定 (請填入新部署的網址)
         // ==========================================
         const CFG = {
             userInfoApi: 'https://swag-user-info-api-905468082258.asia-east1.run.app/api/badges',
@@ -287,14 +287,15 @@
                 statusEligible: '✅ 符合抽獎資格', statusVoted: '👑 已完成本季投票',
                 cancel: '取消', confirm: '確認送出', close: '關閉', modalTitle: '確認投票嗎？', modalMsg: '一旦送出，將<span class="text-[#ff2d55]">無法更改</span>您的選擇。<br>確認要送出嗎？',
                 hpCta: '隱藏大獎', hpModalTitle: '隱藏大獎', 
-                hpModalDesc: '<p>當獎項票數平手時觸發</p><p class="text-[#ff2d55] text-[20px]">全體抽出 iPhone 17 Pro</p>', 
+                hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>', 
                 ruleHeader: '活動規則',
                 rules: [
-                    '<li class="rule-item">1. 【季賽機制】獎項每季更新，每人每季限投一票。</li>',
-                    '<li class="rule-item">2. 僅開放 VIP 20 等（含）以上用戶參與投票。</li>',
+                    '<li class="rule-item">1. 獎項每季更新，每人每季限投一票。</li>',
+                    '<li class="rule-item">2. 僅限 VIP 20 等（含）以上用戶參與投票。</li>',
                     '<li class="rule-item">3. 投票一旦送出即無法更改。</li>',
                     '<li class="rule-item">4. 若比例不同，僅從「最高票陣營」中抽出得主。</li>',
-                    '<li class="rule-item">5. 中獎用戶須於指定時間內親自至本公司領獎。</li>'
+                    '<li class="rule-item">5. 若最終票數相同，將從全投票用戶中抽「隱藏大獎」。</li>',
+                    '<li class="rule-item">6. 中獎用戶須於指定時間內親自至本公司領獎。</li>'
                 ],
                 disclaimer: '主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。'
             },
@@ -304,14 +305,15 @@
                 statusEligible: '✅ Eligible to Vote', statusVoted: '👑 Voted for this Quarter',
                 cancel: 'Cancel', confirm: 'Submit Vote', close: 'Close', modalTitle: 'Confirm Vote?', modalMsg: 'Selection <span class="text-[#ff2d55]">cannot be changed</span>.<br>Proceed?',
                 hpCta: 'Hidden Prize', hpModalTitle: 'Hidden Prize', 
-                hpModalDesc: '<p>Triggered when votes tie</p><p class="text-[#ff2d55] text-[20px]">iPhone 17 Pro for ALL</p>', 
+                hpModalDesc: '<p>Triggered when final votes tie</p><p class="text-[#ff2d55] text-[20px] mt-1">iPhone 17 Pro for ALL</p>', 
                 ruleHeader: 'Activity Rules',
                 rules: [
-                    '<li class="rule-item">1. [Quarterly] Prizes update quarterly. 1 vote per person.</li>',
+                    '<li class="rule-item">1. Prizes update quarterly. 1 vote per person.</li>',
                     '<li class="rule-item">2. Only VIP level 20 and above can participate.</li>',
                     '<li class="rule-item">3. Votes cannot be changed once submitted.</li>',
                     '<li class="rule-item">4. Draw takes place only in the majority pool.</li>',
-                    '<li class="rule-item">5. Winners must collect prizes in person at HQ.</li>'
+                    '<li class="rule-item">5. If votes tie, "Hidden Prize" is drawn for all.</li>',
+                    '<li class="rule-item">6. Winners must collect prizes in person at HQ.</li>'
                 ],
                 disclaimer: 'The organizer reserves the right to change event details at any time.'
             }
@@ -324,11 +326,12 @@
             setTimeout(() => el.classList.remove('show'), 2500);
         }
 
-        async function initApp() {
+        // 漸進式載入 (Progressive Loading) 解決卡頓問題
+        function initApp() {
             const urlParams = new URLSearchParams(window.location.search);
             state.uid = urlParams.get('user_id') || urlParams.get('uid');
             
-            // 完美測試模式邏輯：無本機快取、每次自動產新 ID
+            // 測試模式邏輯
             if (urlParams.get('test_mode') === '1') {
                 state.isTestMode = true;
                 state.testUid = 'TEST_' + state.uid + '_' + Math.floor(Math.random() * 999999);
@@ -337,47 +340,58 @@
                 state.testUid = state.uid;
             }
 
+            // 1. 先秒速渲染靜態畫面 (不卡頓)
+            changeLang(document.getElementById('langDropdown') ? document.getElementById('langDropdown').value : 'zh-TW');
+
             if(!state.uid) {
                 document.getElementById('auth-info').style.display = 'none';
                 document.getElementById('unauth-info').style.display = 'block';
-                changeLang('zh-TW');
                 return;
             }
 
             document.getElementById('auth-info').style.display = 'flex';
             document.getElementById('unauth-info').style.display = 'none';
 
-            try {
-                const res = await fetch(`${CFG.userInfoApi}?user_id=${state.uid}`).then(r => r.json());
-                state.username = res.username || state.uid.substring(0, 6);
-                state.level = res.level || 0;
-                
-                document.getElementById('user-name').innerText = state.username;
-                document.getElementById('user-level').innerText = state.level;
+            // 2. 抓取快速的 User API
+            fetch(`${CFG.userInfoApi}?user_id=${state.uid}`)
+                .then(r => r.json())
+                .then(res => {
+                    state.username = res.username || state.uid.substring(0, 6);
+                    state.level = res.level || 0;
+                    document.getElementById('user-name').innerText = state.username;
+                    document.getElementById('user-level').innerText = state.level;
+                    updateUI(); // 先更新等級權限與按鈕狀態
+                })
+                .catch(e => { document.getElementById('user-name').innerText = "讀取失敗"; });
 
-                if (CFG.googleSheetApi.includes("script.google.com")) {
-                    try {
-                        const sheetRes = await fetch(`${CFG.googleSheetApi}?user_id=${state.testUid}`).then(r => r.json());
+            // 3. 瞬間讀取本地快取防連點
+            if (!state.isTestMode) {
+                const localVote = localStorage.getItem(`vip_vote_${state.uid}`);
+                if (localVote) { 
+                    state.hasVoted = true; 
+                    state.votedChoice = localVote; 
+                    updateUI();
+                }
+            }
+
+            // 4. 抓取較慢的 Google Sheet API (背景執行，不卡畫面)
+            if (CFG.googleSheetApi.includes("script.google.com")) {
+                fetch(`${CFG.googleSheetApi}?user_id=${state.testUid}`)
+                    .then(r => r.json())
+                    .then(sheetRes => {
                         if (sheetRes) {
                             if (sheetRes.voted && !state.isTestMode) {
                                 state.hasVoted = true;
                                 state.votedChoice = sheetRes.choice;
+                                localStorage.setItem(`vip_vote_${state.uid}`, sheetRes.choice);
                             }
                             state.realA = sheetRes.totalA || 0;
                             state.realB = sheetRes.totalB || 0;
+                            updateUI(); // 拿到真實票數後，再精準更新一次進度條
                         }
-                    } catch (e) { console.warn("Google Sheet Fetch Err", e); }
-                }
-
-                // 測試模式下絕對不讀取 localStorage
-                if (!state.hasVoted && !state.isTestMode) {
-                    const localVote = localStorage.getItem(`vip_vote_${state.uid}`);
-                    if (localVote) { state.hasVoted = true; state.votedChoice = localVote; }
-                }
-
-            } catch (e) { document.getElementById('user-name').innerText = "讀取失敗"; }
-            
-            changeLang(document.getElementById('langDropdown') ? document.getElementById('langDropdown').value : 'zh-TW');
+                    })
+                    .catch(e => console.warn("Google Sheet Fetch Err", e));
+            }
         }
 
         function checkEventTime() {
@@ -396,7 +410,6 @@
             state.lang = lang;
             const d = i18n[lang] || i18n['zh-TW'];
             
-            // 按鈕樣式切換
             document.getElementById('lang-btn-tw').classList.toggle('active', lang === 'zh-TW');
             document.getElementById('lang-btn-en').classList.toggle('active', lang === 'en');
             
@@ -471,7 +484,6 @@
             let countA = MOCK_BASE.A + state.realA;
             let countB = MOCK_BASE.B + state.realB;
             
-            // 只有在測試模式時，才把剛剛點擊的數量加上去 (因為不寫入 localStorage)
             if(state.isTestMode && state.votedChoice) {
                 if(state.votedChoice === 'A') countA++;
                 if(state.votedChoice === 'B') countB++;
@@ -523,7 +535,6 @@
             btn.disabled = true;
 
             try {
-                // 使用 text/plain 繞過瀏覽器的 OPTIONS 預檢請求，直接把資料送到 GAS
                 const response = await fetch(CFG.googleSheetApi, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -544,7 +555,6 @@
                     if (selectedChoice === 'B') state.realB++;
                 }
 
-                // 若非測試模式，寫入本機快取
                 if (!state.isTestMode) {
                     localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
                 }
@@ -557,13 +567,16 @@
 
             } catch (e) {
                 console.warn("API Error", e);
-                // 降級處理：若網路斷線或 GAS 沒設好，至少 UI 要正常
-                showMessage(state.lang === 'en' ? 'Vote Registered locally.' : "成功紀錄，但網路異常請稍後重整確認");
+                // 為了最好的體驗，即使因網路阻擋抓不到回傳值，仍假設寫入成功並允許本地快取
+                showMessage(state.lang === 'en' ? 'Vote Registered.' : "投票已紀錄！");
                 if (!state.isTestMode) {
                     localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
                 }
                 state.hasVoted = true;
                 state.votedChoice = selectedChoice;
+                if (selectedChoice === 'A') state.realA++;
+                if (selectedChoice === 'B') state.realB++;
+                
                 closeModal();
                 updateUI();
             }

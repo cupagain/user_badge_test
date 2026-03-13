@@ -2,9 +2,12 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>VIP 專屬抽獎池 - ULTIMATE PRESTIGE</title>
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#050505">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
@@ -26,52 +29,60 @@
             min-height: 100vh;
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
             padding: 20px 15px; margin: 0; overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
+        /* --- 標題 --- */
         .title-prestige {
-            font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em;
+            font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;
             background: linear-gradient(to bottom, #ffffff 0%, var(--gold-light) 40%, var(--gold-primary) 70%, var(--gold-dark) 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-align: center; font-size: clamp(2.2rem, 8vw, 3.5rem);
+            text-align: center; font-size: clamp(1.8rem, 7vw, 3.2rem);
             filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8));
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            white-space: nowrap; word-break: keep-all;
         }
 
-        /* --- 視覺重點轉移：帳號資訊卡 --- */
+        /* --- 帳號資訊區塊 (極簡化) --- */
         .user-profile-card {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(191, 149, 63, 0.4);
-            border-radius: 24px; padding: 20px 30px; display: flex; flex-direction: column; align-items: center;
-            margin-bottom: 30px; box-shadow: inset 0 0 20px rgba(191, 149, 63, 0.15); min-width: 280px;
-        }
-        .level-badge { 
-            background: linear-gradient(135deg, var(--gold-light), var(--gold-dark)); 
-            color: #000; font-weight: 900; padding: 4px 12px; border-radius: 8px; font-size: 22px; margin-left: 8px;
-            box-shadow: 0 4px 10px rgba(191, 149, 63, 0.3);
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(191, 149, 63, 0.3);
+            border-radius: 20px; padding: 16px 20px; display: flex; flex-direction: column; align-items: center;
+            margin-bottom: 25px; box-shadow: inset 0 0 20px rgba(191, 149, 63, 0.1); width: 100%; max-width: 320px; mx-auto;
         }
         .status-badge { 
-            font-size: 15px; font-weight: 900; padding: 8px 20px; border-radius: 50px; margin-top: 15px; 
-            border: 2px solid #ffffff33; letter-spacing: 1px; width: 100%; text-align: center;
+            font-size: 14px; font-weight: 900; padding: 6px 16px; border-radius: 50px; margin-top: 12px; 
+            border: 1px solid #ffffff33; letter-spacing: 1px; white-space: nowrap; text-align: center;
         }
-        .status-eligible { background: rgba(16, 185, 129, 0.15); color: var(--success-green); border-color: var(--success-green); box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+        .status-eligible { background: rgba(16, 185, 129, 0.15); color: var(--success-green); border-color: var(--success-green); }
         .status-ineligible { background: rgba(239, 68, 68, 0.15); color: var(--error-red); border-color: var(--error-red); }
+        
+        /* 升級 CTA 按鈕 (呼吸燈效果) */
+        .upgrade-cta {
+            display: none; margin-top: 12px; padding: 8px 24px; border-radius: 50px;
+            background: linear-gradient(90deg, #ff2d55, #ff5e7e); color: white;
+            font-size: 13px; font-weight: 900; letter-spacing: 1px; text-decoration: none;
+            box-shadow: 0 0 15px rgba(255, 45, 85, 0.4); animation: pulse 2s infinite;
+            white-space: nowrap; text-align: center;
+        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 45, 85, 0.6); } 70% { box-shadow: 0 0 0 10px rgba(255, 45, 85, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 45, 85, 0); } }
 
         .main-card {
             background: rgba(10, 10, 10, 0.98); border: 1px solid rgba(191, 149, 63, 0.25);
-            border-radius: 40px; width: 100%; max-width: 620px; 
-            padding: clamp(25px, 6vw, 45px);
-            box-shadow: 0 40px 100px rgba(0,0,0,1); position: relative;
+            border-radius: 36px; width: 100%; max-width: 600px; 
+            padding: clamp(20px, 5vw, 40px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8); position: relative;
         }
 
         #crown {
-            position: absolute; width: 55px; height: 55px;
+            position: absolute; width: 45px; height: 45px;
             z-index: 500; filter: drop-shadow(0 0 15px var(--gold-primary));
-            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: none; pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); display: none; pointer-events: none;
         }
 
+        /* --- 限定成就加碼 (iPhone) --- */
         .legendary-card {
-            position: relative; background: #050505; border-radius: 35px;
-            padding: 3px; overflow: hidden; margin-bottom: 35px;
+            position: relative; background: #050505; border-radius: 30px;
+            padding: 2px; overflow: hidden; margin-bottom: 30px;
         }
         .legendary-card::before {
             content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
@@ -79,48 +90,56 @@
             animation: laserRotate 4s linear infinite;
         }
         .legendary-inner {
-            position: relative; z-index: 10; 
-            background: radial-gradient(circle at 50% 40%, rgba(191, 149, 63, 0.4) 0%, #0a0a0a 85%);
-            border-radius: 32px; padding: 35px 20px; text-align: center;
+            position: relative; z-index: 10; background: radial-gradient(circle at 50% 40%, rgba(191, 149, 63, 0.3) 0%, #0a0a0a 85%);
+            border-radius: 28px; padding: 30px 15px; text-align: center;
         }
         @keyframes laserRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         
-        /* 圖片確保顯示設定 */
-        .iphone-img { width: 130px; height: auto; margin: 0 auto 15px auto; filter: drop-shadow(0 0 30px rgba(191,149,63,0.7)); display: block; object-fit: contain; }
-        .prize-img { width: 110px; height: 110px; object-fit: contain; filter: drop-shadow(0 0 20px rgba(255,255,255,0.15)); margin: 0 auto; display: block; }
+        /* --- 圖片融合樣式 --- */
+        .img-container { position: relative; display: flex; justify-content: center; align-items: center; margin-bottom: 12px; }
+        .bg-glow { position: absolute; width: 70%; height: 70%; background: radial-gradient(circle, rgba(191,149,63,0.3) 0%, transparent 70%); z-index: 1; pointer-events: none; }
+        .iphone-img { width: 110px; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.9)); position: relative; z-index: 2; object-fit: contain; }
+        .prize-img { width: 100px; height: 100px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8)); position: relative; z-index: 2; object-fit: contain; }
 
+        /* 活動規則框 */
         .rule-box {
-            background: rgba(255, 255, 255, 0.08); border: 1px dashed rgba(191, 149, 63, 0.5);
-            padding: 28px 24px; border-radius: 24px; margin-top: 40px;
+            background: rgba(255, 255, 255, 0.05); border: 1px dashed rgba(191, 149, 63, 0.4);
+            padding: 24px 20px; border-radius: 20px; margin-top: 35px;
         }
-        .rule-item { color: #f8fafc !important; font-weight: 500; line-height: 1.8; font-size: 14px; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+        .rule-item { color: #e2e8f0 !important; font-weight: 500; line-height: 1.7; font-size: 13px; text-shadow: 0 1px 2px rgba(0,0,0,0.8); word-break: break-word; }
 
-        .progress-wrapper { position: relative; margin: 60px 0 35px 0; }
-        .progress-container { height: 75px; background: #000; border-radius: 22px; border: 1px solid rgba(255, 255, 255, 0.2); display: flex; overflow: hidden; }
+        /* 進度條 */
+        .progress-wrapper { position: relative; margin: 50px 0 30px 0; }
+        .progress-container { height: 60px; background: #000; border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.15); display: flex; overflow: hidden; }
         .bar-a { background: linear-gradient(90deg, #800, var(--accent-red)); transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center; }
         .bar-b { background: linear-gradient(90deg, var(--accent-blue), #003366); transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center; }
-        .percent-text { font-weight: 900; font-size: 2.2rem; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.9); position: relative; }
-        .vs-label { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #fff; font-weight: 900; font-size: 16px; z-index: 10; background: #000; padding: 4px 12px; border-radius: 12px; border: 2px solid #333;}
+        .percent-text { font-weight: 900; font-size: 1.8rem; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.9); }
+        .vs-label { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #fff; font-weight: 900; font-size: 14px; z-index: 10; background: #000; padding: 4px 10px; border-radius: 10px; border: 2px solid #333;}
 
-        .btn-premium { border-radius: 22px; font-weight: 900; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; transition: 0.3s; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
+        /* 按鈕樣式 (防斷行) */
+        .btn-premium { border-radius: 18px; font-weight: 900; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); white-space: nowrap; word-break: keep-all; padding: 16px 10px; }
         .btn-a-red { background: linear-gradient(145deg, #400, #100); color: #ff9999; }
-        .btn-a-red:hover:not(:disabled) { background: var(--accent-red); color: #fff; box-shadow: 0 0 30px rgba(255, 45, 85, 0.6); transform: translateY(-3px); }
+        .btn-a-red:hover:not(:disabled) { background: var(--accent-red); color: #fff; box-shadow: 0 0 25px rgba(255, 45, 85, 0.5); transform: translateY(-2px); }
         .btn-b-blue { background: linear-gradient(145deg, #001d4d, #000a1a); color: #99c2ff; }
-        .btn-b-blue:hover:not(:disabled) { background: var(--accent-blue); color: #fff; box-shadow: 0 0 30px rgba(0, 122, 255, 0.6); transform: translateY(-3px); }
+        .btn-b-blue:hover:not(:disabled) { background: var(--accent-blue); color: #fff; box-shadow: 0 0 25px rgba(0, 122, 255, 0.5); transform: translateY(-2px); }
         .btn-locked { opacity: 0.4; cursor: not-allowed; filter: grayscale(0.8); }
-        .btn-active-voted { opacity: 1 !important; border-color: var(--gold-light); box-shadow: inset 0 0 20px rgba(191,149,63,0.6); filter: none !important; color: #fff;}
+        .btn-active-voted { opacity: 1 !important; border-color: var(--gold-light); box-shadow: inset 0 0 20px rgba(191,149,63,0.5); filter: none !important; color: #fff;}
+
+        /* 右上角選單 */
+        .lang-control { position: absolute; top: 1rem; right: 1rem; z-index: 9999; }
+        .lang-select { background: rgba(0, 0, 0, 0.85); border: 1px solid var(--gold-dark); color: var(--gold-primary); padding: 6px 24px 6px 10px; border-radius: 8px; font-size: 11px; font-weight: bold; appearance: none; cursor: pointer; outline: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23bf953f' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 6px center; }
 
         /* 皇冠錨點 */
-        #anchor-a { position: absolute; top: -50px; left: -30px; } 
-        #anchor-b { position: absolute; top: -50px; right: -30px; } 
-        #anchor-iphone { position: absolute; top: -45px; right: -25px; }
+        #anchor-a { position: absolute; top: -40px; left: -20px; } 
+        #anchor-b { position: absolute; top: -40px; right: -20px; } 
+        #anchor-iphone { position: absolute; top: -35px; right: -15px; }
 
         /* 確認彈窗 */
-        #voteModal { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0, 0, 0, 0.96); backdrop-filter: blur(15px); align-items: center; justify-content: center; padding: 24px; opacity: 0; transition: opacity 0.3s ease; }
+        #voteModal { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0, 0, 0, 0.96); backdrop-filter: blur(10px); align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease; }
         #voteModal.show { display: flex; opacity: 1; }
-        .modal-content { background: #0d0d0d; border: 2px solid var(--gold-primary); border-radius: 32px; padding: 45px 30px; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
+        .modal-content { background: #0d0d0d; border: 2px solid var(--gold-primary); border-radius: 28px; padding: 35px 25px; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
 
-        .web-footer { max-width: 600px; width: 100%; margin-top: 40px; padding-bottom: 40px; text-align: center; font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.8; letter-spacing: 0.05em; }
+        .web-footer { max-width: 600px; width: 100%; margin-top: 30px; padding-bottom: 40px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -129,56 +148,69 @@
         <path d="M5 21H19V19H5V21ZM5 17H19V11L15 13L12 7L9 13L5 11V17ZM12 5C13.1046 5 14 4.10457 14 3C14 1.89543 13.1046 1 12 1C10.8954 1 10 1.89543 10 3C10 4.10457 10.8954 5 12 5Z" fill="#ffb100"/>
     </svg>
 
+    <div class="lang-control">
+        <select class="lang-select" onchange="changeLang(this.value)" id="langDropdown">
+            <option value="zh-TW">繁體中文</option>
+            <option value="en">English</option>
+        </select>
+    </div>
+
     <div id="voteModal">
         <div class="modal-content">
-            <h2 id="i18n-modal-title" class="text-2xl font-black text-[#fcf6ba] mb-4">確認投票嗎？</h2>
-            <p id="i18n-modal-msg" class="text-base text-gray-200 font-bold mb-8 leading-relaxed">投票後<span class="text-[#ff2d55]">絕對不得更改選項</span><br>確認要送出嗎？</p>
-            <div class="flex justify-center gap-4">
-                <button onclick="closeModal()" class="px-8 py-3 text-gray-400 font-bold hover:text-white transition-colors">取消</button>
-                <button id="confirm-btn" onclick="submitVote()" class="px-10 py-3 bg-[#bf953f] text-black font-black rounded-xl hover:bg-[#fcf6ba] shadow-lg transition-colors">確認送出</button>
+            <h2 id="i18n-modal-title" class="text-xl font-black text-[#fcf6ba] mb-4 whitespace-nowrap">確認投票嗎？</h2>
+            <p id="i18n-modal-msg" class="text-sm text-gray-200 font-bold mb-8 leading-relaxed">投票後<span class="text-[#ff2d55]">絕對不得更改選項</span><br>確認要送出嗎？</p>
+            <div class="flex justify-center gap-3">
+                <button onclick="closeModal()" class="px-6 py-2.5 text-gray-400 font-bold hover:text-white transition-colors text-sm whitespace-nowrap" id="i18n-btn-cancel">取消</button>
+                <button id="confirm-btn" onclick="submitVote()" class="px-8 py-2.5 bg-[#bf953f] text-black font-black rounded-xl hover:bg-[#fcf6ba] shadow-lg transition-colors text-sm whitespace-nowrap">確認送出</button>
             </div>
         </div>
     </div>
 
     <div class="main-card">
-        <header class="text-center">
-            <h1 class="title-prestige">VIP 專屬抽獎池</h1>
+        <header class="text-center flex flex-col items-center">
+            <h1 id="i18n-main-title" class="title-prestige">VIP 專屬抽獎池</h1>
             
-            <p id="event-time-display" class="text-[#bf953f] font-bold text-sm mb-5 tracking-wide bg-[#bf953f15] inline-block px-4 py-1.5 rounded-full border border-[#bf953f33]"></p>
+            <p id="event-time-display" class="text-[#bf953f] font-bold text-[13px] mb-5 tracking-wide bg-[#bf953f15] inline-block px-4 py-1.5 rounded-full border border-[#bf953f33] whitespace-nowrap"></p>
             
-            <div class="user-profile-card inline-flex mx-auto">
-                <p class="text-[12px] text-gray-400 uppercase tracking-widest mb-3 font-bold">帳號資訊 / Account Info</p>
-                
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="text-sm font-bold text-gray-400">目前等級</span>
-                    <span id="user-level" class="level-badge">--</span>
+            <div class="user-profile-card">
+                <div class="flex flex-wrap justify-center items-center gap-2 text-[14px] font-bold text-gray-300">
+                    <span id="i18n-account-lbl">帳號：</span><span id="user-name" class="text-white">讀取中...</span>
+                    <span class="text-gray-600 hidden md:inline">|</span>
+                    <span id="i18n-vip-lbl">VIP 等級：</span><span id="user-level" class="text-white">--</span>
                 </div>
                 
-                <p id="user-name" class="text-xs text-gray-500 mt-2">讀取中...</p>
-                
                 <div id="user-status" class="status-badge">驗證中...</div>
+                
+                <a href="https://your-upgrade-url.com" id="upgrade-cta" class="upgrade-cta">立即升級參加抽獎</a>
             </div>
         </header>
 
         <div class="legendary-card">
             <div class="legendary-inner">
-                <div class="inline-block bg-[#bf953f] text-black text-[12px] font-black px-5 py-1.5 rounded-full mb-5 uppercase tracking-widest shadow-xl">限定成就加碼</div>
-                <div class="relative">
+                <div id="i18n-tag" class="inline-block bg-[#bf953f] text-black text-[11px] font-black px-4 py-1 rounded-full mb-4 uppercase tracking-widest shadow-xl whitespace-nowrap">限定成就加碼</div>
+                <div class="img-container">
                     <div id="anchor-iphone"></div>
-                    <img src="https://i.imgur.com/kP4A6qG.png" class="iphone-img" alt="iPhone 17 Pro" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/IPhone_14_Pro_Max_Silver.png/640px-IPhone_14_Pro_Max_Silver.png'">
+                    <div class="bg-glow"></div>
+                    <img src="https://public.swag.live/notifications/custom/EL/iphone_17.png" class="iphone-img" alt="iPhone 17 Pro" referrerpolicy="no-referrer">
                 </div>
-                <h4 class="text-lg md:text-xl font-black text-[#fcf6ba] leading-tight">50 VS 50 全體抽 iPhone 17 pro，原獎項不抽。</h4>
+                <h4 id="i18n-legendary-desc" class="text-[16px] md:text-xl font-black text-[#fcf6ba] leading-tight break-keep">50 VS 50 全體抽 iPhone 17 pro，原獎項不抽。</h4>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-8 mb-6">
+        <div class="grid grid-cols-2 gap-4 md:gap-8 mb-6">
             <div class="text-center">
-                <img src="https://i.imgur.com/3qP9XpK.png" class="prize-img" alt="Switch" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Nintendo_Switch_Console.png/640px-Nintendo_Switch_Console.png'">
-                <p class="text-[12px] text-gray-400 font-bold uppercase tracking-widest mt-3">Team Switch</p>
+                <div class="img-container">
+                    <div class="bg-glow"></div>
+                    <img src="https://public.swag.live/notifications/custom/EL/vip_gift_1.png" class="prize-img" alt="Switch" referrerpolicy="no-referrer">
+                </div>
+                <p class="text-[11px] text-gray-400 font-bold uppercase tracking-widest mt-2 whitespace-nowrap">Team Switch</p>
             </div>
             <div class="text-center">
-                <img src="https://i.imgur.com/5XQ9t2b.png" class="prize-img" alt="PS5" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/PlayStation_5_and_DualSense_with_transparent_background.png/640px-PlayStation_5_and_DualSense_with_transparent_background.png'">
-                <p class="text-[12px] text-gray-400 font-bold uppercase tracking-widest mt-3">Team PS5</p>
+                <div class="img-container">
+                    <div class="bg-glow"></div>
+                    <img src="https://public.swag.live/notifications/custom/EL/vip_gift_2.png" class="prize-img" alt="PS6" referrerpolicy="no-referrer">
+                </div>
+                <p id="i18n-team-b" class="text-[11px] text-gray-400 font-bold uppercase tracking-widest mt-2 whitespace-nowrap">Team PS6</p>
             </div>
         </div>
 
@@ -186,133 +218,206 @@
             <div class="relative w-full h-full">
                 <div id="anchor-a"></div><div id="anchor-b"></div>
             </div>
-            <div class="progress-container mb-4">
+            <div class="progress-container mb-3">
                 <div id="bar-a" class="bar-a" style="width: 50%"><span id="percent-a" class="percent-text">50%</span></div>
                 <div id="bar-b" class="bar-b" style="width: 50%"><span id="percent-b" class="percent-text">50%</span></div>
                 <div class="vs-label">VS</div>
             </div>
-            <div class="flex justify-between px-3 text-[12px] font-black text-gray-300 tracking-widest uppercase">
+            <div class="flex justify-between px-2 text-[10px] md:text-[12px] font-black text-gray-400 tracking-widest uppercase whitespace-nowrap">
                 <span id="count-a">-- 人已投票</span>
                 <span id="count-b">-- 人已投票</span>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-5">
-            <button id="btn-vote-a" onclick="openVoteModal('A')" class="btn-premium btn-a-red py-5 btn-locked" disabled>選擇 Switch</button>
-            <button id="btn-vote-b" onclick="openVoteModal('B')" class="btn-premium btn-b-blue py-5 btn-locked" disabled>選擇 PS5</button>
+        <div class="grid grid-cols-2 gap-3 md:gap-5">
+            <button id="btn-vote-a" onclick="openVoteModal('A')" class="btn-premium btn-a-red btn-locked" disabled>選擇 Switch</button>
+            <button id="btn-vote-b" onclick="openVoteModal('B')" class="btn-premium btn-b-blue btn-locked" disabled>選擇 PS6</button>
         </div>
 
         <div class="rule-box">
-            <h3 class="text-[12px] font-bold text-[#fcf6ba] tracking-[0.3em] uppercase mb-4">活動規則</h3>
-            <ul class="space-y-3 rule-item">
-                <li>1. 參與活動時，請先選擇欲參加之獎池，並完成投票。</li>
-                <li><strong class="text-[#ff2d55]">2. 活動期間內絕對不得更改已選擇之獎池。</strong></li>
-                <li>3. 僅開放 VIP 20 等（含）以上用戶參與投票。</li>
-                <li>4. 若各獎池投票比例不相同，則僅從「投票比例最高之獎池」參與用戶中抽出得主。</li>
-                <li><strong class="text-[#fcf6ba]">5. 若最終比例為 50% vs 50%，則改由全體參與用戶中抽出 iPhone 17 Pro 乙名，原設定獎項將不另行抽出。</strong></li>
-                <li>6. 中獎用戶須於指定時間內親自至本公司完成領獎手續。</li>
-            </ul>
+            <h3 id="i18n-rule-header" class="text-[11px] font-bold text-[#fcf6ba] tracking-[0.2em] uppercase mb-3">活動規則</h3>
+            <ul id="i18n-rules-list" class="space-y-2 rule-item"></ul>
         </div>
     </div>
 
     <footer class="web-footer">
-        <p>主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利，修改訊息將於本網站上公佈，不另行通知</p>
+        <p id="i18n-disclaimer" class="px-4 break-keep">主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利，修改訊息將於本網站上公佈，不另行通知。</p>
     </footer>
 
     <script>
         // ==========================================
-        // 1. 活動時間設定 (在這裡修改上線下線時間)
+        // 1. 抽獎期間設定 (修改這裡即可)
         // ==========================================
         const EVENT_CONFIG = {
             start: new Date('2026-03-10T00:00:00+08:00'),
             end:   new Date('2026-03-20T23:59:59+08:00'),
-            displayStr: '活動期間：3/10 00:00 - 3/20 23:59'
+            zh: '抽獎期間：3/10 00:00 - 3/20 23:59',
+            en: 'Lottery Period: Mar 10 00:00 - Mar 20 23:59'
         };
 
         // ==========================================
-        // 2. 系統設定 (請填入正確權限的 Google App Script 網址)
+        // 2. API 設定
         // ==========================================
         const CFG = {
             userInfoApi: 'https://swag-user-info-api-905468082258.asia-east1.run.app/api/badges',
-            googleSheetApi: 'https://script.google.com/macros/s/AKfycbz7LgwgqVm24BLQ0l3r_9_91_CwDlG4dprPoXFfa9Z-xCo7bHI4hMol6canRN8IJVN0/exec' // 請換成沒有 /a/swag.live/ 的新網址
+            googleSheetApi: 'https://script.google.com/macros/s/AKfycbzkobyCUYgxWCWR57bAOKUeE9XAOBixppm3ZNVLyvoRjIIQzunLFEH3Tg2J6LrmJIaE/exec'
         };
 
         const MOCK_BASE = { A: 2500, B: 2480 }; 
-        let state = { uid: null, username: '---', level: 0, hasVoted: false, votedChoice: null, isEventActive: true };
+        let state = { uid: null, username: '---', level: 0, hasVoted: false, votedChoice: null, isEventActive: true, lang: 'zh-TW' };
         let selectedChoice = null;
 
-        async function initApp() {
-            // 顯示活動時間
-            document.getElementById('event-time-display').innerText = EVENT_CONFIG.displayStr;
-            checkEventTime();
+        // 多國語系字典
+        const i18n = {
+            'zh-TW': {
+                mainTitle: 'VIP 專屬抽獎池', btnA: '選擇 Switch', btnB: '選擇 PS6', teamB: 'Team PS6',
+                account: '帳號：', vip: 'VIP 等級：', upgrade: '立即升級參加抽獎',
+                statusEligible: '✅ 符合抽獎資格', statusIneligible: '❌ 等級不足 (需 LV.20)', statusVoted: '👑 已完成投票',
+                cancel: '取消', confirm: '確認送出', modalTitle: '確認投票嗎？', modalMsg: '投票後<span class="text-[#ff2d55]">絕對不得更改選項</span><br>確認要送出嗎？',
+                tag: '限定成就加碼', legendaryDesc: '50 VS 50 全體抽 iPhone 17 pro，原獎項不抽。', ruleHeader: '活動規則',
+                rules: [
+                    '1. 參與活動時，請先選擇欲參加之獎池，並完成投票。',
+                    '<strong class="text-[#ff2d55]">2. 每個帳號限投票一次，投票後絕對無法更改。</strong>',
+                    '3. 僅開放 VIP 20 等（含）以上用戶參與投票。',
+                    '4. 若各獎池投票比例不相同，則僅從「投票比例最高之獎池」參與用戶中抽出得主。',
+                    '<strong class="text-[#fcf6ba]">5. 若最終比例為 50% vs 50%，則改由全體參與用戶中抽出 iPhone 17 Pro 乙名，原設定獎項將不另行抽出。</strong>',
+                    '6. 中獎用戶須於指定時間內親自至本公司完成領獎手續。'
+                ],
+                disclaimer: '主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利，修改訊息將於本網站上公佈，不另行通知。'
+            },
+            'en': {
+                mainTitle: 'VIP PRESTIGE POOL', btnA: 'Vote Switch', btnB: 'Vote PS6', teamB: 'Team PS6',
+                account: 'Account: ', vip: 'VIP Level: ', upgrade: 'Upgrade to Join Lottery',
+                statusEligible: '✅ Eligible for Lottery', statusIneligible: '❌ Ineligible (LV.20 Req)', statusVoted: '👑 Vote Casted',
+                cancel: 'Cancel', confirm: 'Confirm Vote', modalTitle: 'Confirm your vote?', modalMsg: 'Selection <span class="text-[#ff2d55]">cannot be changed</span> later.<br>Proceed?',
+                tag: 'Special Bonus', legendaryDesc: 'If 50/50, iPhone 17 Pro is drawn from all participants.', ruleHeader: 'Activity Rules',
+                rules: [
+                    '1. Select your pool and vote to participate.',
+                    '<strong class="text-[#ff2d55]">2. Selection absolutely cannot be changed once confirmed.</strong>',
+                    '3. Only VIP level 20 and above can participate.',
+                    '4. Only users in the majority pool will be entered into the draw.',
+                    '<strong class="text-[#fcf6ba]">5. If the final ratio is exactly 50/50, an iPhone 17 Pro will be drawn from ALL participants.</strong>',
+                    '6. Winners must collect prizes in person at HQ within the designated time.'
+                ],
+                disclaimer: 'The organizer reserves the right to change event details at any time without prior notice.'
+            }
+        };
 
+        async function initApp() {
             const urlParams = new URLSearchParams(window.location.search);
             state.uid = urlParams.get('user_id') || urlParams.get('uid');
 
             if(!state.uid) {
                 document.getElementById('user-name').innerText = "未登入帳號";
                 renderStatus('ineligible', '請從正確連結進入');
+                changeLang('zh-TW');
                 return;
             }
 
             try {
-                // 獲取使用者資料
                 const res = await fetch(`${CFG.userInfoApi}?user_id=${state.uid}`).then(r => r.json());
-                state.username = res.username || "User_" + state.uid.substring(0, 4);
+                state.username = res.username || state.uid.substring(0, 6);
                 state.level = res.level || 0;
                 
                 document.getElementById('user-name').innerText = "@" + state.username;
                 document.getElementById('user-level').innerText = state.level;
 
-                // 檢查是否投過票
                 const localVote = localStorage.getItem(`vip_vote_${state.uid}`);
                 if (localVote) {
                     state.hasVoted = true;
                     state.votedChoice = localVote;
+                } else {
+                    try {
+                        const sheetRes = await fetch(`${CFG.googleSheetApi}?user_id=${state.uid}`).then(r => r.json());
+                        if (sheetRes && sheetRes.voted) {
+                            state.hasVoted = true;
+                            state.votedChoice = sheetRes.choice;
+                            localStorage.setItem(`vip_vote_${state.uid}`, sheetRes.choice);
+                        }
+                    } catch (e) { /* Ignore CORS error if not deployed correctly yet */ }
                 }
             } catch (e) { 
-                console.error("Init Error", e); 
-                document.getElementById('user-name').innerText = "資料讀取失敗";
+                document.getElementById('user-name').innerText = "讀取失敗";
             }
             
-            updateUI();
+            changeLang(document.getElementById('langDropdown').value);
         }
 
         function checkEventTime() {
             const now = new Date();
             if (now < EVENT_CONFIG.start) {
                 state.isEventActive = false;
-                renderStatus('ineligible', '活動尚未開始');
+                renderStatus('ineligible', state.lang === 'en' ? 'Event not started' : '活動尚未開始');
             } else if (now > EVENT_CONFIG.end) {
                 state.isEventActive = false;
-                renderStatus('ineligible', '活動已結束');
+                renderStatus('ineligible', state.lang === 'en' ? 'Event ended' : '活動已結束');
+            } else {
+                state.isEventActive = true;
             }
         }
 
         function renderStatus(type, text) {
             const el = document.getElementById('user-status');
             el.className = 'status-badge status-' + type;
-            el.innerText = text || (type === 'eligible' ? '✅ 符合投票資格' : '❌ 等級不足 (需 LV.20)');
+            el.innerText = text;
+        }
+
+        function changeLang(lang) {
+            state.lang = lang;
+            const d = i18n[lang] || i18n['zh-TW'];
+            
+            document.getElementById('event-time-display').innerText = lang === 'en' ? EVENT_CONFIG.en : EVENT_CONFIG.zh;
+            
+            try {
+                document.getElementById('i18n-main-title').innerText = d.mainTitle;
+                document.getElementById('i18n-account-lbl').innerText = d.account;
+                document.getElementById('i18n-vip-lbl').innerText = d.vip;
+                document.getElementById('upgrade-cta').innerText = d.upgrade;
+                document.getElementById('btn-vote-a').innerText = d.btnA;
+                document.getElementById('btn-vote-b').innerText = d.btnB;
+                document.getElementById('i18n-team-b').innerText = d.teamB;
+                document.getElementById('i18n-modal-title').innerText = d.modalTitle;
+                document.getElementById('i18n-modal-msg').innerHTML = d.modalMsg;
+                document.getElementById('i18n-btn-cancel').innerText = d.cancel;
+                document.getElementById('confirm-btn').innerText = d.confirm;
+                document.getElementById('i18n-tag').innerText = d.tag;
+                document.getElementById('i18n-legendary-desc').innerText = d.legendaryDesc;
+                document.getElementById('i18n-rule-header').innerText = d.ruleHeader;
+                document.getElementById('i18n-disclaimer').innerText = d.disclaimer;
+                
+                const list = document.getElementById('i18n-rules-list');
+                list.innerHTML = d.rules.map(r => `<li>${r}</li>`).join('');
+            } catch (error) {}
+            
+            updateUI();
         }
 
         function updateUI() {
-            if(!state.isEventActive && !state.hasVoted) return; // 活動未開始/結束不更新按鈕為啟用
-
+            checkEventTime();
+            const d = i18n[state.lang];
             const btnA = document.getElementById('btn-vote-a');
             const btnB = document.getElementById('btn-vote-b');
+            const cta = document.getElementById('upgrade-cta');
+
+            // CTA 按鈕顯示邏輯
+            if (state.level < 20 && !state.hasVoted) {
+                cta.style.display = 'block';
+            } else {
+                cta.style.display = 'none';
+            }
 
             if (state.hasVoted) {
-                renderStatus('eligible', '👑 已完成投票');
+                renderStatus('eligible', d.statusVoted);
                 btnA.disabled = btnB.disabled = true;
-                btnA.className = btnB.className = "btn-premium py-5 btn-locked";
+                btnA.className = btnB.className = "btn-premium btn-locked";
                 if(state.votedChoice === 'A') btnA.classList.add('btn-a-red', 'btn-active-voted');
                 else btnB.classList.add('btn-b-blue', 'btn-active-voted');
-            } else if (state.level >= 20) {
-                renderStatus('eligible');
+            } else if (state.isEventActive && state.level >= 20) {
+                renderStatus('eligible', d.statusEligible);
                 btnA.disabled = btnB.disabled = false;
                 btnA.classList.remove('btn-locked'); btnB.classList.remove('btn-locked');
-            } else {
-                renderStatus('ineligible');
+            } else if (state.isEventActive) {
+                renderStatus('ineligible', d.statusIneligible);
                 btnA.disabled = btnB.disabled = true;
                 btnA.classList.add('btn-locked'); btnB.classList.add('btn-locked');
             }
@@ -328,19 +433,21 @@
             document.getElementById('bar-b').style.width = pB + '%';
             document.getElementById('percent-a').innerText = pA + '%';
             document.getElementById('percent-b').innerText = pB + '%';
-            document.getElementById('count-a').innerText = `${countA.toLocaleString()} 人已投票`;
-            document.getElementById('count-b').innerText = `${countB.toLocaleString()} 人已投票`;
+            
+            const votedText = state.lang === 'en' ? ' Voted' : ' 人已投票';
+            document.getElementById('count-a').innerText = `${countA.toLocaleString()}${votedText}`;
+            document.getElementById('count-b').innerText = `${countB.toLocaleString()}${votedText}`;
 
             // 皇冠動態定位
             requestAnimationFrame(() => {
                 const crown = document.getElementById('crown');
                 let targetAnchor, rotation;
                 if (pA === 50 && pB === 50) {
-                    targetAnchor = document.getElementById('anchor-iphone'); rotation = 'rotate(45deg) scale(1.1)';
+                    targetAnchor = document.getElementById('anchor-iphone'); rotation = 'rotate(45deg) scale(0.9)';
                 } else if (pA > pB) {
-                    targetAnchor = document.getElementById('anchor-a'); rotation = 'rotate(-45deg) scale(1.2)';
+                    targetAnchor = document.getElementById('anchor-a'); rotation = 'rotate(-45deg)';
                 } else {
-                    targetAnchor = document.getElementById('anchor-b'); rotation = 'rotate(45deg) scale(1.2)';
+                    targetAnchor = document.getElementById('anchor-b'); rotation = 'rotate(45deg)';
                 }
 
                 if (targetAnchor) {
@@ -354,10 +461,7 @@
         }
 
         function openVoteModal(choice) {
-            if (!state.isEventActive) { alert("非活動時間！"); return; }
-            if (state.hasVoted) return;
-            if (state.level < 20) { alert("等級不足！需達到 VIP 20 等才能參與。"); return; }
-            
+            if (!state.isEventActive || state.hasVoted || state.level < 20) return;
             selectedChoice = choice;
             const modal = document.getElementById('voteModal');
             modal.style.display = 'flex';
@@ -372,33 +476,34 @@
 
         async function submitVote() {
             const btn = document.getElementById('confirm-btn');
-            btn.innerText = "處理中..."; 
+            const originalText = btn.innerText;
+            btn.innerText = state.lang === 'en' ? "Processing..." : "處理中..."; 
             btn.disabled = true;
 
             try {
-                // 使用純文字 POST 避開 Google Apps Script 的 CORS 阻擋
+                // 使用 no-cors 模式避開前端阻擋，確實發送資料給 Google Apps Script
                 await fetch(CFG.googleSheetApi, {
                     method: 'POST',
-                    body: JSON.stringify({
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
                         user_id: state.uid,
                         username: state.username,
                         choice: selectedChoice
                     })
                 });
                 
-                // 寫入本地快取
                 localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
                 state.hasVoted = true;
                 state.votedChoice = selectedChoice;
                 
                 closeModal();
                 updateUI();
-                setTimeout(() => alert('投票成功！'), 300);
+                setTimeout(() => alert(state.lang === 'en' ? 'Vote Successful!' : '投票成功！'), 300);
 
             } catch (e) {
-                console.error("Submit Error:", e);
-                alert("寫入失敗，請確認 Apps Script 部署權限設定為「所有人」！");
-                btn.innerText = "確認送出"; 
+                alert(state.lang === 'en' ? 'Network error.' : "連線不穩，請確認網路後重試！");
+                btn.innerText = originalText; 
                 btn.disabled = false;
             }
         }

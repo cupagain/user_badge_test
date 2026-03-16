@@ -282,11 +282,11 @@
         };
 
         // ==========================================
-        // 2. API 設定 (請保留你的 UserInfo，並替換為「中轉 Handler API」)
+        // 2. API 設定 (已更新中轉 API 路徑)
         // ==========================================
         const CFG = {
             userInfoApi: 'https://swag-user-info-api-905468082258.asia-east1.run.app/api/badges',
-            handlerApi: 'https://swag-request-handler-v3-905468082258.asia-east1.run.app/api/request' // <--- 替換成你的中轉 API
+            handlerApi: 'https://vip-lottery-api-905468082258.asia-east1.run.app/api/request'
         };
 
         const MOCK_BASE = { A: 2500, B: 2480 }; 
@@ -303,7 +303,7 @@
                 hpCta: '隱藏大獎', hpModalTitle: '隱藏大獎', hpModalNote: '※ 觸發時原定獎項取消',
                 hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>', 
                 ruleHeader: '活動規則',
-                rules: [
+                rules:[
                     '<li class="rule-item">1. 獎項每季更新，每人每季限投一票。</li>',
                     '<li class="rule-item">2. 僅限 VIP 20 等（含）以上用戶參與投票。</li>',
                     '<li class="rule-item">3. 投票一旦送出即無法更改。</li>',
@@ -322,7 +322,7 @@
                 hpCta: 'Hidden Prize', hpModalTitle: 'Hidden Prize', hpModalNote: '※ Original prizes cancelled when triggered',
                 hpModalDesc: '<p>Triggered when final votes tie</p><p class="text-[#ff2d55] text-[20px] mt-1">iPhone 17 Pro for ALL</p>', 
                 ruleHeader: 'Activity Rules',
-                rules: [
+                rules:[
                     '<li class="rule-item">1. Prizes update quarterly. 1 vote per person.</li>',
                     '<li class="rule-item">2. Only VIP level 20 and above can participate.</li>',
                     '<li class="rule-item">3. Votes cannot be changed once submitted.</li>',
@@ -387,12 +387,6 @@
                     updateUI();
                 }
             }
-
-            /* * 【中轉驗證修改點】 
-             * 由於你更換了架構，初始化時如果後端有提供「查詢個人投票狀態與總票數」的 API 接口，
-             * 請在這裡補上 GET 請求來覆蓋 state.realA 與 state.realB，並確保不會重複投票。
-             * (目前因為你尚未提供該接口，我先保留前端 localStorage 檢查功能)
-             */
         }
 
         function checkEventTime() {
@@ -543,14 +537,14 @@
             btn.disabled = true;
 
             try {
-                // 發送至你的中轉 API (需根據你們實際的 action 或欄位名稱調整)
+                // 發送至你的中轉 API
                 const response = await fetch(CFG.handlerApi, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         user_id: state.testUid,
                         username: state.username,
-                        action: 'VIP_LOTTERY_VOTE', // 加個 action 讓後端辨識
+                        action: 'VIP_LOTTERY_VOTE', 
                         choice: selectedChoice
                     })
                 });
@@ -579,7 +573,7 @@
                     btn.innerText = originalText;
                     btn.disabled = false;
                 } else {
-                    // 其他後端驗證錯誤 (例如: 等級不夠, 已經投過票)
+                    // 其他後端驗證錯誤
                     showMessage(`❌ ${result.error || (state.lang === 'en' ? 'Failed' : '驗證失敗')}`);
                     btn.innerText = originalText;
                     btn.disabled = false;

@@ -184,7 +184,7 @@
     <div id="voteModal" class="modal-overlay">
         <div class="modal-content">
             <h2 id="i18n-modal-title" class="text-xl font-black text-[#fcf6ba] mb-4 whitespace-nowrap">確認投票嗎？</h2>
-            <p id="i18n-modal-msg" class="text-sm text-gray-300 font-bold mb-8 leading-relaxed">一旦送出，將<span class="text-[#ff2d55]">無法更改</span>您的選擇。<br>確認要送出嗎？</p>
+            <p id="i18n-modal-msg" class="text-sm text-gray-300 font-bold mb-8 leading-relaxed">送出後<span class="text-[#ff2d55]">無法更改</span>您的選擇</p>
             <div class="flex justify-center gap-3">
                 <button onclick="closeModal()" class="px-6 py-2.5 text-gray-500 font-bold hover:text-white transition-colors text-sm whitespace-nowrap" id="i18n-btn-cancel">取消</button>
                 <button id="confirm-btn" onclick="submitVote()" class="px-8 py-2.5 bg-[#bf953f] text-black font-black rounded-xl hover:bg-[#fcf6ba] shadow-lg transition-colors text-sm whitespace-nowrap">確認送出</button>
@@ -329,7 +329,7 @@
             'zh-TW': {
                 mainTitle: 'VIP 專屬抽獎池', prizeA: 'Switch', prizeB: 'PS5', btnA: '選擇 Switch', btnB: '選擇 PS5',
                 prizeQty: '僅抽出 1 名', hpQty: '僅抽出 1 名', account: '帳號：', vip: 'VIP', upgradeMsg: '需達到 LV.20 即可參與投票', upgradeCTA: '立即升級參加抽獎',
-                statusEligible: '✅ 符合抽獎資格', statusVoted: '👑 已完成本季投票', cancel: '取消', confirm: '確認送出', close: '關閉', modalTitle: '確認投票嗎？', modalMsg: '一旦送出，將<span class="text-[#ff2d55]">無法更改</span>您的選擇。<br>確認要送出嗎？',
+                statusEligible: '✅ 符合抽獎資格', statusVoted: '👑 已完成本季投票', cancel: '取消', confirm: '確認送出', close: '關閉', modalTitle: '確認投票嗎？', modalMsg: '送出後<span class="text-[#ff2d55]">無法更改</span>您的選擇',
                 hpCta: '隱藏大獎', hpModalTitle: '隱藏大獎', hpModalNote: '※ 觸發時原定獎項取消', hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>', ruleHeader: '活動規則',
                 rules:[
                     '<li class="rule-item">1. 獎項每季更新，每人每季限投一票。</li>',
@@ -641,58 +641,67 @@
             setTimeout(() => modal.style.display = 'none', 300);
         }
 
-        async function submitVote() {
-            const btn = document.getElementById('confirm-btn');
-            const originalText = btn.innerText;
-            btn.innerText = state.lang === 'en' ? "Processing..." : "驗證中..."; 
-            btn.disabled = true;
+async function submitVote() {
+    const btn = document.getElementById('confirm-btn');
+    const originalText = btn.innerText;
+    btn.innerText = state.lang === 'en' ? "Processing..." : "驗證中..."; 
+    btn.disabled = true;
 
-            try {
-                const response = await fetch(CFG.handlerApi, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        user_id: state.testUid,
-                        username: state.username,
-                        action: 'VIP_LOTTERY_VOTE', 
-                        choice: selectedChoice
-                    })
-                });
+    try {
+        let response, result;
 
-                const result = await response.json().catch(() => ({}));
-                
-                if (response.ok) {
-                    showMessage(state.lang === 'en' ? 'Vote Successful!' : '投票成功！');
-                    if (selectedChoice === 'A') state.realA++;
-                    if (selectedChoice === 'B') state.realB++;
-                    
-                    if (!state.isTestMode) {
-                        localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
-                        state.hasVoted = true;
-                        state.votedChoice = selectedChoice;
-                    } else {
-                        // 測試模式下，每次投票後重新產生隨機 ID，這樣可以無限狂點而不被後端冷卻擋住
-                        state.testUid = 'TEST_' + state.uid + '_' + Math.floor(Math.random() * 999999);
-                    }
-                    
-                    closeModal();
-                    updateUI();
-                } else if (response.status === 429) {
-                    showMessage(state.lang === 'en' ? 'Please wait.' : '⏳ 系統繁忙，請稍後再試');
-                    btn.innerText = originalText;
-                    btn.disabled = false;
-                } else {
-                    showMessage(`❌ ${result.error || '驗證失敗'}`);
-                    btn.innerText = originalText;
-                    btn.disabled = false;
-                    closeModal();
-                }
-            } catch (e) {
-                showMessage(state.lang === 'en' ? 'Network error.' : "連線不穩，請確認網路後重試！");
-                btn.innerText = originalText;
-                btn.disabled = false;
-            }
+        // 🛠 如果是測試模式，直接模擬 API 成功回傳 (不戳真實後端)
+        if (state.isTestMode) {
+            await new Promise(r => setTimeout(r, 400)); // 稍微延遲模擬連線感
+            response = { ok: true, status: 200 };
+            result = { success: true };
+        } else {
+            // 正式模式：打真實的 API
+            response = await fetch(CFG.handlerApi, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: state.uid, 
+                    username: state.username,
+                    action: 'VIP_LOTTERY_VOTE', 
+                    choice: selectedChoice
+                })
+            });
+            result = await response.json().catch(() => ({}));
         }
+        
+        if (response.ok) {
+            showMessage(state.lang === 'en' ? 'Vote Successful!' : '投票成功！');
+            if (selectedChoice === 'A') state.realA++;
+            if (selectedChoice === 'B') state.realB++;
+            
+            if (!state.isTestMode) {
+                localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
+                state.hasVoted = true;
+                state.votedChoice = selectedChoice;
+            } else {
+                // 測試模式下，不鎖定按鈕，允許無限狂點
+                state.testUid = 'TEST_' + state.uid + '_' + Math.floor(Math.random() * 999999);
+            }
+            
+            closeModal();
+            updateUI();
+        } else if (response.status === 429) {
+            showMessage(state.lang === 'en' ? 'Please wait.' : '⏳ 系統繁忙，請稍後再試');
+            btn.innerText = originalText;
+            btn.disabled = false;
+        } else {
+            showMessage(`❌ ${result.error || '驗證失敗'}`);
+            btn.innerText = originalText;
+            btn.disabled = false;
+            closeModal();
+        }
+    } catch (e) {
+        showMessage(state.lang === 'en' ? 'Network error.' : "連線不穩，請確認網路後重試！");
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
+}
 
         window.addEventListener('DOMContentLoaded', initApp);
         window.addEventListener('resize', updateChartOnly);

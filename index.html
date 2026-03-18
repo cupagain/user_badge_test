@@ -183,8 +183,11 @@
 
     <div id="voteModal" class="modal-overlay">
         <div class="modal-content">
-            <h2 id="i18n-modal-title" class="text-xl font-black text-[#fcf6ba] mb-4 whitespace-nowrap">確認投票嗎？</h2>
-            <p id="i18n-modal-msg" class="text-sm text-gray-300 font-bold mb-8 leading-relaxed">送出後<span class="text-[#ff2d55]">無法更改</span>您的選擇</p>
+            <h2 id="i18n-modal-title" class="text-xl font-black text-[#fcf6ba] mb-4 whitespace-nowrap">身分驗證</h2>
+            <p id="i18n-modal-msg" class="text-sm text-gray-300 font-bold mb-4 leading-relaxed">請輸入您的<span class="text-[#ff2d55]">完整帳號名稱</span>以確認本人操作：</p>
+            
+            <input type="text" id="verify-username" placeholder="輸入您的 SWAG 帳號" class="w-full bg-black border border-[#bf953f] rounded-lg px-4 py-3 mb-6 text-white text-center font-bold focus:outline-none focus:ring-2 focus:ring-[#fcf6ba]">
+
             <div class="flex justify-center gap-3">
                 <button onclick="closeModal()" class="px-6 py-2.5 text-gray-500 font-bold hover:text-white transition-colors text-sm whitespace-nowrap" id="i18n-btn-cancel">取消</button>
                 <button id="confirm-btn" onclick="submitVote()" class="px-8 py-2.5 bg-[#bf953f] text-black font-black rounded-xl hover:bg-[#fcf6ba] shadow-lg transition-colors text-sm whitespace-nowrap">確認送出</button>
@@ -252,7 +255,6 @@
             <div class="progress-container">
                 <div id="bar-a" class="bar-a" style="width: 50%"><span id="percent-a" class="percent-text">50%</span></div>
                 <div id="bar-b" class="bar-b" style="width: 50%"><span id="percent-b" class="percent-text">50%</span></div>
-                <!-- VS 動態跟隨標籤 -->
                 <div id="vs-label" class="vs-label" style="left: 50%">VS</div>
             </div>
             <div class="flex justify-between px-2 mt-3 text-[12px] font-bold text-gray-400 tracking-widest uppercase whitespace-nowrap">
@@ -261,13 +263,11 @@
             </div>
         </div>
 
-        <!-- 投票按鈕區 -->
         <div id="btn-wrapper" class="grid grid-cols-2 gap-3 md:gap-5 btn-wrapper">
             <button id="btn-vote-a" onclick="openVoteModal('A')" class="btn-premium btn-a-red btn-locked" disabled>選擇 Switch</button>
             <button id="btn-vote-b" onclick="openVoteModal('B')" class="btn-premium btn-b-blue btn-locked" disabled>選擇 PS5</button>
         </div>
 
-        <!-- 結算結果區 (活動結束後顯示) -->
         <div id="results-section" class="results-section">
             <h3 id="i18n-result-title" class="text-[#fcf6ba] text-2xl font-black tracking-widest mb-4">🎉 抽獎結果公佈</h3>
             <p class="text-gray-300 font-bold text-[15px] mb-5">
@@ -276,8 +276,7 @@
                 <span id="i18n-result-desc-post">陣營勝出！</span>
             </p>
             <div class="winner-list" id="winner-list-container">
-                <!-- 動態填入中獎者 -->
-            </div>
+                </div>
         </div>
 
         <div class="rule-box">
@@ -325,11 +324,14 @@
             return name.substring(0, 2) + '***' + name.substring(name.length - 2);
         }
 
+        // 🌟 修改點 2：加入多語系的彈窗提示詞
         const i18n = {
             'zh-TW': {
                 mainTitle: 'VIP 專屬抽獎池', prizeA: 'Switch', prizeB: 'PS5', btnA: '選擇 Switch', btnB: '選擇 PS5',
                 prizeQty: '僅抽出 1 名', hpQty: '僅抽出 1 名', account: '帳號：', vip: 'VIP', upgradeMsg: '需達到 LV.20 即可參與投票', upgradeCTA: '立即升級參加抽獎',
-                statusEligible: '✅ 符合抽獎資格', statusVoted: '👑 已完成本季投票', cancel: '取消', confirm: '確認送出', close: '關閉', modalTitle: '確認投票嗎？', modalMsg: '送出後<span class="text-[#ff2d55]">無法更改</span>您的選擇',
+                statusEligible: '✅ 符合抽獎資格', statusVoted: '👑 已完成本季投票', cancel: '取消', confirm: '確認送出', close: '關閉', 
+                modalTitle: '身分驗證', modalMsg: '請輸入您的<span class="text-[#ff2d55]">完整帳號名稱</span>以確認本人操作：',
+                inputPlaceholder: '輸入您的 SWAG 帳號', emptyInputMsg: '請輸入您的帳號名稱！',
                 hpCta: '隱藏大獎', hpModalTitle: '隱藏大獎', hpModalNote: '※ 觸發時原定獎項取消', hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>', ruleHeader: '活動規則',
                 rules:[
                     '<li class="rule-item">1. 獎項每季更新，每人每季限投一票。</li>',
@@ -345,7 +347,9 @@
             'en': {
                 mainTitle: 'VIP PRESTIGE POOL', prizeA: 'Switch', prizeB: 'PS5', btnA: 'Vote Switch', btnB: 'Vote PS5',
                 prizeQty: '1 Winner Only', hpQty: '1 Winner Only', account: 'Acc: ', vip: 'VIP', upgradeMsg: 'Reach LV.20 to participate', upgradeCTA: 'Upgrade Now',
-                statusEligible: '✅ Eligible to Vote', statusVoted: '👑 Voted for this Quarter', cancel: 'Cancel', confirm: 'Submit Vote', close: 'Close', modalTitle: 'Confirm Vote?', modalMsg: 'Selection <span class="text-[#ff2d55]">cannot be changed</span>.<br>Proceed?',
+                statusEligible: '✅ Eligible to Vote', statusVoted: '👑 Voted for this Quarter', cancel: 'Cancel', confirm: 'Submit Vote', close: 'Close', 
+                modalTitle: 'Identity Verification', modalMsg: 'Please enter your <span class="text-[#ff2d55]">Full Username</span> to verify:',
+                inputPlaceholder: 'Enter your SWAG Username', emptyInputMsg: 'Please enter your username!',
                 hpCta: 'Hidden Prize', hpModalTitle: 'Hidden Prize', hpModalNote: '※ Original prizes cancelled when triggered', hpModalDesc: '<p>Triggered when final votes tie</p><p class="text-[#ff2d55] text-[20px] mt-1">iPhone 17 Pro for ALL</p>', ruleHeader: 'Activity Rules',
                 rules:[
                     '<li class="rule-item">1. Prizes update quarterly. 1 vote per person.</li>',
@@ -474,6 +478,8 @@
                 document.getElementById('i18n-prize-b-qty').innerText = d.prizeQty;
                 document.getElementById('i18n-modal-title').innerText = d.modalTitle;
                 document.getElementById('i18n-modal-msg').innerHTML = d.modalMsg;
+                // 🌟 更新輸入框的 Placeholder
+                document.getElementById('verify-username').placeholder = d.inputPlaceholder;
                 document.getElementById('i18n-btn-cancel').innerText = d.cancel;
                 document.getElementById('confirm-btn').innerText = d.confirm;
                 document.getElementById('i18n-btn-close').innerText = d.close;
@@ -509,14 +515,12 @@
             const statusBadge = document.getElementById('user-status');
 
             if (state.isTestMode) {
-                // 測試模式：永遠保持按鈕開啟，不被 hasVoted 或 level 卡住
                 statusBadge.style.display = 'none';
                 upgWrap.style.display = 'none';
                 btnA.disabled = btnB.disabled = false;
                 btnA.classList.remove('btn-locked', 'btn-active-voted'); 
                 btnB.classList.remove('btn-locked', 'btn-active-voted');
             } else {
-                // 正常模式
                 if (state.level < 20 && !state.hasVoted) {
                     statusBadge.style.display = 'none';
                     upgWrap.style.display = 'block';
@@ -565,9 +569,6 @@
             document.getElementById('count-a').innerText = `${countA.toLocaleString()}${voteTxt}`;
             document.getElementById('count-b').innerText = `${countB.toLocaleString()}${voteTxt}`;
 
-            // ==========================================
-            // 🏅 結算顯示邏輯 (Event Over)
-            // ==========================================
             const now = new Date();
             const btnWrapper = document.getElementById('btn-wrapper');
             const resultsSection = document.getElementById('results-section');
@@ -595,10 +596,8 @@
 
                 const container = document.getElementById('winner-list-container');
                 if (EVENT_WINNERS.length === 0) {
-                    // 若陣列為空，顯示結算中
                     container.innerHTML = `<div class="text-gray-400 font-bold py-4 text-sm">${i18n[state.lang].calc}</div>`;
                 } else {
-                    // 若填入名單，渲染得獎者
                     const wonText = i18n[state.lang].won;
                     container.innerHTML = EVENT_WINNERS.map(name => 
                         `<div class="winner-item">
@@ -619,6 +618,10 @@
             if (!state.isEventActive) return;
             if (!state.isTestMode && (state.hasVoted || state.level < 20)) return;
             selectedChoice = choice;
+            
+            // 🌟 每次打開彈窗時，清空輸入框
+            document.getElementById('verify-username').value = '';
+            
             const modal = document.getElementById('voteModal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('show'), 10);
@@ -641,9 +644,6 @@
             setTimeout(() => modal.style.display = 'none', 300);
         }
 
-// ==========================================
-        // 【新增】設備 ID 產生器 (防禦機器人)
-        // ==========================================
         function getDeviceId() {
             let did = localStorage.getItem('vip_device_id');
             if (!did) {
@@ -653,11 +653,8 @@
             return did;
         }
 
-        // ==========================================
-        // 【新增】動態加密簽章產生器 (防偽造請求)
-        // ==========================================
         async function generateSignature(uid, timestamp) {
-            const text = uid + timestamp + "VIP_SWAG_2026_SECRET_KEY"; // 必須與後端一致
+            const text = uid + timestamp + "VIP_SWAG_2026_SECRET_KEY"; 
             const encoder = new TextEncoder();
             const data = encoder.encode(text);
             const hashBuffer = await crypto.subtle.digest('SHA-256', data);
@@ -665,12 +662,20 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // ==========================================
-        // 【中轉驗證核心】送出投票邏輯 (加入安防機制 & 保留測試模式)
-        // ==========================================
+        // 🌟 修改點 3：送出投票時抓取輸入框並傳給後端
         async function submitVote() {
             const btn = document.getElementById('confirm-btn');
             const originalText = btn.innerText;
+
+            const inputUsername = document.getElementById('verify-username').value.trim();
+            
+            // 檢查是否為空字串
+            if (!inputUsername) {
+                const warnMsg = state.lang === 'en' ? i18n['en'].emptyInputMsg : i18n['zh-TW'].emptyInputMsg;
+                showMessage(warnMsg);
+                return;
+            }
+
             btn.innerText = state.lang === 'en' ? "Processing..." : "驗證中..."; 
             btn.disabled = true;
 
@@ -678,12 +683,10 @@
                 let response, result;
 
                 if (state.isTestMode) {
-                    // 🛠 測試模式：直接模擬 API 成功回傳 (不戳真實後端)
-                    await new Promise(r => setTimeout(r, 400)); // 稍微延遲模擬連線感
+                    await new Promise(r => setTimeout(r, 400)); 
                     response = { ok: true, status: 200 };
                     result = { success: true };
                 } else {
-                    // 🛡️ 正式模式：準備安全參數並打真實 API
                     const currentTimestamp = Date.now().toString();
                     const secureSignature = await generateSignature(state.testUid, currentTimestamp);
                     const deviceId = getDeviceId();
@@ -693,12 +696,12 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             user_id: state.testUid,
-                            username: state.username,
+                            input_username: inputUsername, // 👈 把使用者打的帳號傳給後端驗證
                             action: 'VIP_LOTTERY_VOTE', 
                             choice: selectedChoice,
-                            timestamp: currentTimestamp,   // 安全參數: 時間
-                            signature: secureSignature,    // 安全參數: 簽章
-                            device_id: deviceId            // 安全參數: 設備識別碼
+                            timestamp: currentTimestamp,   
+                            signature: secureSignature,    
+                            device_id: deviceId            
                         })
                     });
                     result = await response.json().catch(() => ({}));
@@ -710,19 +713,16 @@
                     if (selectedChoice === 'B') state.realB++;
                     
                     if (!state.isTestMode) {
-                        // 正式模式：鎖定投票資格
                         localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
                         state.hasVoted = true;
                         state.votedChoice = selectedChoice;
                     } else {
-                        // 測試模式：更新假 UID，允許無限次點擊
                         state.testUid = 'TEST_' + state.uid + '_' + Math.floor(Math.random() * 999999);
                     }
                     
                     closeModal();
                     updateUI();
                 } else if (response.status === 429) {
-                    // 速度過快或冷卻中
                     showMessage(state.lang === 'en' ? 'Voting too fast, please wait.' : '⏳ 操作過於頻繁，請等待3秒後再試');
                     btn.innerText = originalText;
                     btn.disabled = false;

@@ -41,9 +41,10 @@
             position: relative;
         }
 
-        .lang-controls { position: absolute; top: 16px; right: 16px; z-index: 50; display: flex; gap: 4px; background: rgba(0,0,0,0.5); padding: 4px; border-radius: 12px; border: 1px solid rgba(191,149,63,0.3); }
-        .lang-btn { font-size: 11px; font-weight: 900; color: #aaa; padding: 4px 10px; border-radius: 8px; transition: 0.3s; cursor: pointer; }
-        .lang-btn.active { background: var(--gold-primary); color: #000; box-shadow: 0 2px 5px rgba(191,149,63,0.5); }
+        /* --- 🌟 優化：語言切換按鈕縮小 --- */
+        .lang-controls { position: absolute; top: 14px; right: 14px; z-index: 50; display: flex; gap: 2px; background: rgba(0,0,0,0.5); padding: 3px; border-radius: 10px; border: 1px solid rgba(191,149,63,0.3); }
+        .lang-btn { font-size: 10px; font-weight: 900; color: #aaa; padding: 3px 8px; border-radius: 6px; transition: 0.3s; cursor: pointer; }
+        .lang-btn.active { background: var(--gold-primary); color: #000; box-shadow: 0 1px 3px rgba(191,149,63,0.5); }
 
         .title-prestige {
             font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;
@@ -51,7 +52,7 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             text-align: center; font-size: clamp(1.8rem, 7vw, 3rem);
             filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8));
-            margin-top: 25px; margin-bottom: 20px;
+            margin-top: 15px; margin-bottom: 20px;
             white-space: nowrap;
         }
 
@@ -65,7 +66,9 @@
         .dashboard-time { display: flex; justify-content: center; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; margin-bottom: 10px; }
         .dashboard-user { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         
-        .level-badge { background: linear-gradient(135deg, var(--gold-light), var(--gold-dark)); color: #000; font-weight: 900; padding: 2px 8px; border-radius: 6px; font-size: 15px; margin-left: 2px; }
+        /* --- 🌟 優化：等級標籤平面化 --- */
+        .level-badge { background: rgba(191, 149, 63, 0.15); color: #fcf6ba; border: 1px solid rgba(191, 149, 63, 0.4); font-weight: 900; padding: 2px 8px; border-radius: 6px; font-size: 14px; margin-left: 2px; }
+        
         .status-badge { font-size: 12px; font-weight: 900; padding: 4px 12px; border-radius: 50px; border: 1px solid #ffffff33; letter-spacing: 1px; white-space: nowrap; }
         .status-eligible { background: rgba(16, 185, 129, 0.15); color: var(--success-green); border-color: var(--success-green); }
         
@@ -73,7 +76,6 @@
         .upgrade-cta { display: inline-block; padding: 6px 16px; border-radius: 50px; background: linear-gradient(90deg, #bf953f, #fcf6ba, #bf953f); background-size: 200% auto; color: #000; font-size: 12px; font-weight: 900; letter-spacing: 1px; text-decoration: none; box-shadow: 0 0 15px rgba(191, 149, 63, 0.4); animation: goldShine 3s linear infinite; }
         @keyframes goldShine { to { background-position: 200% center; } }
 
-        /* --- 🌟 優化：隱藏大獎 Banner (恢復流光特效) --- */
         .hidden-prize-banner {
             display: flex; justify-content: space-between; align-items: center;
             background: linear-gradient(90deg, #1f180a 0%, #5c450d 50%, #1f180a 100%);
@@ -99,7 +101,6 @@
         .prize-title { font-size: 24px; font-weight: 900; color: #fff; letter-spacing: 1px; text-shadow: 0 3px 6px rgba(0,0,0,0.9); position: relative; z-index: 2; margin-bottom: 6px;}
         .prize-qty-tag { background: rgba(191, 149, 63, 0.15); border: 1px solid rgba(191, 149, 63, 0.4); color: #fcf6ba; font-size: 11px; font-weight: 900; padding: 3px 12px; border-radius: 50px; display: inline-block; letter-spacing: 1px;}
 
-        /* --- 🌟 優化：進度條降噪 (變細、光暈收斂) --- */
         .progress-wrapper { position: relative; margin: 0 0 25px 0; width: 100%; }
         .progress-container { 
             width: 100%; height: 42px; background: #000; border-radius: 21px; 
@@ -119,18 +120,16 @@
             border: 2px solid var(--gold-primary); box-shadow: 0 0 10px rgba(0,0,0,1); 
         }
 
-        /* --- 🌟 優化：投票按鈕 (3D 浮凸與閃爍光澤) --- */
         .btn-wrapper { margin-bottom: 10px; } 
         .btn-premium { 
             border-radius: 16px; font-weight: 900; font-size: 16px; letter-spacing: 1px; 
             transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer; 
             border: 1px solid rgba(255,255,255,0.15); white-space: nowrap; padding: 20px 5px; width: 100%;
             position: relative; overflow: hidden;
-            box-shadow: 0 6px 0 rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5); /* 3D 浮凸 */
+            box-shadow: 0 6px 0 rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5); 
             transform: translateY(0);
         }
         
-        /* 光澤流動動畫 */
         .btn-premium::after {
             content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
             background: linear-gradient(to right, transparent, rgba(255,255,255,0.25), transparent);
@@ -138,21 +137,17 @@
         }
         @keyframes pulseShine { 0% { left: -100%; } 15% { left: 200%; } 100% { left: 200%; } }
 
-        /* A 按鈕樣式 */
         .btn-a-red { background: linear-gradient(145deg, #800015, #300005); color: #ffb3b3; border-color: rgba(255, 45, 85, 0.4); }
         .btn-a-red:hover:not(:disabled) { background: linear-gradient(145deg, #a0001a, #50000a); color: #fff; transform: translateY(-2px); box-shadow: 0 8px 0 rgba(0,0,0,0.8), 0 15px 25px rgba(255, 45, 85, 0.3); }
-        .btn-a-red:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 0px 0 rgba(0,0,0,0.8), 0 2px 5px rgba(255, 45, 85, 0.4); } /* 物理點擊陷下 */
+        .btn-a-red:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 0px 0 rgba(0,0,0,0.8), 0 2px 5px rgba(255, 45, 85, 0.4); } 
 
-        /* B 按鈕樣式 */
         .btn-b-blue { background: linear-gradient(145deg, #002b73, #000c24); color: #b3d4ff; border-color: rgba(0, 122, 255, 0.4); }
         .btn-b-blue:hover:not(:disabled) { background: linear-gradient(145deg, #003a99, #00153d); color: #fff; transform: translateY(-2px); box-shadow: 0 8px 0 rgba(0,0,0,0.8), 0 15px 25px rgba(0, 122, 255, 0.3); }
-        .btn-b-blue:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 0px 0 rgba(0,0,0,0.8), 0 2px 5px rgba(0, 122, 255, 0.4); } /* 物理點擊陷下 */
+        .btn-b-blue:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 0px 0 rgba(0,0,0,0.8), 0 2px 5px rgba(0, 122, 255, 0.4); } 
 
-        /* 禁用狀態 */
         .btn-locked { opacity: 0.5; cursor: not-allowed; filter: grayscale(0.8); border-color: transparent; box-shadow: 0 4px 0 rgba(0,0,0,0.4); }
-        .btn-locked::after { display: none; } /* 禁用時無光澤 */
+        .btn-locked::after { display: none; } 
         
-        /* 投票完成狀態 (保持按下的真實凹陷感) */
         .btn-active-voted { 
             opacity: 1 !important; border-color: var(--gold-light) !important; 
             box-shadow: 0 2px 0 rgba(0,0,0,0.8), inset 0 0 20px rgba(191,149,63,0.5) !important; 
@@ -177,7 +172,7 @@
 
         .modal-overlay { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease; }
         .modal-overlay.show { display: flex; opacity: 1; }
-        .modal-content { background: #0d0d0d; border: 1px solid var(--gold-primary); border-radius: 24px; padding: 35px 25px; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
+        .modal-content { background: #0d0d0d; border: 1px solid var(--gold-primary); border-radius: 24px; padding: 30px 25px; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
         
         .iphone-modal-img { width: 150px; margin: 0 auto 20px auto; filter: drop-shadow(0 0 30px rgba(191,149,63,0.7)); display: block;}
         
@@ -207,7 +202,14 @@
     <div id="voteModal" class="modal-overlay">
         <div class="modal-content">
             <h2 id="i18n-modal-title" class="text-xl font-black text-[#fcf6ba] mb-4 whitespace-nowrap">身分驗證</h2>
-            <p id="i18n-modal-msg" class="text-sm text-gray-300 font-bold mb-4 leading-relaxed">請輸入您的<span class="text-[#ff2d55]">完整帳號名稱</span>以確認本人操作：</p>
+            
+            <div class="bg-black/40 border border-[rgba(255,255,255,0.1)] rounded-xl py-3 mb-5">
+                <p id="i18n-modal-confirm-prefix" class="text-xs text-gray-400 font-bold mb-1">您即將投票給：</p>
+                <p id="modal-selected-prize" class="text-2xl text-white font-black tracking-wider drop-shadow-md">---</p>
+                <p id="i18n-modal-warning" class="text-xs text-[#ff2d55] font-bold mt-1">※ 投票送出後無法更改</p>
+            </div>
+
+            <p id="i18n-modal-msg" class="text-sm text-gray-300 font-bold mb-2 text-left px-1">請輸入完整帳號以確認本人操作：</p>
             
             <input type="text" id="verify-username" placeholder="輸入您的 SWAG 帳號" class="w-full bg-black border border-[#bf953f] rounded-lg px-4 py-3 mb-6 text-white text-center font-bold focus:outline-none focus:ring-2 focus:ring-[#fcf6ba]">
 
@@ -232,7 +234,7 @@
                 
                 <div id="auth-info" class="dashboard-user" style="display: none;">
                     <div class="flex items-center gap-1.5 text-[14px] font-bold text-gray-300">
-                        <span id="i18n-vip-lbl" class="shrink-0">您的 VIP 等級：</span>
+                        <span id="i18n-vip-lbl" class="shrink-0">您的等級：</span>
                         <span id="user-level" class="level-badge shrink-0">--</span>
                     </div>
                     <div>
@@ -337,9 +339,10 @@
         const i18n = {
             'zh-TW': {
                 mainTitle: 'VIP 專屬抽獎池', prizeA: 'Switch', prizeB: 'PS5', btnA: '選擇 Switch', btnB: '選擇 PS5',
-                prizeQty: '僅抽出 1 名', hpQty: '僅抽出 1 名', vip: '您的 VIP 等級：', upgradeCTA: '升級至 LV.20 即可投票',
+                prizeQty: '僅抽出 1 名', hpQty: '僅抽出 1 名', vip: '您的等級：', upgradeCTA: '升級至 LV.20 即可投票',
                 statusEligible: '符合抽獎資格', statusVoted: '已完成本季投票', cancel: '取消', confirm: '確認送出', close: '關閉', 
-                modalTitle: '身分驗證', modalMsg: '請輸入您的<span class="text-[#ff2d55]">完整帳號名稱</span>以確認本人操作：',
+                modalTitle: '身分驗證', modalConfirmPrefix: '您即將投票給：', modalWarning: '※ 投票送出後無法更改',
+                modalMsg: '請輸入完整帳號以確認本人操作：',
                 inputPlaceholder: '輸入您的 SWAG 帳號', emptyInputMsg: '請輸入您的帳號名稱！',
                 timeFormat: '<span class="text-gray-400 text-xs font-bold tracking-widest mr-2">投票時間</span><span class="text-[#fcf6ba] text-xs font-bold tracking-wider">3/10 00:00 - 3/20 23:59</span>',
                 hpBannerTxt: '票數平手將觸發隱藏大獎', hpBannerBtn: '查看詳情 ➔',
@@ -357,9 +360,10 @@
             },
             'en': {
                 mainTitle: 'VIP PRESTIGE POOL', prizeA: 'Switch', prizeB: 'PS5', btnA: 'Vote Switch', btnB: 'Vote PS5',
-                prizeQty: '1 Winner Only', hpQty: '1 Winner Only', vip: 'Your VIP Level: ', upgradeCTA: 'Upgrade to LV.20 to Vote',
+                prizeQty: '1 Winner Only', hpQty: '1 Winner Only', vip: 'Your Level: ', upgradeCTA: 'Upgrade to LV.20 to Vote',
                 statusEligible: 'Eligible to Vote', statusVoted: 'Voted for this Quarter', cancel: 'Cancel', confirm: 'Submit Vote', close: 'Close', 
-                modalTitle: 'Identity Verification', modalMsg: 'Please enter your <span class="text-[#ff2d55]">Full Username</span> to verify:',
+                modalTitle: 'Verification', modalConfirmPrefix: 'You are voting for: ', modalWarning: '※ Cannot be changed later',
+                modalMsg: 'Enter full username to verify:',
                 inputPlaceholder: 'Enter SWAG Username', emptyInputMsg: 'Please enter your username!',
                 timeFormat: '<span class="text-gray-400 text-xs font-bold tracking-widest mr-2">Voting Time</span><span class="text-[#fcf6ba] text-xs font-bold tracking-wider">Mar 10 - Mar 20</span>',
                 hpBannerTxt: 'Tie Votes Trigger Hidden Prize', hpBannerBtn: 'View Details ➔',
@@ -506,6 +510,8 @@
                 document.getElementById('i18n-hp-banner-btn').innerText = d.hpBannerBtn;
 
                 document.getElementById('i18n-modal-title').innerText = d.modalTitle;
+                document.getElementById('i18n-modal-confirm-prefix').innerText = d.modalConfirmPrefix;
+                document.getElementById('i18n-modal-warning').innerText = d.modalWarning;
                 document.getElementById('i18n-modal-msg').innerHTML = d.modalMsg;
                 document.getElementById('verify-username').placeholder = d.inputPlaceholder;
                 document.getElementById('i18n-btn-cancel').innerText = d.cancel;
@@ -521,6 +527,10 @@
                 document.getElementById('i18n-result-title').innerText = d.resultTitle;
                 document.getElementById('i18n-result-desc-pre').innerText = d.resultDescPre;
                 document.getElementById('i18n-result-desc-post').innerText = d.resultDescPost;
+
+                if (selectedChoice) {
+                    document.getElementById('modal-selected-prize').innerText = selectedChoice === 'A' ? d.prizeA : d.prizeB;
+                }
 
                 if(!state.uid) { document.getElementById('unauth-info').innerText = lang === 'en' ? 'Please Log In' : '請登入帳號'; }
 
@@ -664,6 +674,10 @@
             if (!state.isTestMode && (state.hasVoted || state.level < 20)) return;
             selectedChoice = choice;
             
+            const d = i18n[state.lang];
+            const prizeName = choice === 'A' ? d.prizeA : d.prizeB;
+            document.getElementById('modal-selected-prize').innerText = prizeName;
+
             document.getElementById('verify-username').value = '';
             
             const modal = document.getElementById('voteModal');
@@ -776,7 +790,7 @@
                     btn.innerText = originalText;
                     btn.disabled = false;
                 } else {
-                    showMessage(state.lang === 'en' ? 'Verification Failed' : '❌ 帳號驗證失敗，非本人操作');
+                    showMessage(result.error || (state.lang === 'en' ? 'Verification Failed' : '❌ 帳號驗證失敗，非本人操作'));
                     btn.innerText = originalText;
                     btn.disabled = false;
                 }

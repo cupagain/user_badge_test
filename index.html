@@ -51,42 +51,40 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             text-align: center; font-size: clamp(1.8rem, 7vw, 3rem);
             filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8));
-            margin-top: 25px; margin-bottom: 15px;
+            margin-top: 25px; margin-bottom: 20px;
             white-space: nowrap;
         }
 
-        .quarterly-tag {
-            color: #fcf6ba; background: linear-gradient(90deg, transparent, rgba(191,149,63,0.15), transparent);
-            padding: 8px 0; margin-bottom: 25px; text-align: center; display: block; width: 100%;
-            border-top: 1px solid rgba(191,149,63,0.3); border-bottom: 1px solid rgba(191,149,63,0.3);
+        /* --- 🌟 優化：儀表板合併卡片 --- */
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(191, 149, 63, 0.3);
+            border-radius: 16px; padding: 12px 16px; width: 100%; 
+            margin-bottom: 25px; box-shadow: inset 0 0 20px rgba(191, 149, 63, 0.05);
+            backdrop-filter: blur(10px);
         }
-
-        .user-profile-card {
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(191, 149, 63, 0.3);
-            border-radius: 20px; padding: 15px 20px; display: flex; flex-direction: column; align-items: center;
-            margin-bottom: 25px; box-shadow: inset 0 0 20px rgba(191, 149, 63, 0.05); width: 100%; max-width: 320px; margin-left: auto; margin-right: auto;
-        }
+        .dashboard-time { display: flex; justify-content: center; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; margin-bottom: 10px; }
+        .dashboard-user { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        
         .level-badge { background: linear-gradient(135deg, var(--gold-light), var(--gold-dark)); color: #000; font-weight: 900; padding: 2px 8px; border-radius: 6px; font-size: 15px; margin-left: 2px; }
-        .status-badge { font-size: 13px; font-weight: 900; padding: 5px 16px; border-radius: 50px; margin-top: 10px; border: 1px solid #ffffff33; letter-spacing: 1px; white-space: nowrap; text-align: center; }
+        .status-badge { font-size: 12px; font-weight: 900; padding: 4px 12px; border-radius: 50px; border: 1px solid #ffffff33; letter-spacing: 1px; white-space: nowrap; }
         .status-eligible { background: rgba(16, 185, 129, 0.15); color: var(--success-green); border-color: var(--success-green); }
         
-        .upgrade-wrapper { display: none; text-align: center; margin-top: 8px; }
-        .upgrade-msg { color: #aaa; font-size: 12px; font-weight: 700; margin-bottom: 6px; }
-        .upgrade-cta { display: inline-block; padding: 8px 24px; border-radius: 50px; background: linear-gradient(90deg, #bf953f, #fcf6ba, #bf953f); background-size: 200% auto; color: #000; font-size: 14px; font-weight: 900; letter-spacing: 1px; text-decoration: none; box-shadow: 0 0 15px rgba(191, 149, 63, 0.4); animation: goldShine 3s linear infinite; }
+        .upgrade-wrapper { display: none; }
+        .upgrade-cta { display: inline-block; padding: 6px 16px; border-radius: 50px; background: linear-gradient(90deg, #bf953f, #fcf6ba, #bf953f); background-size: 200% auto; color: #000; font-size: 12px; font-weight: 900; letter-spacing: 1px; text-decoration: none; box-shadow: 0 0 15px rgba(191, 149, 63, 0.4); animation: goldShine 3s linear infinite; }
         @keyframes goldShine { to { background-position: 200% center; } }
 
-        .hidden-prize-cta {
-            position: relative; width: 100%; border-radius: 16px; padding: 14px 0; margin-bottom: 35px; cursor: pointer;
-            background: linear-gradient(90deg, #1f180a 0%, #5c450d 50%, #1f180a 100%); 
-            background-size: 200% auto;
-            border: 1px solid rgba(252, 246, 186, 0.6);
-            box-shadow: 0 5px 20px rgba(191, 149, 63, 0.3), inset 0 0 15px rgba(252,246,186,0.1); 
-            animation: smoothFlow 3s linear infinite;
-            transition: 0.3s;
+        /* --- 🌟 優化：隱藏大獎 Banner --- */
+        .hidden-prize-banner {
+            display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(90deg, rgba(30,20,0,0.8) 0%, rgba(60,45,10,0.8) 50%, rgba(30,20,0,0.8) 100%);
+            border: 1px solid rgba(191,149,63,0.3); border-radius: 14px;
+            padding: 12px 18px; margin-top: 15px; margin-bottom: 30px; cursor: pointer; transition: 0.3s; width: 100%;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
         }
-        .hidden-prize-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(191, 149, 63, 0.5); }
-        @keyframes smoothFlow { 0% { background-position: 200% center; } 100% { background-position: 0% center; } }
-        .hp-text { color: #fcf6ba; font-weight: 900; font-size: 16px; letter-spacing: 2px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+        .hidden-prize-banner:hover { border-color: rgba(252,246,186,0.6); box-shadow: 0 4px 15px rgba(191,149,63,0.3); transform: translateY(-2px); }
+        .hp-icon-text { color: #fcf6ba; font-size: 13px; font-weight: 900; letter-spacing: 1px; }
+        .hp-arrow { color: #bf953f; font-size: 12px; font-weight: 900; background: rgba(191,149,63,0.15); padding: 4px 10px; border-radius: 20px; }
 
         .prize-container { position: relative; margin-bottom: 30px; width: 100%; }
         .img-container { position: relative; display: flex; justify-content: center; align-items: center; height: 140px; margin-bottom: 10px; }
@@ -107,7 +105,9 @@
         }
         .bar-a { position: absolute; left: 0; top: 0; height: 100%; background: linear-gradient(90deg, #600, var(--accent-red)); transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center; z-index: 2; }
         .bar-b { position: absolute; right: 0; top: 0; height: 100%; background: linear-gradient(90deg, var(--accent-blue), #002244); transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center; z-index: 1; }
-        .percent-text { font-weight: 900; font-size: 1.6rem; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.9); line-height: 1; }
+        
+        /* 🌟 優化：進度條文字大小隨 100% 狀態動態變化更好看 */
+        .percent-text { font-weight: 900; font-size: 1.4rem; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.9); line-height: 1; letter-spacing: 1px;}
         
         .vs-label { 
             position: absolute; top: 50%; transform: translate(-50%, -50%); 
@@ -117,7 +117,7 @@
             border: 2px solid var(--gold-primary); box-shadow: 0 0 15px rgba(0,0,0,1); 
         }
 
-        .btn-wrapper { margin-bottom: 20px; }
+        .btn-wrapper { margin-bottom: 10px; } /* 微調間距 */
         .btn-premium { border-radius: 18px; font-weight: 900; font-size: 16px; letter-spacing: 1px; transition: 0.3s; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); white-space: nowrap; padding: 20px 5px; width: 100%;}
         .btn-a-red { background: linear-gradient(145deg, #400, #100); color: #ff9999; }
         .btn-a-red:hover:not(:disabled) { background: var(--accent-red); color: #fff; box-shadow: 0 0 30px rgba(255, 45, 85, 0.6); transform: translateY(-2px); border-color: var(--accent-red);}
@@ -126,7 +126,7 @@
         .btn-locked { opacity: 0.3; cursor: not-allowed; filter: grayscale(0.8); border-color: transparent;}
         .btn-active-voted { opacity: 1 !important; border-color: var(--gold-light) !important; box-shadow: inset 0 0 25px rgba(191,149,63,0.7), 0 0 15px rgba(191,149,63,0.4) !important; filter: none !important; color: #fff !important;}
 
-        .rule-box { background: rgba(0, 0, 0, 0.4); border-radius: 20px; padding: 25px 20px; margin-top: 50px; border: 1px solid rgba(255,255,255,0.05); }
+        .rule-box { background: rgba(0, 0, 0, 0.4); border-radius: 20px; padding: 25px 20px; margin-top: 30px; border: 1px solid rgba(255,255,255,0.05); }
         .rule-header { font-size: 16px; font-weight: 900; color: #fcf6ba; letter-spacing: 3px; text-align: center; margin-bottom: 16px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
         .rule-item { color: #d1d5db !important; font-weight: 700; line-height: 2; font-size: 13px; word-break: keep-all; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         @media (max-width: 400px) { .rule-item { white-space: normal; word-break: break-word; } } 
@@ -191,33 +191,30 @@
             <button id="lang-btn-en" class="lang-btn" onclick="changeLang('en')">EN</button>
         </div>
 
-        <header class="text-center flex flex-col items-center">
+        <header class="text-center flex flex-col items-center w-full">
             <h1 id="i18n-main-title" class="title-prestige">VIP 專屬抽獎池</h1>
             
-            <div id="event-time-display" class="quarterly-tag"></div>
-            
-            <div class="user-profile-card">
-                <div id="auth-info" class="flex flex-col items-center w-full" style="display: none;">
-                    <div class="flex items-center justify-center gap-1.5 text-[15px] font-bold text-gray-300 w-full">
+            <div class="dashboard-card">
+                <div id="event-time-display" class="dashboard-time"></div>
+                
+                <div id="auth-info" class="dashboard-user" style="display: none;">
+                    <div class="flex items-center gap-1.5 text-[14px] font-bold text-gray-300">
                         <span id="i18n-vip-lbl" class="shrink-0">VIP 等級：</span>
                         <span id="user-level" class="level-badge shrink-0">--</span>
                     </div>
-                    <div id="user-status" class="status-badge" style="display: none;">驗證中...</div>
-                    <div id="upgrade-wrapper" class="upgrade-wrapper">
-                        <div class="upgrade-msg" id="i18n-upgrade-msg">需達到 LV.20 即可參與投票</div>
-                        <a href="https://swag.live/settings/vvip" target="_blank" id="upgrade-cta" class="upgrade-cta">立即升級參加抽獎</a>
+                    <div>
+                        <div id="user-status" class="status-badge" style="display: none;">驗證中...</div>
+                        <div id="upgrade-wrapper" class="upgrade-wrapper">
+                            <a href="https://swag.live/settings/vvip" target="_blank" id="upgrade-cta" class="upgrade-cta">升級 LV.20</a>
+                        </div>
                     </div>
                 </div>
 
-                <div id="unauth-info" class="text-center text-gray-300 font-bold text-[15px] py-2">
+                <div id="unauth-info" class="text-center text-gray-400 font-bold text-[13px] py-1" style="display: none;">
                     請登入帳號 / Please Log In
                 </div>
             </div>
         </header>
-
-        <button onclick="openIphoneModal()" class="hidden-prize-cta">
-            <span id="i18n-hp-cta-text" class="hp-text">隱藏大獎</span>
-        </button>
 
         <div class="grid grid-cols-2 gap-4 md:gap-6 prize-container">
             <div class="text-center flex flex-col items-center">
@@ -255,6 +252,11 @@
             <button id="btn-vote-b" onclick="openVoteModal('B')" class="btn-premium btn-b-blue btn-locked" disabled>選擇 PS5</button>
         </div>
 
+        <div class="hidden-prize-banner" onclick="openIphoneModal()">
+            <span id="i18n-hp-banner-txt" class="hp-icon-text">🎁 票數平手將觸發隱藏大獎</span>
+            <span id="i18n-hp-banner-btn" class="hp-arrow">查看詳情 ➔</span>
+        </div>
+
         <div id="results-section" class="results-section">
             <h3 id="i18n-result-title" class="text-[#fcf6ba] text-2xl font-black tracking-widest mb-4">🎉 抽獎結果公佈</h3>
             <p class="text-gray-300 font-bold text-[15px] mb-5">
@@ -279,9 +281,7 @@
     <script>
         const EVENT_CONFIG = {
             start: new Date('2026-03-10T00:00:00+08:00'),
-            end:   new Date('2026-03-20T23:59:59+08:00'), 
-            zh: '<div class="font-bold text-[14px] tracking-widest">本季抽獎期間</div><div class="text-[12px] font-bold mt-1 tracking-wider opacity-90">3/10 00:00 - 3/20 23:59</div>',
-            en: '<div class="font-bold text-[14px] tracking-widest">Quarterly Lottery</div><div class="text-[12px] font-bold mt-1 tracking-wider opacity-90">Mar 10 00:00 - Mar 20 23:59</div>'
+            end:   new Date('2026-03-20T23:59:59+08:00')
         };
 
         const EVENT_WINNERS =[];
@@ -304,11 +304,13 @@
         const i18n = {
             'zh-TW': {
                 mainTitle: 'VIP 專屬抽獎池', prizeA: 'Switch', prizeB: 'PS5', btnA: '選擇 Switch', btnB: '選擇 PS5',
-                prizeQty: '僅抽出 1 名', hpQty: '僅抽出 1 名', vip: 'VIP 等級：', upgradeMsg: '需達到 LV.20 即可參與投票', upgradeCTA: '立即升級參加抽獎',
+                prizeQty: '僅抽出 1 名', hpQty: '僅抽出 1 名', vip: 'VIP 等級：', upgradeCTA: '升級 LV.20',
                 statusEligible: '✅ 符合抽獎資格', statusVoted: '👑 已完成本季投票', cancel: '取消', confirm: '確認送出', close: '關閉', 
                 modalTitle: '身分驗證', modalMsg: '請輸入您的<span class="text-[#ff2d55]">完整帳號名稱</span>以確認本人操作：',
                 inputPlaceholder: '輸入您的 SWAG 帳號', emptyInputMsg: '請輸入您的帳號名稱！',
-                hpCta: '隱藏大獎', hpModalTitle: '隱藏大獎', hpModalNote: '※ 觸發時原定獎項取消', hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>', ruleHeader: '活動規則',
+                timeFormat: '<span class="text-gray-400 text-xs font-bold tracking-widest mr-2">本季抽獎</span><span class="text-[#fcf6ba] text-xs font-bold tracking-wider">3/10 00:00 - 3/20 23:59</span>',
+                hpBannerTxt: '🎁 票數平手將觸發隱藏大獎', hpBannerBtn: '查看詳情 ➔',
+                hpModalTitle: '隱藏大獎', hpModalNote: '※ 觸發時原定獎項取消', hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>', ruleHeader: '活動規則',
                 rules:[
                     '<li class="rule-item">1. 獎項每季更新，每人每季限投一票。</li>',
                     '<li class="rule-item">2. 僅限 VIP 20 等（含）以上用戶參與投票。</li>',
@@ -322,11 +324,13 @@
             },
             'en': {
                 mainTitle: 'VIP PRESTIGE POOL', prizeA: 'Switch', prizeB: 'PS5', btnA: 'Vote Switch', btnB: 'Vote PS5',
-                prizeQty: '1 Winner Only', hpQty: '1 Winner Only', vip: 'VIP Level: ', upgradeMsg: 'Reach LV.20 to participate', upgradeCTA: 'Upgrade Now',
-                statusEligible: '✅ Eligible to Vote', statusVoted: '👑 Voted for this Quarter', cancel: 'Cancel', confirm: 'Submit Vote', close: 'Close', 
+                prizeQty: '1 Winner Only', hpQty: '1 Winner Only', vip: 'VIP Level: ', upgradeCTA: 'Upgrade LV.20',
+                statusEligible: '✅ Eligible to Vote', statusVoted: '👑 Voted for Quarter', cancel: 'Cancel', confirm: 'Submit Vote', close: 'Close', 
                 modalTitle: 'Identity Verification', modalMsg: 'Please enter your <span class="text-[#ff2d55]">Full Username</span> to verify:',
-                inputPlaceholder: 'Enter your SWAG Username', emptyInputMsg: 'Please enter your username!',
-                hpCta: 'Hidden Prize', hpModalTitle: 'Hidden Prize', hpModalNote: '※ Original prizes cancelled when triggered', hpModalDesc: '<p>Triggered when final votes tie</p><p class="text-[#ff2d55] text-[20px] mt-1">iPhone 17 Pro for ALL</p>', ruleHeader: 'Activity Rules',
+                inputPlaceholder: 'Enter SWAG Username', emptyInputMsg: 'Please enter your username!',
+                timeFormat: '<span class="text-gray-400 text-xs font-bold tracking-widest mr-2">Quarterly Draw</span><span class="text-[#fcf6ba] text-xs font-bold tracking-wider">Mar 10 - Mar 20</span>',
+                hpBannerTxt: '🎁 Tie Votes Trigger Hidden Prize', hpBannerBtn: 'View Details ➔',
+                hpModalTitle: 'Hidden Prize', hpModalNote: '※ Original prizes cancelled when triggered', hpModalDesc: '<p>Triggered when final votes tie</p><p class="text-[#ff2d55] text-[20px] mt-1">iPhone 17 Pro for ALL</p>', ruleHeader: 'Activity Rules',
                 rules:[
                     '<li class="rule-item">1. Prizes update quarterly. 1 vote per person.</li>',
                     '<li class="rule-item">2. Only VIP level 20 and above can participate.</li>',
@@ -347,29 +351,20 @@
             setTimeout(() => el.classList.remove('show'), 2500);
         }
 
-        // ==========================================
-        // 【新增】PWA / iframe 連結攔截機制
-        // ==========================================
+        // 攔截 PWA Iframe 點擊事件
         function setupPwaLinkInterceptor() {
             if (window.self !== window.top) {
                 document.addEventListener('click', function(e) {
                     const link = e.target.closest('a[target="_blank"]');
                     if (!link) return;
-
                     try {
                         const url = new URL(link.href);
                         const hostname = url.hostname;
-
                         if (hostname === 'swag.live' || hostname === 'www.swag.live') {
                             e.preventDefault();
-                            window.parent.postMessage({ 
-                                type: 'PWA_NAVIGATE', 
-                                url: link.href 
-                            }, '*');
+                            window.parent.postMessage({ type: 'PWA_NAVIGATE', url: link.href }, '*');
                         }
-                    } catch (error) {
-                        console.warn('URL parsing error:', error);
-                    }
+                    } catch (error) { console.warn('URL parsing error:', error); }
                 });
             }
         }
@@ -440,7 +435,6 @@
                     .catch(e => console.warn("Stats API Fetch Err", e));
             } catch(e) {}
             
-            // 啟動 PWA 連結攔截器
             setupPwaLinkInterceptor();
         }
 
@@ -463,12 +457,11 @@
             document.getElementById('lang-btn-tw').classList.toggle('active', lang === 'zh-TW');
             document.getElementById('lang-btn-en').classList.toggle('active', lang === 'en');
             
-            document.getElementById('event-time-display').innerHTML = lang === 'en' ? EVENT_CONFIG.en : EVENT_CONFIG.zh;
+            document.getElementById('event-time-display').innerHTML = d.timeFormat;
             
             try {
                 document.getElementById('i18n-main-title').innerText = d.mainTitle;
                 document.getElementById('i18n-vip-lbl').innerText = d.vip;
-                document.getElementById('i18n-upgrade-msg').innerText = d.upgradeMsg;
                 document.getElementById('upgrade-cta').innerText = d.upgradeCTA;
                 document.getElementById('btn-vote-a').innerText = d.btnA;
                 document.getElementById('btn-vote-b').innerText = d.btnB;
@@ -476,13 +469,16 @@
                 document.getElementById('i18n-prize-b').innerText = d.prizeB;
                 document.getElementById('i18n-prize-a-qty').innerText = d.prizeQty;
                 document.getElementById('i18n-prize-b-qty').innerText = d.prizeQty;
+                
+                document.getElementById('i18n-hp-banner-txt').innerText = d.hpBannerTxt;
+                document.getElementById('i18n-hp-banner-btn').innerText = d.hpBannerBtn;
+
                 document.getElementById('i18n-modal-title').innerText = d.modalTitle;
                 document.getElementById('i18n-modal-msg').innerHTML = d.modalMsg;
                 document.getElementById('verify-username').placeholder = d.inputPlaceholder;
                 document.getElementById('i18n-btn-cancel').innerText = d.cancel;
                 document.getElementById('confirm-btn').innerText = d.confirm;
                 document.getElementById('i18n-btn-close').innerText = d.close;
-                document.getElementById('i18n-hp-cta-text').innerText = d.hpCta;
                 document.getElementById('i18n-hp-modal-title').innerText = d.hpModalTitle;
                 document.getElementById('i18n-hp-modal-desc').innerHTML = d.hpModalDesc;
                 document.getElementById('i18n-hp-qty').innerText = d.hpQty;
@@ -547,6 +543,7 @@
         }
 
         function updateChartOnly() {
+            const d = i18n[state.lang];
             let countA = state.realA;
             let countB = state.realB;
             
@@ -556,12 +553,27 @@
 
             document.getElementById('bar-a').style.width = pA + '%';
             document.getElementById('bar-b').style.width = pB + '%';
-            document.getElementById('percent-a').innerText = pA + '%';
-            document.getElementById('percent-b').innerText = pB + '%';
             
+            const percentAEl = document.getElementById('percent-a');
+            const percentBEl = document.getElementById('percent-b');
             const vsLabel = document.getElementById('vs-label');
-            if (vsLabel) {
-                vsLabel.style.left = pA + '%';
+
+            // 🌟 優化：處理 100% 極端值顯示
+            if (pA === 100) {
+                percentAEl.innerText = `👑 100% ${d.prizeA}`;
+                percentBEl.innerText = '';
+                if(vsLabel) vsLabel.style.display = 'none';
+            } else if (pB === 100) {
+                percentBEl.innerText = `👑 100% ${d.prizeB}`;
+                percentAEl.innerText = '';
+                if(vsLabel) vsLabel.style.display = 'none';
+            } else {
+                percentAEl.innerText = pA > 0 ? pA + '%' : '';
+                percentBEl.innerText = pB > 0 ? pB + '%' : '';
+                if(vsLabel) {
+                    vsLabel.style.display = 'flex';
+                    vsLabel.style.left = pA + '%';
+                }
             }
             
             const voteTxt = state.lang === 'en' ? ' Votes' : ' 票';
@@ -571,9 +583,11 @@
             const now = new Date();
             const btnWrapper = document.getElementById('btn-wrapper');
             const resultsSection = document.getElementById('results-section');
+            const hpBanner = document.querySelector('.hidden-prize-banner');
             
             if (!state.isEventActive && now > EVENT_CONFIG.end) {
                 btnWrapper.style.display = 'none'; 
+                if(hpBanner) hpBanner.style.display = 'none';
                 resultsSection.style.display = 'block'; 
                 
                 const winTeamEl = document.getElementById('win-team');
@@ -595,9 +609,9 @@
 
                 const container = document.getElementById('winner-list-container');
                 if (EVENT_WINNERS.length === 0) {
-                    container.innerHTML = `<div class="text-gray-400 font-bold py-4 text-sm">${i18n[state.lang].calc}</div>`;
+                    container.innerHTML = `<div class="text-gray-400 font-bold py-4 text-sm">${d.calc}</div>`;
                 } else {
-                    const wonText = i18n[state.lang].won;
+                    const wonText = d.won;
                     container.innerHTML = EVENT_WINNERS.map(name => 
                         `<div class="winner-item">
                             <span class="winner-mask">${maskName(name)}</span> 
@@ -609,6 +623,7 @@
                 return;
             } else {
                 btnWrapper.style.display = 'grid';
+                if(hpBanner) hpBanner.style.display = 'flex';
                 resultsSection.style.display = 'none';
             }
         }
@@ -680,7 +695,7 @@
 
                 if (state.isTestMode) {
                     if (inputUsername.toLowerCase() !== state.mockUsername.toLowerCase()) {
-                        showMessage(state.lang === 'en' ? "❌ Verification failed" : "❌ 帳號驗證失敗");
+                        showMessage(state.lang === 'en' ? "❌ Verification failed" : "❌ 帳號驗證失敗，非本人操作");
                         btn.innerText = originalText;
                         btn.disabled = false;
                         return; 
@@ -730,7 +745,8 @@
                     btn.innerText = originalText;
                     btn.disabled = false;
                 } else {
-                    showMessage(result.error || (state.lang === 'en' ? 'Verification Failed' : '❌ 帳號驗證失敗'));
+                    // 🛡️ 修正：不再洩漏真實名稱，盲回覆錯誤訊息
+                    showMessage(state.lang === 'en' ? 'Verification Failed' : '❌ 帳號驗證失敗，非本人操作');
                     btn.innerText = originalText;
                     btn.disabled = false;
                 }

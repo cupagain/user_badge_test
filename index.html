@@ -220,6 +220,22 @@
         </div>
     </div>
 
+    <div id="participantModal" class="modal-overlay">
+        <div class="modal-content" style="max-height: 85vh; display: flex; flex-direction: column;">
+            <h2 id="i18n-participant-title" class="text-xl font-black text-[#fcf6ba] mb-1 whitespace-nowrap">符合抽獎資格名單</h2>
+            <p id="i18n-participant-note" class="text-[13px] text-gray-400 font-bold mb-4">※ 中獎者將透過官方系統發送專屬通知</p>
+            
+            <div id="participant-list-container" class="overflow-y-auto flex-1 bg-black/50 border border-[rgba(191,149,63,0.3)] rounded-xl p-4 mb-5 space-y-3 text-center" style="max-height: 40vh;">
+                </div>
+
+            <a href="https://swag.live/" target="_blank" id="i18n-video-cta" class="w-full block py-3.5 rounded-xl font-black text-black text-[15px] mb-3 tracking-widest" style="background: linear-gradient(90deg, #bf953f, #fcf6ba, #bf953f); background-size: 200% auto; animation: goldShine 3s linear infinite; box-shadow: 0 5px 15px rgba(191, 149, 63, 0.4);">
+                觀看抽獎影片 ➔
+            </a>
+
+            <button onclick="closeParticipantModal()" class="px-6 py-3 bg-transparent border border-gray-600 text-gray-400 font-bold rounded-xl hover:bg-gray-800 hover:text-white transition-colors text-sm w-full" id="i18n-btn-close-participant">關閉</button>
+        </div>
+    </div>
+
     <div class="main-card">
         <div class="lang-controls">
             <button id="lang-btn-tw" class="lang-btn active" onclick="changeLang('zh-TW')">繁中</button>
@@ -294,11 +310,16 @@
 
         <div id="results-section" class="results-section">
             <h3 id="i18n-result-title" class="text-[#fcf6ba] text-2xl font-black tracking-widest mb-4">🎉 抽獎結果公佈</h3>
-            <p class="text-gray-300 font-bold text-[15px] mb-5">
+            <p class="text-gray-300 font-bold text-[15px] mb-6">
                 <span id="i18n-result-desc-pre">本次由</span>
                 <span id="win-team" class="text-white text-xl px-1 font-black underline decoration-[#bf953f] decoration-2 underline-offset-4">---</span>
                 <span id="i18n-result-desc-post">陣營勝出！</span>
             </p>
+            
+            <button onclick="openParticipantModal()" class="mb-2 px-6 py-2.5 border border-[#bf953f] text-[#fcf6ba] font-bold rounded-full text-[13px] hover:bg-[#bf953f] hover:text-black transition-colors box-shadow: 0 0 10px rgba(191,149,63,0.2);">
+                <span id="i18n-view-list-btn">查看符合抽獎資格名單 ➔</span>
+            </button>
+
             <div class="winner-list" id="winner-list-container"></div>
         </div>
 
@@ -344,7 +365,7 @@
                 modalTitle: '身分驗證', modalConfirmPrefix: '您即將投票給：', modalWarning: '※ 投票送出後無法更改',
                 modalMsg: '請輸入完整帳號以確認本人操作：',
                 inputPlaceholder: '輸入您的 SWAG 帳號', emptyInputMsg: '請輸入您的帳號名稱！',
-                timeFormat: '<span class="text-gray-400 text-xs font-bold tracking-widest mr-2">投票時間</span><span class="text-[#fcf6ba] text-xs font-bold tracking-wider">3/10 00:00 - 3/20 23:59</span>',
+                timeFormat: '<span class="text-gray-400 text-xs font-bold tracking-widest mr-2">投票時間</span><span class="text-[#fcf6ba] text-xs font-bold tracking-wider">3/10 00:00 - 3/18 23:59</span>',
                 hpBannerTxt: '票數平手將觸發隱藏大獎', hpBannerBtn: '查看詳情 ➔',
                 hpModalTitle: '隱藏大獎', hpModalNote: '※ 觸發時原定獎項取消', hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>', ruleHeader: '活動規則',
                 rules:[

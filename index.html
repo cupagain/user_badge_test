@@ -158,9 +158,12 @@
         @media (max-width: 400px) { .rule-item { white-space: normal; word-break: break-word; } } 
 
         .results-section { display: none; background: rgba(0,0,0,0.6); border: 1px solid var(--gold-primary); border-radius: 24px; padding: 30px 20px; margin-top: 20px; text-align: center; box-shadow: inset 0 0 30px rgba(191,149,63,0.1); }
-        .winner-list { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 15px; margin-top: 15px; margin-bottom: 20px; display: grid; gap: 10px; }
-        .winner-item { font-size: 16px; font-weight: bold; color: #fff; display: flex; justify-content: center; gap: 10px; align-items: center; }
-        .winner-mask { color: var(--gold-light); font-family: monospace; letter-spacing: 2px; }
+        
+        .winner-display-block {
+            background: rgba(0,0,0,0.5); border: 1px solid var(--gold-primary); border-radius: 16px; 
+            padding: 20px 15px; margin-bottom: 25px;
+            box-shadow: 0 0 20px rgba(191, 149, 63, 0.3), inset 0 0 15px rgba(191, 149, 63, 0.1);
+        }
 
         .footer-divider { width: 80%; height: 1px; background: linear-gradient(90deg, transparent, rgba(191,149,63,0.2), transparent); margin: 35px auto 20px auto; }
         .web-footer { max-width: 600px; width: 100%; padding-bottom: 40px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.25); line-height: 1.6; font-weight: bold;}
@@ -303,22 +306,30 @@
         </div>
 
         <div id="results-section" class="results-section">
-            <h3 id="i18n-result-title" class="text-[#fcf6ba] text-2xl font-black tracking-widest mb-4">🎉 抽獎結果公佈</h3>
-            <p class="text-gray-300 font-bold text-[15px] mb-5">
+            <h3 id="i18n-result-title" class="text-[#fcf6ba] text-2xl font-black tracking-widest mb-3">🎉 抽獎結果公佈</h3>
+            <p class="text-gray-300 font-bold text-sm mb-6">
                 <span id="i18n-result-desc-pre">本次由</span>
-                <span id="win-team" class="text-white text-xl px-1 font-black underline decoration-[#bf953f] decoration-2 underline-offset-4">---</span>
+                <span id="win-team" class="text-white text-lg px-1 font-black underline decoration-[#bf953f] decoration-2 underline-offset-4">---</span>
                 <span id="i18n-result-desc-post">勝出！</span>
             </p>
             
-            <button onclick="openParticipantModal()" class="mb-2 px-6 py-2.5 border border-[#bf953f] text-[#fcf6ba] font-bold rounded-full text-[13px] hover:bg-[#bf953f] hover:text-black transition-colors w-full shadow-[0_0_10px_rgba(191,149,63,0.2)]">
-                <span id="i18n-view-list-btn">查看符合抽獎資格名單 ➔</span>
-            </button>
+            <div class="winner-display-block">
+                <p class="text-gray-400 text-xs font-bold mb-3 tracking-widest" id="i18n-winner-lbl">幸運得主</p>
+                <div id="winner-list-container" class="text-2xl text-[#fcf6ba] font-mono tracking-wider font-black mb-4">
+                    </div>
+                <p class="text-[#10b981] text-xs font-bold bg-[#10b981]/10 py-1.5 px-3 rounded-lg inline-block border border-[#10b981]/30" id="i18n-winner-notice">
+                    ※ 將由專人通知至本公司領獎
+                </p>
+            </div>
 
-            <div class="winner-list" id="winner-list-container"></div>
-            
-            <a href="#" target="_blank" id="video-cta-btn" style="display:none;" class="mt-2 w-full block py-3.5 rounded-xl font-black text-black text-[15px] tracking-widest bg-gradient-to-r from-[#bf953f] via-[#fcf6ba] to-[#bf953f] shadow-[0_5px_15px_rgba(191,149,63,0.4)] transition-transform hover:-translate-y-1">
-                <span id="i18n-video-cta">觀看抽獎影片 ➔</span>
-            </a>
+            <div id="result-ctas" class="flex flex-col gap-3" style="display:none;">
+                <a href="#" target="_blank" class="w-full py-3 border border-[#bf953f] bg-[#bf953f]/10 text-[#fcf6ba] font-bold rounded-xl text-[13px] tracking-wider hover:bg-[#bf953f] hover:text-black transition-colors">
+                    <span id="i18n-video-cta">▶ 觀看抽獎影片</span>
+                </a>
+                <button onclick="openParticipantModal()" class="w-full py-3 border border-gray-600 text-gray-300 font-bold rounded-xl text-[13px] tracking-wider hover:bg-gray-800 transition-colors">
+                    <span id="i18n-view-list-btn">📋 查看符合抽獎資格名單</span>
+                </button>
+            </div>
         </div>
 
         <div class="rule-box">
@@ -338,8 +349,11 @@
             end:   new Date('2026-03-19T23:59:59+08:00')
         };
 
-        // 🌟 未來在這裡填寫得獎者
+        // 🌟 在這裡手動填寫「得獎者」名單 (活動結束後填寫)
         const EVENT_WINNERS = ["ericli"];
+
+        // 🌟 在這裡手動填寫「符合資格」的所有參與者名單 (活動結束後填寫)
+        const EVENT_PARTICIPANTS = ["User1", "User2", "User3", "Gamer99", "LuckyStar"];
 
         const CFG = {
             userInfoApi: 'https://swag-user-info-api-905468082258.asia-east1.run.app/api/badges',
@@ -376,8 +390,10 @@
                     '<li class="rule-item">6. 中獎用戶須於指定時間內親自至本公司領獎。</li>'
                 ],
                 disclaimer: '主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。',
-                resultTitle: '🎉 抽獎結果公佈', resultDescPre: '本次由', resultDescPost: '陣營勝出！', won: '獲得', calc: '名單結算中...',
-                participantTitle: '符合抽獎資格名單', participantNote: '※ 中獎者將透過官方系統發送專屬通知', videoCta: '觀看抽獎影片 ➔', viewListBtn: '查看符合抽獎資格名單 ➔', closeParticipant: '關閉'
+                resultTitle: '🎉 抽獎結果公佈', resultDescPre: '本次由', resultDescPost: '勝出！', calc: '名單結算中...',
+                participantTitle: '符合抽獎資格名單', participantNote: '※ 中獎者將透過官方系統發送專屬通知', 
+                winnerLbl: '幸運得主', winnerNotice: '※ 將由專人通知至本公司領獎',
+                videoCta: '▶ 觀看抽獎影片', viewListBtn: '📋 查看符合資格名單', closeParticipant: '關閉'
             },
             'en': {
                 mainTitle: 'VIP PRESTIGE POOL', prizeA: 'Switch', prizeB: 'PS5', btnA: 'Vote Switch', btnB: 'Vote PS5',
@@ -398,8 +414,10 @@
                     '<li class="rule-item">6. Winners must collect prizes in person at HQ.</li>'
                 ],
                 disclaimer: 'The organizer reserves the right to change event details at any time.',
-                resultTitle: '🎉 Lucky Draw Results', resultDescPre: 'Winner:', resultDescPost: '!', won: 'Won', calc: 'Calculating results...',
-                participantTitle: 'Eligible Participants', participantNote: '※ Winners will be notified via official system', videoCta: 'Watch Draw Video ➔', viewListBtn: 'View Eligible Participants ➔', closeParticipant: 'Close'
+                resultTitle: '🎉 Lucky Draw Results', resultDescPre: 'Winner:', resultDescPost: '!', calc: 'Calculating results...',
+                participantTitle: 'Eligible Participants', participantNote: '※ Winners will be notified via official system', 
+                winnerLbl: 'Lucky Winner', winnerNotice: '※ You will be contacted to collect the prize at HQ',
+                videoCta: '▶ Watch Draw Video', viewListBtn: '📋 View Eligible Participants', closeParticipant: 'Close'
             }
         };
 
@@ -555,6 +573,9 @@
                 document.getElementById('i18n-video-cta').innerText = d.videoCta;
                 document.getElementById('i18n-view-list-btn').innerText = d.viewListBtn;
                 document.getElementById('i18n-btn-close-participant').innerText = d.closeParticipant;
+                
+                document.getElementById('i18n-winner-lbl').innerText = d.winnerLbl;
+                document.getElementById('i18n-winner-notice').innerText = d.winnerNotice;
 
                 if (selectedChoice) {
                     document.getElementById('modal-selected-prize').innerText = selectedChoice === 'A' ? d.prizeA : d.prizeB;
@@ -677,20 +698,15 @@
                 }
 
                 const container = document.getElementById('winner-list-container');
-                const videoBtn = document.getElementById('video-cta-btn');
+                const ctas = document.getElementById('result-ctas');
                 
                 if (EVENT_WINNERS.length === 0) {
-                    container.innerHTML = `<div class="text-gray-400 font-bold py-4 text-sm">${d.calc}</div>`;
-                    videoBtn.style.display = 'none';
+                    container.innerHTML = `<div class="text-gray-400 font-bold py-2 text-sm">${d.calc}</div>`;
+                    if(ctas) ctas.style.display = 'none';
                 } else {
-                    videoBtn.style.display = 'block';
-                    const wonText = d.won;
+                    if(ctas) ctas.style.display = 'flex';
                     container.innerHTML = EVENT_WINNERS.map(name => 
-                        `<div class="winner-item">
-                            <span class="winner-mask">${maskName(name)}</span> 
-                            <span class="text-[12px] text-gray-400">${wonText}</span> 
-                            <span class="text-[#fcf6ba]">${prizeName}</span>
-                        </div>`
+                        `<div class="py-1">${maskName(name)}</div>`
                     ).join('');
                 }
                 return;
@@ -701,17 +717,18 @@
             }
         }
 
+        // 🌟 透過前端手動陣列產生名單
         function openParticipantModal() {
             const modal = document.getElementById('participantModal');
             const container = document.getElementById('participant-list-container');
             
-            // 這裡放的是抽獎結束後，從後端撈出來的「獲勝陣營所有投票者」名單
-            // 目前先放假資料展示 UI
-            const dummyUsers = ['SWAG***88', 'VIP_***NG', 'Game***23', 'Luck***99', 'Play***ne', 'Swag***er', 'Taiw***o1', 'Hell***26', 'App***le', 'Bana***na'];
-            
-            container.innerHTML = dummyUsers.map(name => {
-                return `<div class="text-[15px] text-[#fcf6ba] font-mono tracking-widest border-b border-[rgba(191,149,63,0.2)] pb-2">${name}</div>`;
-            }).join('');
+            if (EVENT_PARTICIPANTS.length > 0) {
+                container.innerHTML = EVENT_PARTICIPANTS.map(name => {
+                    return `<div class="text-[15px] text-[#fcf6ba] font-mono tracking-widest border-b border-[rgba(191,149,63,0.2)] pb-2">${maskName(name)}</div>`;
+                }).join('');
+            } else {
+                container.innerHTML = `<div class="text-gray-400 text-sm py-4">名單結算中...</div>`;
+            }
             
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('show'), 10);

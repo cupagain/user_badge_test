@@ -41,7 +41,6 @@
             position: relative;
         }
 
-        /* --- 🌟 優化：語言切換按鈕縮小 --- */
         .lang-controls { position: absolute; top: 14px; right: 14px; z-index: 50; display: flex; gap: 2px; background: rgba(0,0,0,0.5); padding: 3px; border-radius: 10px; border: 1px solid rgba(191,149,63,0.3); }
         .lang-btn { font-size: 10px; font-weight: 900; color: #aaa; padding: 3px 8px; border-radius: 6px; transition: 0.3s; cursor: pointer; }
         .lang-btn.active { background: var(--gold-primary); color: #000; box-shadow: 0 1px 3px rgba(191,149,63,0.5); }
@@ -66,7 +65,6 @@
         .dashboard-time { display: flex; justify-content: center; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; margin-bottom: 10px; }
         .dashboard-user { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         
-        /* --- 🌟 優化：等級標籤平面化 --- */
         .level-badge { background: rgba(191, 149, 63, 0.15); color: #fcf6ba; border: 1px solid rgba(191, 149, 63, 0.4); font-weight: 900; padding: 2px 8px; border-radius: 6px; font-size: 14px; margin-left: 2px; }
         
         .status-badge { font-size: 12px; font-weight: 900; padding: 4px 12px; border-radius: 50px; border: 1px solid #ffffff33; letter-spacing: 1px; white-space: nowrap; }
@@ -160,7 +158,7 @@
         @media (max-width: 400px) { .rule-item { white-space: normal; word-break: break-word; } } 
 
         .results-section { display: none; background: rgba(0,0,0,0.6); border: 1px solid var(--gold-primary); border-radius: 24px; padding: 30px 20px; margin-top: 20px; text-align: center; box-shadow: inset 0 0 30px rgba(191,149,63,0.1); }
-        .winner-list { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 15px; margin-top: 20px; display: grid; gap: 10px; }
+        .winner-list { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 15px; margin-top: 15px; margin-bottom: 20px; display: grid; gap: 10px; }
         .winner-item { font-size: 16px; font-weight: bold; color: #fff; display: flex; justify-content: center; gap: 10px; align-items: center; }
         .winner-mask { color: var(--gold-light); font-family: monospace; letter-spacing: 2px; }
 
@@ -199,6 +197,18 @@
         </div>
     </div>
 
+    <div id="participantModal" class="modal-overlay">
+        <div class="modal-content" style="max-height: 85vh; display: flex; flex-direction: column;">
+            <h2 id="i18n-participant-title" class="text-xl font-black text-[#fcf6ba] mb-2 whitespace-nowrap">符合抽獎資格名單</h2>
+            <p id="i18n-participant-note" class="text-[12px] text-gray-400 font-bold mb-5">※ 中獎者將透過官方系統發送專屬通知</p>
+            
+            <div id="participant-list-container" class="overflow-y-auto flex-1 bg-black/50 border border-[rgba(191,149,63,0.3)] rounded-xl p-4 mb-5 space-y-3 text-center" style="max-height: 40vh;">
+                </div>
+
+            <button onclick="closeParticipantModal()" class="px-6 py-3 bg-transparent border border-gray-600 text-gray-400 font-bold rounded-xl hover:bg-gray-800 hover:text-white transition-colors text-sm w-full" id="i18n-btn-close-participant">關閉</button>
+        </div>
+    </div>
+
     <div id="voteModal" class="modal-overlay">
         <div class="modal-content">
             <h2 id="i18n-modal-title" class="text-xl font-black text-[#fcf6ba] mb-4 whitespace-nowrap">身分驗證</h2>
@@ -217,22 +227,6 @@
                 <button onclick="closeModal()" class="px-6 py-2.5 text-gray-500 font-bold hover:text-white transition-colors text-sm whitespace-nowrap" id="i18n-btn-cancel">取消</button>
                 <button id="confirm-btn" onclick="submitVote()" class="px-8 py-2.5 bg-[#bf953f] text-black font-black rounded-xl hover:bg-[#fcf6ba] shadow-lg transition-colors text-sm whitespace-nowrap">確認送出</button>
             </div>
-        </div>
-    </div>
-
-    <div id="participantModal" class="modal-overlay">
-        <div class="modal-content" style="max-height: 85vh; display: flex; flex-direction: column;">
-            <h2 id="i18n-participant-title" class="text-xl font-black text-[#fcf6ba] mb-1 whitespace-nowrap">符合抽獎資格名單</h2>
-            <p id="i18n-participant-note" class="text-[13px] text-gray-400 font-bold mb-4">※ 中獎者將透過官方系統發送專屬通知</p>
-            
-            <div id="participant-list-container" class="overflow-y-auto flex-1 bg-black/50 border border-[rgba(191,149,63,0.3)] rounded-xl p-4 mb-5 space-y-3 text-center" style="max-height: 40vh;">
-                </div>
-
-            <a href="https://swag.live/" target="_blank" id="i18n-video-cta" class="w-full block py-3.5 rounded-xl font-black text-black text-[15px] mb-3 tracking-widest" style="background: linear-gradient(90deg, #bf953f, #fcf6ba, #bf953f); background-size: 200% auto; animation: goldShine 3s linear infinite; box-shadow: 0 5px 15px rgba(191, 149, 63, 0.4);">
-                觀看抽獎影片 ➔
-            </a>
-
-            <button onclick="closeParticipantModal()" class="px-6 py-3 bg-transparent border border-gray-600 text-gray-400 font-bold rounded-xl hover:bg-gray-800 hover:text-white transition-colors text-sm w-full" id="i18n-btn-close-participant">關閉</button>
         </div>
     </div>
 
@@ -310,17 +304,21 @@
 
         <div id="results-section" class="results-section">
             <h3 id="i18n-result-title" class="text-[#fcf6ba] text-2xl font-black tracking-widest mb-4">🎉 抽獎結果公佈</h3>
-            <p class="text-gray-300 font-bold text-[15px] mb-6">
+            <p class="text-gray-300 font-bold text-[15px] mb-5">
                 <span id="i18n-result-desc-pre">本次由</span>
                 <span id="win-team" class="text-white text-xl px-1 font-black underline decoration-[#bf953f] decoration-2 underline-offset-4">---</span>
-                <span id="i18n-result-desc-post">陣營勝出！</span>
+                <span id="i18n-result-desc-post">勝出！</span>
             </p>
             
-            <button onclick="openParticipantModal()" class="mb-2 px-6 py-2.5 border border-[#bf953f] text-[#fcf6ba] font-bold rounded-full text-[13px] hover:bg-[#bf953f] hover:text-black transition-colors box-shadow: 0 0 10px rgba(191,149,63,0.2);">
+            <button onclick="openParticipantModal()" class="mb-2 px-6 py-2.5 border border-[#bf953f] text-[#fcf6ba] font-bold rounded-full text-[13px] hover:bg-[#bf953f] hover:text-black transition-colors w-full shadow-[0_0_10px_rgba(191,149,63,0.2)]">
                 <span id="i18n-view-list-btn">查看符合抽獎資格名單 ➔</span>
             </button>
 
             <div class="winner-list" id="winner-list-container"></div>
+            
+            <a href="#" target="_blank" id="video-cta-btn" style="display:none;" class="mt-2 w-full block py-3.5 rounded-xl font-black text-black text-[15px] tracking-widest bg-gradient-to-r from-[#bf953f] via-[#fcf6ba] to-[#bf953f] shadow-[0_5px_15px_rgba(191,149,63,0.4)] transition-transform hover:-translate-y-1">
+                <span id="i18n-video-cta">觀看抽獎影片 ➔</span>
+            </a>
         </div>
 
         <div class="rule-box">
@@ -337,10 +335,11 @@
     <script>
         const EVENT_CONFIG = {
             start: new Date('2026-03-10T00:00:00+08:00'),
-            end:   new Date('2026-03-18T23:59:59+08:00')
+            end:   new Date('2026-03-20T23:59:59+08:00')
         };
 
-        const EVENT_WINNERS =[];
+        // 🌟 未來在這裡填寫得獎者
+        const EVENT_WINNERS = ["ericli"];
 
         const CFG = {
             userInfoApi: 'https://swag-user-info-api-905468082258.asia-east1.run.app/api/badges',
@@ -365,7 +364,7 @@
                 modalTitle: '身分驗證', modalConfirmPrefix: '您即將投票給：', modalWarning: '※ 投票送出後無法更改',
                 modalMsg: '請輸入完整帳號以確認本人操作：',
                 inputPlaceholder: '輸入您的 SWAG 帳號', emptyInputMsg: '請輸入您的帳號名稱！',
-                timeFormat: '<span class="text-gray-400 text-xs font-bold tracking-widest mr-2">投票時間</span><span class="text-[#fcf6ba] text-xs font-bold tracking-wider">3/10 00:00 - 3/18 23:59</span>',
+                timeFormat: '<span class="text-gray-400 text-xs font-bold tracking-widest mr-2">投票時間</span><span class="text-[#fcf6ba] text-xs font-bold tracking-wider">3/10 00:00 - 3/20 23:59</span>',
                 hpBannerTxt: '票數平手將觸發隱藏大獎', hpBannerBtn: '查看詳情 ➔',
                 hpModalTitle: '隱藏大獎', hpModalNote: '※ 觸發時原定獎項取消', hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>', ruleHeader: '活動規則',
                 rules:[
@@ -377,7 +376,8 @@
                     '<li class="rule-item">6. 中獎用戶須於指定時間內親自至本公司領獎。</li>'
                 ],
                 disclaimer: '主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。',
-                resultTitle: '🎉 抽獎結果公佈', resultDescPre: '本次由', resultDescPost: '陣營勝出！', won: '獲得', calc: '名單結算中...'
+                resultTitle: '🎉 抽獎結果公佈', resultDescPre: '本次由', resultDescPost: '陣營勝出！', won: '獲得', calc: '名單結算中...',
+                participantTitle: '符合抽獎資格名單', participantNote: '※ 中獎者將透過官方系統發送專屬通知', videoCta: '觀看抽獎影片 ➔', viewListBtn: '查看符合抽獎資格名單 ➔', closeParticipant: '關閉'
             },
             'en': {
                 mainTitle: 'VIP PRESTIGE POOL', prizeA: 'Switch', prizeB: 'PS5', btnA: 'Vote Switch', btnB: 'Vote PS5',
@@ -398,7 +398,8 @@
                     '<li class="rule-item">6. Winners must collect prizes in person at HQ.</li>'
                 ],
                 disclaimer: 'The organizer reserves the right to change event details at any time.',
-                resultTitle: '🎉 Lucky Draw Results', resultDescPre: 'Winner:', resultDescPost: '!', won: 'Won', calc: 'Calculating results...'
+                resultTitle: '🎉 Lucky Draw Results', resultDescPre: 'Winner:', resultDescPost: '!', won: 'Won', calc: 'Calculating results...',
+                participantTitle: 'Eligible Participants', participantNote: '※ Winners will be notified via official system', videoCta: 'Watch Draw Video ➔', viewListBtn: 'View Eligible Participants ➔', closeParticipant: 'Close'
             }
         };
 
@@ -549,6 +550,12 @@
                 document.getElementById('i18n-result-desc-pre').innerText = d.resultDescPre;
                 document.getElementById('i18n-result-desc-post').innerText = d.resultDescPost;
 
+                document.getElementById('i18n-participant-title').innerText = d.participantTitle;
+                document.getElementById('i18n-participant-note').innerText = d.participantNote;
+                document.getElementById('i18n-video-cta').innerText = d.videoCta;
+                document.getElementById('i18n-view-list-btn').innerText = d.viewListBtn;
+                document.getElementById('i18n-btn-close-participant').innerText = d.closeParticipant;
+
                 if (selectedChoice) {
                     document.getElementById('modal-selected-prize').innerText = selectedChoice === 'A' ? d.prizeA : d.prizeB;
                 }
@@ -660,19 +667,23 @@
                     winTeamEl.style.color = "#fcf6ba"; 
                     prizeName = 'iPhone 17 Pro';
                 } else if (pA > pB) {
-                    winTeamEl.innerText = state.lang === 'en' ? "Team Switch" : "Switch 陣營";
+                    winTeamEl.innerText = state.lang === 'en' ? "Switch" : "Switch"; 
                     winTeamEl.style.color = "#ff9999"; 
                     prizeName = 'Switch';
                 } else {
-                    winTeamEl.innerText = state.lang === 'en' ? "Team PS5" : "PS5 陣營";
+                    winTeamEl.innerText = state.lang === 'en' ? "PS5" : "PS5";
                     winTeamEl.style.color = "#99c2ff"; 
                     prizeName = 'PS5';
                 }
 
                 const container = document.getElementById('winner-list-container');
+                const videoBtn = document.getElementById('video-cta-btn');
+                
                 if (EVENT_WINNERS.length === 0) {
                     container.innerHTML = `<div class="text-gray-400 font-bold py-4 text-sm">${d.calc}</div>`;
+                    videoBtn.style.display = 'none';
                 } else {
+                    videoBtn.style.display = 'block';
                     const wonText = d.won;
                     container.innerHTML = EVENT_WINNERS.map(name => 
                         `<div class="winner-item">
@@ -688,6 +699,28 @@
                 if(hpBanner) hpBanner.style.display = 'flex';
                 resultsSection.style.display = 'none';
             }
+        }
+
+        function openParticipantModal() {
+            const modal = document.getElementById('participantModal');
+            const container = document.getElementById('participant-list-container');
+            
+            // 這裡放的是抽獎結束後，從後端撈出來的「獲勝陣營所有投票者」名單
+            // 目前先放假資料展示 UI
+            const dummyUsers = ['SWAG***88', 'VIP_***NG', 'Game***23', 'Luck***99', 'Play***ne', 'Swag***er', 'Taiw***o1', 'Hell***26', 'App***le', 'Bana***na'];
+            
+            container.innerHTML = dummyUsers.map(name => {
+                return `<div class="text-[15px] text-[#fcf6ba] font-mono tracking-widest border-b border-[rgba(191,149,63,0.2)] pb-2">${name}</div>`;
+            }).join('');
+            
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+
+        function closeParticipantModal() {
+            const modal = document.getElementById('participantModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
         }
 
         function openVoteModal(choice) {

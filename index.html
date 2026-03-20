@@ -206,7 +206,7 @@
             <p id="i18n-participant-note" class="text-[12px] text-gray-400 font-bold mb-5">※ 中獎者將透過官方系統發送專屬通知</p>
             
             <div id="participant-list-container" class="overflow-y-auto flex-1 bg-black/50 border border-[rgba(191,149,63,0.3)] rounded-xl p-4 mb-5 space-y-3 text-center" style="max-height: 40vh;">
-                </div>
+            </div>
 
             <button onclick="closeParticipantModal()" class="px-6 py-3 bg-transparent border border-gray-600 text-gray-400 font-bold rounded-xl hover:bg-gray-800 hover:text-white transition-colors text-sm w-full" id="i18n-btn-close-participant">關閉</button>
         </div>
@@ -316,7 +316,7 @@
             <div class="winner-display-block">
                 <p class="text-gray-400 text-xs font-bold mb-3 tracking-widest" id="i18n-winner-lbl">幸運得主</p>
                 <div id="winner-list-container" class="text-2xl text-[#fcf6ba] font-mono tracking-wider font-black mb-4">
-                    </div>
+                </div>
                 <p class="text-[#10b981] text-xs font-bold bg-[#10b981]/10 py-1.5 px-3 rounded-lg inline-block border border-[#10b981]/30" id="i18n-winner-notice">
                     ※ 將由專人通知至本公司領獎
                 </p>
@@ -361,26 +361,41 @@
             statsApi: 'https://vip-lottery-api-905468082258.asia-east1.run.app/api/stats'
         };
 
-        let state = { uid: null, testUid: null, level: 0, hasVoted: false, votedChoice: null, isEventActive: true, lang: 'zh-TW', realA: 0, realB: 0, isTestMode: false, mockUsername: 'Test User' };
-        let selectedChoice = null;
+        // 輪詢間隔（毫秒）
+        const POLL_INTERVAL = 15000;
 
+        let state = {
+            uid: null, testUid: null, level: 0,
+            hasVoted: false, votedChoice: null,
+            isEventActive: true, lang: 'zh-TW',
+            realA: 0, realB: 0,
+            isTestMode: false
+        };
+        let selectedChoice = null;
+        let pollTimer = null;
+        let resizeTimer = null;
+
+        // ✅ FIX: maskName 改善，處理短名稱邊界情況
         function maskName(name) {
             if (!name) return '***';
-            if (name.length <= 3) return name.charAt(0) + '***';
-            return name.substring(0, 2) + '***' + name.substring(name.length - 2);
+            if (name.length <= 2) return '***';
+            return name.substring(0, 2) + '***' + name.substring(name.length - 1);
         }
 
         const i18n = {
             'zh-TW': {
                 mainTitle: 'VIP 專屬抽獎池', prizeA: 'Switch', prizeB: 'PS5', btnA: '選擇 Switch', btnB: '選擇 PS5',
                 prizeQty: '僅抽出 1 名', hpQty: '僅抽出 1 名', vip: '您的等級：', upgradeCTA: '升級至 LV.20 即可投票',
-                statusEligible: '符合抽獎資格', statusVoted: '已完成本季投票', cancel: '取消', confirm: '確認送出', close: '關閉', 
+                statusEligible: '符合抽獎資格', statusVoted: '已完成本季投票', cancel: '取消', confirm: '確認送出', close: '關閉',
                 modalTitle: '身分驗證', modalConfirmPrefix: '您即將投票給：', modalWarning: '※ 投票送出後無法更改',
                 modalMsg: '請輸入完整帳號以確認本人操作：',
                 inputPlaceholder: '輸入您的 SWAG 帳號', emptyInputMsg: '請輸入您的帳號名稱！',
+                // ✅ FIX: 時間顯示與活動設定一致 (3/19)
                 timeFormat: '<span class="text-gray-400 text-xs font-bold tracking-widest mr-2">投票時間</span><span class="text-[#fcf6ba] text-xs font-bold tracking-wider">3/10 00:00 - 3/19 23:59</span>',
                 hpBannerTxt: '票數平手將觸發隱藏大獎', hpBannerBtn: '查看詳情 ➔',
-                hpModalTitle: '隱藏大獎', hpModalNote: '※ 觸發時原定獎項取消', hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>', ruleHeader: '活動規則',
+                hpModalTitle: '隱藏大獎', hpModalNote: '※ 觸發時原定獎項取消',
+                hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>',
+                ruleHeader: '活動規則',
                 rules:[
                     '<li class="rule-item">1. 獎項每季更新，每人每季限投一票。</li>',
                     '<li class="rule-item">2. 僅限 VIP 20 等（含）以上用戶參與投票。</li>',
@@ -391,20 +406,23 @@
                 ],
                 disclaimer: '主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。',
                 resultTitle: '🎉 抽獎結果公佈', resultDescPre: '本次由', resultDescPost: '勝出！', calc: '名單結算中...',
-                participantTitle: '符合抽獎資格名單', participantNote: '※ 中獎者將透過官方系統發送專屬通知', 
+                participantTitle: '符合抽獎資格名單', participantNote: '※ 中獎者將透過官方系統發送專屬通知',
                 winnerLbl: '幸運得主', winnerNotice: '※ 將由專人通知至本公司領獎',
                 videoCta: '▶ 觀看抽獎影片', viewListBtn: '📋 查看符合資格名單', closeParticipant: '關閉'
             },
             'en': {
                 mainTitle: 'VIP PRESTIGE POOL', prizeA: 'Switch', prizeB: 'PS5', btnA: 'Vote Switch', btnB: 'Vote PS5',
                 prizeQty: '1 Winner Only', hpQty: '1 Winner Only', vip: 'Your Level: ', upgradeCTA: 'Upgrade to LV.20 to Vote',
-                statusEligible: 'Eligible to Vote', statusVoted: 'Voted for this Quarter', cancel: 'Cancel', confirm: 'Submit Vote', close: 'Close', 
+                statusEligible: 'Eligible to Vote', statusVoted: 'Voted for this Quarter', cancel: 'Cancel', confirm: 'Submit Vote', close: 'Close',
                 modalTitle: 'Verification', modalConfirmPrefix: 'You are voting for: ', modalWarning: '※ Cannot be changed later',
                 modalMsg: 'Enter full username to verify:',
                 inputPlaceholder: 'Enter SWAG Username', emptyInputMsg: 'Please enter your username!',
-                timeFormat: '<span class="text-gray-400 text-xs font-bold tracking-widest mr-2">Voting Time</span><span class="text-[#fcf6ba] text-xs font-bold tracking-wider">Mar 10 - Mar 20</span>',
+                // ✅ FIX: 英文版日期修正為 Mar 19（與活動設定一致）
+                timeFormat: '<span class="text-gray-400 text-xs font-bold tracking-widest mr-2">Voting Time</span><span class="text-[#fcf6ba] text-xs font-bold tracking-wider">Mar 10 - Mar 19</span>',
                 hpBannerTxt: 'Tie Votes Trigger Hidden Prize', hpBannerBtn: 'View Details ➔',
-                hpModalTitle: 'Hidden Prize', hpModalNote: '※ Original prizes cancelled when triggered', hpModalDesc: '<p>Triggered when final votes tie</p><p class="text-[#ff2d55] text-[20px] mt-1">iPhone 17 Pro for ALL</p>', ruleHeader: 'Activity Rules',
+                hpModalTitle: 'Hidden Prize', hpModalNote: '※ Original prizes cancelled when triggered',
+                hpModalDesc: '<p>Triggered when final votes tie</p><p class="text-[#ff2d55] text-[20px] mt-1">iPhone 17 Pro for ALL</p>',
+                ruleHeader: 'Activity Rules',
                 rules:[
                     '<li class="rule-item">1. Prizes update quarterly. 1 vote per person.</li>',
                     '<li class="rule-item">2. Only VIP level 20 and above can participate.</li>',
@@ -415,7 +433,7 @@
                 ],
                 disclaimer: 'The organizer reserves the right to change event details at any time.',
                 resultTitle: '🎉 Lucky Draw Results', resultDescPre: 'Winner:', resultDescPost: '!', calc: 'Calculating results...',
-                participantTitle: 'Eligible Participants', participantNote: '※ Winners will be notified via official system', 
+                participantTitle: 'Eligible Participants', participantNote: '※ Winners will be notified via official system',
                 winnerLbl: 'Lucky Winner', winnerNotice: '※ You will be contacted to collect the prize at HQ',
                 videoCta: '▶ Watch Draw Video', viewListBtn: '📋 View Eligible Participants', closeParticipant: 'Close'
             }
@@ -445,13 +463,44 @@
             }
         }
 
+        // ✅ FIX: 點擊 Modal 背景可關閉
+        function setupModalBackdropClose() {
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === overlay) {
+                        overlay.classList.remove('show');
+                        setTimeout(() => { overlay.style.display = 'none'; }, 300);
+                    }
+                });
+            });
+        }
+
+        // ✅ FIX: 票數輪詢，讓畫面即時反映其他人投票
+        function startPolling() {
+            if (pollTimer) clearInterval(pollTimer);
+            if (!state.isEventActive) return;
+
+            pollTimer = setInterval(async () => {
+                try {
+                    const res = await fetch(`${CFG.statsApi}?user_id=${state.testUid}`).then(r => r.json());
+                    if (res) {
+                        state.realA = res.totalA || 0;
+                        state.realB = res.totalB || 0;
+                        updateChartOnly();
+                    }
+                } catch (e) {
+                    console.warn('Polling error:', e);
+                }
+            }, POLL_INTERVAL);
+        }
+
         async function initApp() {
             const urlParams = new URLSearchParams(window.location.search);
             let rawUid = urlParams.get('user_id') || urlParams.get('uid');
-            
+
             if (urlParams.get('test_mode') === '1') {
                 state.isTestMode = true;
-                state.uid = rawUid || 'guest_test'; 
+                state.uid = rawUid || 'guest_test';
                 state.testUid = 'TEST_' + state.uid + '_' + Math.floor(Math.random() * 999999);
                 document.getElementById('test-mode-badge').style.display = 'block';
             } else {
@@ -459,12 +508,15 @@
                 state.testUid = state.uid;
             }
 
-            changeLang(document.getElementById('langDropdown') ? document.getElementById('langDropdown').value : 'zh-TW');
+            // ✅ FIX: 移除不存在的 langDropdown 參照，直接使用預設語系
+            changeLang('zh-TW');
 
-            if(!state.uid) {
+            setupModalBackdropClose();
+
+            if (!state.uid) {
                 document.getElementById('auth-info').style.display = 'none';
                 document.getElementById('unauth-info').style.display = 'block';
-                updateChartOnly(); 
+                updateChartOnly();
                 return;
             }
 
@@ -474,43 +526,65 @@
             if (state.isTestMode) {
                 state.level = 99;
                 document.getElementById('user-level').innerText = state.level;
+                // 測試模式先取一次票數，再 updateUI
+                try {
+                    const res = await fetch(`${CFG.statsApi}?user_id=${state.testUid}`).then(r => r.json());
+                    if (res) {
+                        state.realA = res.totalA || 0;
+                        state.realB = res.totalB || 0;
+                    }
+                } catch (e) {}
                 updateUI();
             } else {
-                fetch(`${CFG.userInfoApi}?user_id=${state.uid}`)
-                    .then(r => r.json())
-                    .then(res => {
-                        state.level = res.level || 0;
-                        document.getElementById('user-level').innerText = state.level;
-                        updateUI();
-                    })
-                    .catch(e => { document.getElementById('user-level').innerText = "--"; });
-                
-                const localVote = localStorage.getItem(`vip_vote_${state.uid}`);
-                if (localVote) { 
-                    state.hasVoted = true; 
-                    state.votedChoice = localVote; 
-                    updateUI();
+                // ✅ FIX: 統一等所有非同步資料回來後再呼叫一次 updateUI，避免競態閃爍
+                try {
+                    const [userRes, statsRes] = await Promise.allSettled([
+                        fetch(`${CFG.userInfoApi}?user_id=${state.uid}`).then(r => r.json()),
+                        fetch(`${CFG.statsApi}?user_id=${state.testUid}`).then(r => r.json())
+                    ]);
+
+                    // 處理用戶等級
+                    if (userRes.status === 'fulfilled') {
+                        state.level = userRes.value.level || 0;
+                    }
+                    document.getElementById('user-level').innerText = state.level || '--';
+
+                    // 處理票數與投票狀態
+                    if (statsRes.status === 'fulfilled' && statsRes.value) {
+                        const res = statsRes.value;
+                        // server 記錄優先於 localStorage
+                        if (res.voted) {
+                            state.hasVoted = true;
+                            state.votedChoice = res.choice;
+                            localStorage.setItem(`vip_vote_${state.uid}`, res.choice);
+                        } else {
+                            // server 沒記錄則 fallback localStorage（防止清除 server 資料的邊緣情況）
+                            const localVote = localStorage.getItem(`vip_vote_${state.uid}`);
+                            if (localVote) {
+                                state.hasVoted = true;
+                                state.votedChoice = localVote;
+                            }
+                        }
+                        state.realA = res.totalA || 0;
+                        state.realB = res.totalB || 0;
+                    } else {
+                        // stats API 失敗時，仍嘗試從 localStorage 讀取
+                        const localVote = localStorage.getItem(`vip_vote_${state.uid}`);
+                        if (localVote) {
+                            state.hasVoted = true;
+                            state.votedChoice = localVote;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('initApp fetch error:', e);
+                    document.getElementById('user-level').innerText = '--';
                 }
+
+                // ✅ FIX: 所有資料就緒後統一呼叫一次 updateUI
+                updateUI();
             }
 
-            try {
-                fetch(`${CFG.statsApi}?user_id=${state.testUid}`)
-                    .then(r => r.json())
-                    .then(res => {
-                        if (res) {
-                            if (res.voted && !state.isTestMode) {
-                                state.hasVoted = true;
-                                state.votedChoice = res.choice;
-                                localStorage.setItem(`vip_vote_${state.uid}`, res.choice);
-                            }
-                            state.realA = res.totalA || 0;
-                            state.realB = res.totalB || 0;
-                            updateUI(); 
-                        }
-                    })
-                    .catch(e => console.warn("Stats API Fetch Err", e));
-            } catch(e) {}
-            
+            startPolling();
             setupPwaLinkInterceptor();
         }
 
@@ -529,12 +603,12 @@
         function changeLang(lang) {
             state.lang = lang;
             const d = i18n[lang] || i18n['zh-TW'];
-            
+
             document.getElementById('lang-btn-tw').classList.toggle('active', lang === 'zh-TW');
             document.getElementById('lang-btn-en').classList.toggle('active', lang === 'en');
-            
+
             document.getElementById('event-time-display').innerHTML = d.timeFormat;
-            
+
             try {
                 document.getElementById('i18n-main-title').innerText = d.mainTitle;
                 document.getElementById('i18n-vip-lbl').innerText = d.vip;
@@ -545,7 +619,7 @@
                 document.getElementById('i18n-prize-b').innerText = d.prizeB;
                 document.getElementById('i18n-prize-a-qty').innerText = d.prizeQty;
                 document.getElementById('i18n-prize-b-qty').innerText = d.prizeQty;
-                
+
                 document.getElementById('i18n-hp-banner-txt').innerText = d.hpBannerTxt;
                 document.getElementById('i18n-hp-banner-btn').innerText = d.hpBannerBtn;
 
@@ -563,7 +637,7 @@
                 document.getElementById('i18n-hp-modal-note').innerText = d.hpModalNote;
                 document.getElementById('i18n-rule-header').innerText = d.ruleHeader;
                 document.getElementById('i18n-disclaimer').innerText = d.disclaimer;
-                
+
                 document.getElementById('i18n-result-title').innerText = d.resultTitle;
                 document.getElementById('i18n-result-desc-pre').innerText = d.resultDescPre;
                 document.getElementById('i18n-result-desc-post').innerText = d.resultDescPost;
@@ -573,7 +647,7 @@
                 document.getElementById('i18n-video-cta').innerText = d.videoCta;
                 document.getElementById('i18n-view-list-btn').innerText = d.viewListBtn;
                 document.getElementById('i18n-btn-close-participant').innerText = d.closeParticipant;
-                
+
                 document.getElementById('i18n-winner-lbl').innerText = d.winnerLbl;
                 document.getElementById('i18n-winner-notice').innerText = d.winnerNotice;
 
@@ -581,18 +655,20 @@
                     document.getElementById('modal-selected-prize').innerText = selectedChoice === 'A' ? d.prizeA : d.prizeB;
                 }
 
-                if(!state.uid) { document.getElementById('unauth-info').innerText = lang === 'en' ? 'Please Log In' : '請登入帳號'; }
+                if (!state.uid) {
+                    document.getElementById('unauth-info').innerText = lang === 'en' ? 'Please Log In' : '請登入帳號';
+                }
 
                 const list = document.getElementById('i18n-rules-list');
                 list.innerHTML = d.rules.join('');
             } catch (error) {}
-            
+
             updateUI();
         }
 
         function updateUI() {
             checkEventTime();
-            if(!state.uid) { updateChartOnly(); return; }
+            if (!state.uid) { updateChartOnly(); return; }
 
             const d = i18n[state.lang];
             const btnA = document.getElementById('btn-vote-a');
@@ -604,7 +680,7 @@
                 statusBadge.style.display = 'none';
                 upgWrap.style.display = 'none';
                 btnA.disabled = btnB.disabled = false;
-                btnA.classList.remove('btn-locked', 'btn-active-voted'); 
+                btnA.classList.remove('btn-locked', 'btn-active-voted');
                 btnB.classList.remove('btn-locked', 'btn-active-voted');
             } else {
                 if (state.level < 20 && !state.hasVoted) {
@@ -617,16 +693,24 @@
                 if (state.hasVoted) {
                     renderStatus('eligible', d.statusVoted);
                     btnA.disabled = btnB.disabled = true;
-                    btnA.className = btnB.className = "btn-premium btn-locked";
-                    if(state.votedChoice === 'A') btnA.classList.add('btn-a-red', 'btn-active-voted');
-                    else btnB.classList.add('btn-b-blue', 'btn-active-voted');
+
+                    // ✅ FIX: 兩顆按鈕都保留顏色 class，再疊加 voted 樣式
+                    btnA.className = 'btn-premium btn-a-red btn-locked';
+                    btnB.className = 'btn-premium btn-b-blue btn-locked';
+                    if (state.votedChoice === 'A') {
+                        btnA.classList.add('btn-active-voted');
+                    } else {
+                        btnB.classList.add('btn-active-voted');
+                    }
                 } else if (state.isEventActive && state.level >= 20) {
                     renderStatus('eligible', d.statusEligible);
                     btnA.disabled = btnB.disabled = false;
-                    btnA.classList.remove('btn-locked'); btnB.classList.remove('btn-locked');
+                    btnA.classList.remove('btn-locked');
+                    btnB.classList.remove('btn-locked');
                 } else {
                     btnA.disabled = btnB.disabled = true;
-                    btnA.classList.add('btn-locked'); btnB.classList.add('btn-locked');
+                    btnA.classList.add('btn-locked');
+                    btnB.classList.add('btn-locked');
                 }
             }
 
@@ -635,16 +719,16 @@
 
         function updateChartOnly() {
             const d = i18n[state.lang];
-            let countA = state.realA;
-            let countB = state.realB;
-            
-            let total = countA + countB;
+            const countA = state.realA;
+            const countB = state.realB;
+
+            const total = countA + countB;
             let pA = total > 0 ? Math.round((countA / total) * 100) : 50;
             let pB = 100 - pA;
 
             document.getElementById('bar-a').style.width = pA + '%';
             document.getElementById('bar-b').style.width = pB + '%';
-            
+
             const percentAEl = document.getElementById('percent-a');
             const percentBEl = document.getElementById('percent-b');
             const vsLabel = document.getElementById('vs-label');
@@ -652,20 +736,20 @@
             if (pA === 100) {
                 percentAEl.innerText = `100% ${d.prizeA}`;
                 percentBEl.innerText = '';
-                if(vsLabel) vsLabel.style.display = 'none';
+                if (vsLabel) vsLabel.style.display = 'none';
             } else if (pB === 100) {
                 percentBEl.innerText = `100% ${d.prizeB}`;
                 percentAEl.innerText = '';
-                if(vsLabel) vsLabel.style.display = 'none';
+                if (vsLabel) vsLabel.style.display = 'none';
             } else {
                 percentAEl.innerText = pA > 0 ? pA + '%' : '';
                 percentBEl.innerText = pB > 0 ? pB + '%' : '';
-                if(vsLabel) {
+                if (vsLabel) {
                     vsLabel.style.display = 'flex';
                     vsLabel.style.left = pA + '%';
                 }
             }
-            
+
             const voteTxt = state.lang === 'en' ? ' Votes' : ' 票';
             document.getElementById('count-a').innerText = `${countA.toLocaleString()}${voteTxt}`;
             document.getElementById('count-b').innerText = `${countB.toLocaleString()}${voteTxt}`;
@@ -674,62 +758,58 @@
             const btnWrapper = document.getElementById('btn-wrapper');
             const resultsSection = document.getElementById('results-section');
             const hpBanner = document.querySelector('.hidden-prize-banner');
-            
+
             if (!state.isEventActive && now > EVENT_CONFIG.end) {
-                btnWrapper.style.display = 'none'; 
-                if(hpBanner) hpBanner.style.display = 'none';
-                resultsSection.style.display = 'block'; 
-                
+                // 活動結束：停止輪詢、顯示結果
+                if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+                btnWrapper.style.display = 'none';
+                if (hpBanner) hpBanner.style.display = 'none';
+                resultsSection.style.display = 'block';
+
                 const winTeamEl = document.getElementById('win-team');
-                let prizeName = '';
-                
+
                 if (pA === 50 && pB === 50) {
-                    winTeamEl.innerText = state.lang === 'en' ? "iPhone 17 Pro (Tie)" : "隱藏大獎 (iPhone 17 Pro)";
-                    winTeamEl.style.color = "#fcf6ba"; 
-                    prizeName = 'iPhone 17 Pro';
+                    winTeamEl.innerText = state.lang === 'en' ? 'iPhone 17 Pro (Tie)' : '隱藏大獎 (iPhone 17 Pro)';
+                    winTeamEl.style.color = '#fcf6ba';
                 } else if (pA > pB) {
-                    winTeamEl.innerText = state.lang === 'en' ? "Switch" : "Switch"; 
-                    winTeamEl.style.color = "#ff9999"; 
-                    prizeName = 'Switch';
+                    winTeamEl.innerText = 'Switch';
+                    winTeamEl.style.color = '#ff9999';
                 } else {
-                    winTeamEl.innerText = state.lang === 'en' ? "PS5" : "PS5";
-                    winTeamEl.style.color = "#99c2ff"; 
-                    prizeName = 'PS5';
+                    winTeamEl.innerText = 'PS5';
+                    winTeamEl.style.color = '#99c2ff';
                 }
 
                 const container = document.getElementById('winner-list-container');
                 const ctas = document.getElementById('result-ctas');
-                
+
                 if (EVENT_WINNERS.length === 0) {
                     container.innerHTML = `<div class="text-gray-400 font-bold py-2 text-sm">${d.calc}</div>`;
-                    if(ctas) ctas.style.display = 'none';
+                    if (ctas) ctas.style.display = 'none';
                 } else {
-                    if(ctas) ctas.style.display = 'flex';
-                    container.innerHTML = EVENT_WINNERS.map(name => 
+                    if (ctas) ctas.style.display = 'flex';
+                    container.innerHTML = EVENT_WINNERS.map(name =>
                         `<div class="py-1">${maskName(name)}</div>`
                     ).join('');
                 }
-                return;
             } else {
                 btnWrapper.style.display = 'grid';
-                if(hpBanner) hpBanner.style.display = 'flex';
+                if (hpBanner) hpBanner.style.display = 'flex';
                 resultsSection.style.display = 'none';
             }
         }
 
-        // 🌟 透過前端手動陣列產生名單
         function openParticipantModal() {
             const modal = document.getElementById('participantModal');
             const container = document.getElementById('participant-list-container');
-            
+
             if (EVENT_PARTICIPANTS.length > 0) {
-                container.innerHTML = EVENT_PARTICIPANTS.map(name => {
-                    return `<div class="text-[15px] text-[#fcf6ba] font-mono tracking-widest border-b border-[rgba(191,149,63,0.2)] pb-2">${maskName(name)}</div>`;
-                }).join('');
+                container.innerHTML = EVENT_PARTICIPANTS.map(name =>
+                    `<div class="text-[15px] text-[#fcf6ba] font-mono tracking-widest border-b border-[rgba(191,149,63,0.2)] pb-2">${maskName(name)}</div>`
+                ).join('');
             } else {
                 container.innerHTML = `<div class="text-gray-400 text-sm py-4">名單結算中...</div>`;
             }
-            
+
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('show'), 10);
         }
@@ -744,19 +824,18 @@
             if (!state.isEventActive) return;
             if (!state.isTestMode && (state.hasVoted || state.level < 20)) return;
             selectedChoice = choice;
-            
+
             const d = i18n[state.lang];
             const prizeName = choice === 'A' ? d.prizeA : d.prizeB;
             document.getElementById('modal-selected-prize').innerText = prizeName;
-
             document.getElementById('verify-username').value = '';
-            
+
             const modal = document.getElementById('voteModal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('show'), 10);
         }
 
-        function closeModal() { 
+        function closeModal() {
             const modal = document.getElementById('voteModal');
             modal.classList.remove('show');
             setTimeout(() => modal.style.display = 'none', 300);
@@ -767,6 +846,7 @@
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('show'), 10);
         }
+
         function closeIphoneModal() {
             const modal = document.getElementById('iphoneModal');
             modal.classList.remove('show');
@@ -782,8 +862,9 @@
             return did;
         }
 
+        // ⚠️ 注意：此簽名僅為客戶端防護層，真正的安全驗證請在後端實作
         async function generateSignature(uid, timestamp) {
-            const text = uid + timestamp + "VIP_SWAG_2026_SECRET_KEY"; 
+            const text = uid + timestamp + "VIP_SWAG_2026_SECRET_KEY";
             const encoder = new TextEncoder();
             const data = encoder.encode(text);
             const hashBuffer = await crypto.subtle.digest('SHA-256', data);
@@ -794,24 +875,23 @@
         async function submitVote() {
             const btn = document.getElementById('confirm-btn');
             const originalText = btn.innerText;
-
             const inputUsername = document.getElementById('verify-username').value.trim();
-            
+
             if (!inputUsername) {
                 const warnMsg = state.lang === 'en' ? i18n['en'].emptyInputMsg : i18n['zh-TW'].emptyInputMsg;
                 showMessage(warnMsg);
                 return;
             }
 
-            btn.innerText = state.lang === 'en' ? "Processing..." : "驗證中..."; 
+            btn.innerText = state.lang === 'en' ? 'Processing...' : '驗證中...';
             btn.disabled = true;
 
             try {
                 let response, result;
 
-               if (state.isTestMode) {
-                    // 🛠 測試模式下：拔除名稱限制，輸入任何字串都直接模擬成功
-                    await new Promise(r => setTimeout(r, 400)); 
+                if (state.isTestMode) {
+                    // 🛠 測試模式：模擬成功，不驗證帳號
+                    await new Promise(r => setTimeout(r, 400));
                     response = { ok: true, status: 200 };
                     result = { success: true };
                 } else {
@@ -824,34 +904,35 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             user_id: state.testUid,
-                            input_username: inputUsername, 
-                            action: 'VIP_LOTTERY_VOTE', 
+                            input_username: inputUsername,
+                            action: 'VIP_LOTTERY_VOTE',
                             choice: selectedChoice,
-                            timestamp: currentTimestamp,   
-                            signature: secureSignature,    
-                            device_id: deviceId            
+                            timestamp: currentTimestamp,
+                            signature: secureSignature,
+                            device_id: deviceId
                         })
                     });
                     result = await response.json().catch(() => ({}));
                 }
-                
-            if (response.ok) {
+
+                if (response.ok) {
                     showMessage(state.lang === 'en' ? 'Vote Successful!' : '投票成功！');
                     if (selectedChoice === 'A') state.realA++;
                     if (selectedChoice === 'B') state.realB++;
-                    
+
                     if (!state.isTestMode) {
                         localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
                         state.hasVoted = true;
                         state.votedChoice = selectedChoice;
                     } else {
+                        // 測試模式：產生新的 testUid，讓下一票可以繼續投
                         state.testUid = 'TEST_' + state.uid + '_' + Math.floor(Math.random() * 999999);
                     }
-                    
-                    // 👉 關鍵修復：成功後必須把彈窗的按鈕恢復原狀，才能無限次點擊！
+
+                    // ✅ 確保按鈕恢復，讓測試模式可以無限次投票
                     btn.innerText = originalText;
                     btn.disabled = false;
-                    
+
                     closeModal();
                     updateUI();
                 } else if (response.status === 429) {
@@ -864,14 +945,19 @@
                     btn.disabled = false;
                 }
             } catch (e) {
-                showMessage(state.lang === 'en' ? 'Network error.' : "連線不穩，請確認網路後重試！");
+                showMessage(state.lang === 'en' ? 'Network error.' : '連線不穩，請確認網路後重試！');
                 btn.innerText = originalText;
                 btn.disabled = false;
             }
         }
 
         window.addEventListener('DOMContentLoaded', initApp);
-        window.addEventListener('resize', updateChartOnly);
+
+        // ✅ FIX: resize 加上 debounce，避免頻繁觸發
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(updateChartOnly, 100);
+        });
     </script>
 </body>
 </html>

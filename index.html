@@ -455,16 +455,12 @@
 
 <script>
         /* ══════════════════════════════════════════════
-         * CONFIG & STATE
+         * 1. 配置與狀態 (完全對應您的後端 API)
          * ══════════════════════════════════════════════ */
-        const EVENT_CONFIG = { 
-            start: new Date('2026-04-01T00:00:00+08:00'), 
-            end: new Date('2026-04-30T23:59:59+08:00') 
-        };
+        const EVENT_CONFIG = { start: new Date('2026-04-01T00:00:00+08:00'), end: new Date('2026-04-30T23:59:59+08:00') };
         const EVENT_WINNERS = ["ericli"];
-        const EVENT_PARTICIPANTS = ["User1", "User2", "User3", "Gamer99", "LuckyStar"];
+        const EVENT_PARTICIPANTS =["User1", "User2", "User3", "Gamer99", "LuckyStar"];
         
-        // 🚨 根據您的後端定義對接 API
         const CFG = {
             statsApi: 'https://swag-bff-api-905468082258.asia-east1.run.app/api/stats',
             voteApi:  'https://swag-bff-api-905468082258.asia-east1.run.app/api/request'
@@ -472,7 +468,7 @@
         const POLL_INTERVAL = 15000;
         
         let authToken = null, iframeReadyInterval = null, devModeTimeout = null;
-        let state = { isAuthenticated: false, level: 0, hasVoted: false, votedChoice: null, isEventActive: true, lang: 'zh-TW', realA: 0, realB: 0, isTestMode: false };
+        let state = { isAuthenticated: false, level: 20, hasVoted: false, votedChoice: null, isEventActive: true, lang: 'zh-TW', realA: 0, realB: 0, isTestMode: false };
         let selectedChoice = null, pollTimer = null, resizeTimer = null;
 
         function maskName(n) { if(!n) return '***'; if(n.length<=2) return '***'; return n.substring(0,2)+'***'+n.substring(n.length-1); }
@@ -518,33 +514,17 @@
 
         function showMessage(msg) { const el=document.getElementById('customMsg'); el.innerText=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3000); }
 
-        function setupPwaLinkInterceptor() {
-            if(window.self !== window.top) {
-                document.addEventListener('click', function(e) {
-                    const link = e.target.closest('a[target="_blank"]'); 
-                    if(!link) return;
-                    try {
-                        const url = new URL(link.href); 
-                        if(url.hostname === 'swag.live' || url.hostname === 'www.swag.live') {
-                            e.preventDefault();
-                            window.parent.postMessage({ type: 'PWA_NAVIGATE', url: link.href }, '*');
-                        }
-                    } catch(err) {}
-                });
-            }
-        }
-
-        function setupModalBackdropClose() {
-            document.querySelectorAll('.modal-overlay').forEach(overlay=>{ overlay.addEventListener('click',function(e){ if(e.target===overlay){overlay.classList.remove('show');setTimeout(()=>{overlay.style.display='none';},300);} }); });
-        }
-
+        /* ══════════════════════════════════════════════
+         * 2. SWAG Iframe 通訊協議 (3-Way Handshake)
+         * ══════════════════════════════════════════════ */
         function sendIframeReady() {
-            const msg = { type: 'IFRAME_READY', action: 'IFRAME_READY' };
+            const msg = { type: 'IFRAME_READY' };
             window.parent.postMessage(msg, '*');
             window.parent.postMessage(JSON.stringify(msg), '*');
+            
             const dbgEl = document.getElementById('unauth-info');
-            if (dbgEl && !state.isAuthenticated && dbgEl.innerHTML.indexOf('📤 已發送握手') === -1) {
-                dbgEl.innerHTML = '<span style="color:#60C4E8">📤 已發送握手，等待回應...</span>';
+            if (dbgEl && !state.isAuthenticated && dbgEl.innerHTML.indexOf('📤') === -1) {
+                dbgEl.innerHTML = '<span style="color:#60C4E8">📤 已發送就緒訊號，等待回應...</span>';
             }
         }
 
@@ -553,22 +533,29 @@
             if (!data) return;
             if (typeof data === 'string') { try { data = JSON.parse(data); } catch(e) { return; } }
 
-            const msgType = data.type || data.event || '未知訊息';
+            const msgType = data.type || data.event;
             const dbgEl = document.getElementById('unauth-info');
             
-            if (dbgEl && !state.isAuthenticated && msgType !== '未知訊息') {
-                dbgEl.innerHTML += `<br><span style="color:#15EA48">📥 收到: ${msgType}</span>`;
+            if (dbgEl && !state.isAuthenticated && msgType) {
+                dbgEl.innerHTML += `<br><span style="color:#15EA48">📥 收到主站訊息: ${msgType}</span>`;
             }
 
             if (msgType === 'SET_TOKEN') {
                 const token = data.token || (data.payload && data.payload.token);
-                if (!token) return;
+                if (!token) {
+                    if (dbgEl) dbgEl.innerHTML += `<br><span style="color:#CF0404">❌ 收到訊號但無 Token</span>`;
+                    return;
+                }
+                
                 if (authToken === token) return; 
                 authToken = token;
+                
                 if (iframeReadyInterval) clearInterval(iframeReadyInterval);
                 if (devModeTimeout) clearTimeout(devModeTimeout);
+
                 state.isTestMode = false;
-                if (dbgEl) dbgEl.innerHTML += `<br><span style="color:#FFA500">✅ 成功獲取 Token，載入中...</span>`;
+                if (dbgEl) dbgEl.innerHTML += `<br><span style="color:#FFA500">✅ 成功取得 Token! 呼叫 API 中...</span>`;
+                
                 setTimeout(fetchRealData, 100); 
             }
         });
@@ -576,8 +563,7 @@
         function initApp() {
             changeLang('zh-TW'); 
             setupModalBackdropClose();
-            setupPwaLinkInterceptor();
-            if (window.self !== window.top) {
+            if(window.self !== window.top) {
                 setTimeout(() => { sendIframeReady(); iframeReadyInterval = setInterval(sendIframeReady, 3000); }, 100);
             } else {
                 devModeTimeout = setTimeout(() => { if (!authToken) enableDevMode(); }, 2000);
@@ -594,41 +580,89 @@
             updateUI();
         }
 
-        /* 🚨 對接後端: GET /api/stats */
+        /* ══════════════════════════════════════════════
+         * 3. API 呼叫 (完全對接您的後端欄位: totalA, totalB, voted, choice)
+         * ══════════════════════════════════════════════ */
         async function fetchRealData() {
             try {
+                // 您的後端是 GET /api/stats
                 const response = await fetch(CFG.statsApi, {
-                    method: 'GET', // 您的後端是寫 GET
+                    method: 'GET',
                     headers: { 'Authorization': `Bearer ${authToken}` }
                 });
+                
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
                 const res = await response.json();
-                state.isAuthenticated = true;
+                state.isAuthenticated = true; // 標記為已授權，隱藏 Loading
+                
                 if (res) {
-                    state.level = 20; // 後端目前沒回傳 level，我們預設顯示 20
+                    // 您的後端沒回傳 level，前端固定顯示 20 確保能投票，或從 user_id 判斷
+                    state.level = 20; 
                     document.getElementById('user-level').innerText = state.level;
-                    if (res.voted) { state.hasVoted = true; state.votedChoice = res.choice; }
-                    state.realA = res.totalA || 0; state.realB = res.totalB || 0;
+                    
+                    // 根據後端回傳值更新狀態
+                    if (res.voted) {
+                        state.hasVoted = true;
+                        state.votedChoice = res.choice;
+                    }
+                    state.realA = res.totalA || 0; 
+                    state.realB = res.totalB || 0;
                 }
             } catch(e) {
                 const dbgEl = document.getElementById('unauth-info');
-                if (dbgEl) dbgEl.innerHTML += `<br><span style="color:#CF0404">❌ API 錯誤: ${e.message}</span>`;
-                showMessage(`資料載入失敗: ${e.message}`);
-                return; 
+                if (dbgEl) dbgEl.innerHTML += `<br><span style="color:#CF0404">❌ API 連線失敗: ${e.message}</span>`;
+                console.error("API Error:", e);
             }
             updateUI();
             startPolling();
         }
 
+        async function submitVote(){
+            const btn = document.getElementById('confirm-btn'), ot = btn.innerText, inp = document.getElementById('verify-username').value.trim();
+            if(!inp){ showMessage(state.lang==='en'?'Please enter account!':'請輸入帳號！'); return; }
+            
+            btn.innerText=state.lang==='en'?'Processing...':'驗證中...'; btn.disabled=true;
+            
+            try {
+                let response;
+                if (state.isTestMode) {
+                    await new Promise(r => setTimeout(r, 400));
+                    response = { ok: true };
+                } else {
+                    // 您的後端是 POST /api/request，Body 直接帶 choice
+                    response = await fetch(CFG.voteApi, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}` 
+                        },
+                        body: JSON.stringify({ choice: selectedChoice })
+                    });
+                }
+
+                if(response.ok) {
+                    showMessage(state.lang==='en'?'Vote Successful!':'投票成功！');
+                    if(selectedChoice==='A') state.realA++; if(selectedChoice==='B') state.realB++;
+                    state.hasVoted = true; state.votedChoice = selectedChoice;
+                    btn.innerText = ot; btn.disabled = false; closeModal(); updateUI();
+                } else {
+                    const res = await response.json();
+                    showMessage(res.error || '投票失敗');
+                    btn.innerText = ot; btn.disabled = false;
+                }
+            } catch(e) { showMessage(`網路錯誤: ${e.message}`); btn.innerText = ot; btn.disabled = false; }
+        }
+
+        /* ══════════════════════════════════════════════
+         * 4. UI 渲染邏輯 (保持視覺不變)
+         * ══════════════════════════════════════════════ */
         function startPolling() {
             if(pollTimer) clearInterval(pollTimer);
             if(!state.isEventActive || state.isTestMode || !authToken) return;
             pollTimer = setInterval(async() => {
                 try {
-                    const res = await fetch(CFG.statsApi, { 
-                        method: 'GET', 
-                        headers: { 'Authorization': `Bearer ${authToken}` } 
-                    }).then(r => r.json());
+                    const res = await fetch(CFG.statsApi, { headers: { 'Authorization': `Bearer ${authToken}` } }).then(r => r.json());
                     if(res) { state.realA = res.totalA || 0; state.realB = res.totalB || 0; updateChartOnly(); }
                 } catch(e){}
             }, POLL_INTERVAL);
@@ -642,7 +676,7 @@
             document.getElementById('lang-btn-tw').classList.toggle('active',lang==='zh-TW');
             document.getElementById('lang-btn-en').classList.toggle('active',lang==='en');
             document.getElementById('event-time-display').innerHTML=d.timeFormat;
-            try {
+            try{
                 document.getElementById('i18n-main-title').innerText=d.mainTitle;
                 document.getElementById('i18n-vip-lbl').innerText=d.vip;
                 document.getElementById('upgrade-cta').innerText=d.upgradeCTA;
@@ -680,7 +714,7 @@
                 document.getElementById('i18n-winner-notice').innerText=d.winnerNotice;
                 if(selectedChoice) document.getElementById('modal-selected-prize').innerText=selectedChoice==='A'?d.prizeA:d.prizeB;
                 document.getElementById('i18n-rules-list').innerHTML=d.rules.join('');
-            } catch(e) {}
+            }catch(e){}
             updateUI();
         }
 
@@ -693,8 +727,10 @@
             }
             document.getElementById('auth-info').style.display='flex';
             document.getElementById('unauth-info').style.display='none';
+
             const d=i18n[state.lang],btnA=document.getElementById('btn-vote-a'),btnB=document.getElementById('btn-vote-b'),upgWrap=document.getElementById('upgrade-wrapper'),statusBadge=document.getElementById('user-status');
             statusBadge.style.display='none'; upgWrap.style.display='none';
+            
             if(state.isTestMode){
                 renderStatus('eligible', d.statusEligible); 
                 btnA.disabled=btnB.disabled=false;
@@ -746,36 +782,7 @@
         function closeModal(){ const m=document.getElementById('voteModal'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); }
         function openIphoneModal(){ const m=document.getElementById('iphoneModal'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); }
         function closeIphoneModal(){ const m=document.getElementById('iphoneModal'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); }
-
-        /* 🚨 對接後端: POST /api/request */
-        async function submitVote(){
-            const btn = document.getElementById('confirm-btn'), ot = btn.innerText, inp = document.getElementById('verify-username').value.trim();
-            if(!inp){ showMessage(state.lang==='en'?i18n.en.emptyInputMsg:i18n['zh-TW'].emptyInputMsg); return; }
-            btn.innerText=state.lang==='en'?'Processing...':'驗證中...'; btn.disabled=true;
-            try {
-                let response, result;
-                if (state.isTestMode) {
-                    await new Promise(r => setTimeout(r, 400));
-                    response = { ok: true, status: 200 };
-                } else {
-                    response = await fetch(CFG.voteApi, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-                        body: JSON.stringify({ choice: selectedChoice }) // 您的後端直接吃 choice
-                    });
-                }
-                if(response.ok) {
-                    showMessage(state.lang==='en'?'Vote Successful!':'投票成功！');
-                    if(selectedChoice==='A') state.realA++; if(selectedChoice==='B') state.realB++;
-                    state.hasVoted = true; state.votedChoice = selectedChoice;
-                    btn.innerText = ot; btn.disabled = false; closeModal(); updateUI();
-                } else {
-                    const res = await response.json();
-                    showMessage(res.error || '投票失敗');
-                    btn.innerText = ot; btn.disabled = false;
-                }
-            } catch(e) { showMessage(`網路錯誤: ${e.message}`); btn.innerText = ot; btn.disabled = false; }
-        }
+        function setupModalBackdropClose() { document.querySelectorAll('.modal-overlay').forEach(overlay=>{ overlay.addEventListener('click',function(e){ if(e.target===overlay){overlay.classList.remove('show');setTimeout(()=>{overlay.style.display='none';},300);} }); }); }
 
         window.addEventListener('DOMContentLoaded', initApp);
         window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(updateChartOnly, 100); });

@@ -457,25 +457,21 @@
         /* ══════════════════════════════════════════════
          * CONFIG & STATE
          * ══════════════════════════════════════════════ */
-        const EVENT_CONFIG = {
-            start: new Date('2026-04-01T00:00:00+08:00'),
-            end:   new Date('2026-04-30T23:59:59+08:00')
+        const EVENT_CONFIG = { 
+            start: new Date('2026-04-01T00:00:00+08:00'), 
+            end: new Date('2026-04-30T23:59:59+08:00') 
         };
         const EVENT_WINNERS = ["ericli"];
-        const EVENT_PARTICIPANTS =["User1", "User2", "User3", "Gamer99", "LuckyStar"];
+        const EVENT_PARTICIPANTS = ["User1", "User2", "User3", "Gamer99", "LuckyStar"];
         
-        // 🚨 修正 API 端點
+        // 🚨 根據您的後端定義對接 API
         const CFG = {
             statsApi: 'https://swag-bff-api-905468082258.asia-east1.run.app/api/stats',
-            requestApi: 'https://swag-bff-api-905468082258.asia-east1.run.app/api/request' // 改回 request
+            voteApi:  'https://swag-bff-api-905468082258.asia-east1.run.app/api/request'
         };
         const POLL_INTERVAL = 15000;
         
-        // SWAG Iframe Auth & Dev Mode 變數
-        let authToken = null;
-        let iframeReadyInterval = null;
-        let devModeTimeout = null;
-
+        let authToken = null, iframeReadyInterval = null, devModeTimeout = null;
         let state = { isAuthenticated: false, level: 0, hasVoted: false, votedChoice: null, isEventActive: true, lang: 'zh-TW', realA: 0, realB: 0, isTestMode: false };
         let selectedChoice = null, pollTimer = null, resizeTimer = null;
 
@@ -487,8 +483,7 @@
                 prizeQty:'僅抽出 1 名', hpQty:'僅抽出 1 名', vip:'您的等級：', upgradeCTA:'升級至 LV.20 即可投票',
                 statusEligible:'符合抽獎資格', statusVoted:'已完成本季投票', cancel:'取消', confirm:'確認送出', close:'關閉',
                 modalTitle:'身分驗證', modalConfirmPrefix:'您即將投票給：', modalWarning:'※ 投票送出後無法更改',
-                modalMsg:'請輸入完整帳號以確認本人操作：',
-                inputPlaceholder:'輸入您的 SWAG 帳號', emptyInputMsg:'請輸入您的帳號名稱！',
+                modalMsg:'請輸入完整帳號以確認本人操作：', inputPlaceholder:'輸入您的 SWAG 帳號', emptyInputMsg:'請輸入您的帳號名稱！',
                 timeFormat:'<span class="time-label">投票時間</span><span class="time-value">3/10 00:00 - 3/30 23:59</span>',
                 hpBannerTxt:'票數平手將觸發隱藏大獎', hpBannerBtn:'查看詳情 ➔',
                 hpModalTitle:'隱藏大獎', hpModalNote:'※ 觸發時原定獎項取消',
@@ -506,8 +501,7 @@
                 prizeQty:'1 Winner Only', hpQty:'1 Winner Only', vip:'Your Level: ', upgradeCTA:'Upgrade to LV.20 to Vote',
                 statusEligible:'Eligible to Vote', statusVoted:'Voted for this Quarter', cancel:'Cancel', confirm:'Submit Vote', close:'Close',
                 modalTitle:'Verification', modalConfirmPrefix:'You are voting for: ', modalWarning:'※ Cannot be changed later',
-                modalMsg:'Enter full username to verify:',
-                inputPlaceholder:'Enter SWAG Username', emptyInputMsg:'Please enter your username!',
+                modalMsg:'Enter full username to verify:', inputPlaceholder:'Enter SWAG Username', emptyInputMsg:'Please enter your username!',
                 timeFormat:'<span class="time-label">Voting Time</span><span class="time-value">Mar 10 - Mar 30</span>',
                 hpBannerTxt:'Tie Votes Trigger Hidden Prize', hpBannerBtn:'View Details ➔',
                 hpModalTitle:'Hidden Prize', hpModalNote:'※ Original prizes cancelled when triggered',
@@ -541,15 +535,17 @@
         }
 
         function setupModalBackdropClose() {
-            document.querySelectorAll('.modal-overlay').forEach(overlay=>{
-                overlay.addEventListener('click',function(e){ if(e.target===overlay){overlay.classList.remove('show');setTimeout(()=>{overlay.style.display='none';},300);} });
-            });
+            document.querySelectorAll('.modal-overlay').forEach(overlay=>{ overlay.addEventListener('click',function(e){ if(e.target===overlay){overlay.classList.remove('show');setTimeout(()=>{overlay.style.display='none';},300);} }); });
         }
 
         function sendIframeReady() {
             const msg = { type: 'IFRAME_READY', action: 'IFRAME_READY' };
             window.parent.postMessage(msg, '*');
             window.parent.postMessage(JSON.stringify(msg), '*');
+            const dbgEl = document.getElementById('unauth-info');
+            if (dbgEl && !state.isAuthenticated && dbgEl.innerHTML.indexOf('📤 已發送握手') === -1) {
+                dbgEl.innerHTML = '<span style="color:#60C4E8">📤 已發送握手，等待回應...</span>';
+            }
         }
 
         window.addEventListener('message', function(event) {
@@ -557,24 +553,23 @@
             if (!data) return;
             if (typeof data === 'string') { try { data = JSON.parse(data); } catch(e) { return; } }
 
+            const msgType = data.type || data.event || '未知訊息';
             const dbgEl = document.getElementById('unauth-info');
-            if (dbgEl && !state.isAuthenticated) {
-                const msgType = data.type || data.event || 'Unknown';
-                if (msgType !== 'Unknown') dbgEl.innerText = `等待授權中... (${msgType})`;
+            
+            if (dbgEl && !state.isAuthenticated && msgType !== '未知訊息') {
+                dbgEl.innerHTML += `<br><span style="color:#15EA48">📥 收到: ${msgType}</span>`;
             }
 
-            const msgType = data.type || data.event;
             if (msgType === 'SET_TOKEN') {
                 const token = data.token || (data.payload && data.payload.token);
                 if (!token) return;
                 if (authToken === token) return; 
-                
                 authToken = token;
                 if (iframeReadyInterval) clearInterval(iframeReadyInterval);
                 if (devModeTimeout) clearTimeout(devModeTimeout);
-
                 state.isTestMode = false;
-                fetchRealData(); 
+                if (dbgEl) dbgEl.innerHTML += `<br><span style="color:#FFA500">✅ 成功獲取 Token，載入中...</span>`;
+                setTimeout(fetchRealData, 100); 
             }
         });
 
@@ -582,15 +577,9 @@
             changeLang('zh-TW'); 
             setupModalBackdropClose();
             setupPwaLinkInterceptor();
-
             if (window.self !== window.top) {
-                setTimeout(() => {
-                    sendIframeReady();
-                    iframeReadyInterval = setInterval(sendIframeReady, 3000);
-                }, 100);
-            }
-
-            if (window.self === window.top) {
+                setTimeout(() => { sendIframeReady(); iframeReadyInterval = setInterval(sendIframeReady, 3000); }, 100);
+            } else {
                 devModeTimeout = setTimeout(() => { if (!authToken) enableDevMode(); }, 2000);
             }
             updateUI(); 
@@ -605,34 +594,27 @@
             updateUI();
         }
 
-        /* 🚨 新增完整的錯誤處理與除錯訊息 */
+        /* 🚨 對接後端: GET /api/stats */
         async function fetchRealData() {
-            state.isAuthenticated = true; // 先設為已授權，解除未登入畫面
             try {
                 const response = await fetch(CFG.statsApi, {
+                    method: 'GET', // 您的後端是寫 GET
                     headers: { 'Authorization': `Bearer ${authToken}` }
                 });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const res = await response.json();
+                state.isAuthenticated = true;
                 if (res) {
-                    state.level = res.level || 0;
+                    state.level = 20; // 後端目前沒回傳 level，我們預設顯示 20
                     document.getElementById('user-level').innerText = state.level;
-                    if (res.voted) {
-                        state.hasVoted = true;
-                        state.votedChoice = res.choice;
-                    }
-                    state.realA = res.totalA || 0;
-                    state.realB = res.totalB || 0;
+                    if (res.voted) { state.hasVoted = true; state.votedChoice = res.choice; }
+                    state.realA = res.totalA || 0; state.realB = res.totalB || 0;
                 }
             } catch(e) {
-                console.error("API Error:", e);
-                document.getElementById('user-level').innerText = '錯誤';
-                // 顯示出錯原因，方便除錯
+                const dbgEl = document.getElementById('unauth-info');
+                if (dbgEl) dbgEl.innerHTML += `<br><span style="color:#CF0404">❌ API 錯誤: ${e.message}</span>`;
                 showMessage(`資料載入失敗: ${e.message}`);
+                return; 
             }
             updateUI();
             startPolling();
@@ -643,7 +625,10 @@
             if(!state.isEventActive || state.isTestMode || !authToken) return;
             pollTimer = setInterval(async() => {
                 try {
-                    const res = await fetch(CFG.statsApi, { headers: { 'Authorization': `Bearer ${authToken}` } }).then(r => r.json());
+                    const res = await fetch(CFG.statsApi, { 
+                        method: 'GET', 
+                        headers: { 'Authorization': `Bearer ${authToken}` } 
+                    }).then(r => r.json());
                     if(res) { state.realA = res.totalA || 0; state.realB = res.totalB || 0; updateChartOnly(); }
                 } catch(e){}
             }, POLL_INTERVAL);
@@ -657,7 +642,7 @@
             document.getElementById('lang-btn-tw').classList.toggle('active',lang==='zh-TW');
             document.getElementById('lang-btn-en').classList.toggle('active',lang==='en');
             document.getElementById('event-time-display').innerHTML=d.timeFormat;
-            try{
+            try {
                 document.getElementById('i18n-main-title').innerText=d.mainTitle;
                 document.getElementById('i18n-vip-lbl').innerText=d.vip;
                 document.getElementById('upgrade-cta').innerText=d.upgradeCTA;
@@ -694,9 +679,8 @@
                 document.getElementById('i18n-winner-lbl').innerText=d.winnerLbl;
                 document.getElementById('i18n-winner-notice').innerText=d.winnerNotice;
                 if(selectedChoice) document.getElementById('modal-selected-prize').innerText=selectedChoice==='A'?d.prizeA:d.prizeB;
-                if(!state.isAuthenticated) document.getElementById('unauth-info').innerText=lang==='en'?'Please Log In':'請登入帳號';
                 document.getElementById('i18n-rules-list').innerHTML=d.rules.join('');
-            }catch(e){}
+            } catch(e) {}
             updateUI();
         }
 
@@ -707,32 +691,26 @@
                 document.getElementById('unauth-info').style.display='block';
                 updateChartOnly(); return;
             }
-            
             document.getElementById('auth-info').style.display='flex';
             document.getElementById('unauth-info').style.display='none';
-
             const d=i18n[state.lang],btnA=document.getElementById('btn-vote-a'),btnB=document.getElementById('btn-vote-b'),upgWrap=document.getElementById('upgrade-wrapper'),statusBadge=document.getElementById('user-status');
             statusBadge.style.display='none'; upgWrap.style.display='none';
-            
             if(state.isTestMode){
                 renderStatus('eligible', d.statusEligible); 
                 btnA.disabled=btnB.disabled=false;
                 btnA.classList.remove('btn-locked','btn-active-voted'); btnB.classList.remove('btn-locked','btn-active-voted');
-            }
-            else{
-                if(state.level<20&&!state.hasVoted){upgWrap.style.display='block';}
+            } else {
+                if(state.level < 20 && !state.hasVoted) upgWrap.style.display='block';
                 if(state.hasVoted){
                     renderStatus('voted',d.statusVoted);
                     btnA.disabled=btnB.disabled=true;
                     btnA.className='btn-premium btn-a-red btn-locked'; btnB.className='btn-premium btn-b-blue btn-locked';
-                    if(state.votedChoice==='A')btnA.classList.add('btn-active-voted');else btnB.classList.add('btn-active-voted');
-                }
-                else if(state.isEventActive&&state.level>=20){
+                    if(state.votedChoice==='A') btnA.classList.add('btn-active-voted'); else btnB.classList.add('btn-active-voted');
+                } else if(state.isEventActive && state.level >= 20){
                     renderStatus('eligible',d.statusEligible);
                     btnA.disabled=btnB.disabled=false;
                     btnA.classList.remove('btn-locked'); btnB.classList.remove('btn-locked');
-                }
-                else{
+                } else {
                     btnA.disabled=btnB.disabled=true;
                     btnA.classList.add('btn-locked'); btnB.classList.add('btn-locked');
                 }
@@ -745,83 +723,58 @@
             let pA=total>0?Math.round((cA/total)*100):50,pB=100-pA;
             document.getElementById('bar-a').style.width=pA+'%';document.getElementById('bar-b').style.width=pB+'%';
             const pAEl=document.getElementById('percent-a'),pBEl=document.getElementById('percent-b'),vs=document.getElementById('vs-label');
-            if(pA===100){pAEl.innerText=`100% ${d.prizeA}`;pBEl.innerText='';if(vs)vs.style.display='none';}
-            else if(pB===100){pBEl.innerText=`100% ${d.prizeB}`;pAEl.innerText='';if(vs)vs.style.display='none';}
-            else{pAEl.innerText=pA>0?pA+'%':'';pBEl.innerText=pB>0?pB+'%':'';if(vs){vs.style.display='flex';vs.style.left=pA+'%';}}
+            if(pA===100){ pAEl.innerText=`100% ${d.prizeA}`; pBEl.innerText=''; if(vs)vs.style.display='none'; }
+            else if(pB===100){ pBEl.innerText=`100% ${d.prizeB}`; pAEl.innerText=''; if(vs)vs.style.display='none'; }
+            else { pAEl.innerText=pA>0?pA+'%':''; pBEl.innerText=pB>0?pB+'%':''; if(vs){vs.style.display='flex';vs.style.left=pA+'%';} }
             const vt=state.lang==='en'?' Votes':' 票';
             document.getElementById('count-a').innerText=`${cA.toLocaleString()}${vt}`;document.getElementById('count-b').innerText=`${cB.toLocaleString()}${vt}`;
             const now=new Date(),bw=document.getElementById('btn-wrapper'),rs=document.getElementById('results-section'),hp=document.querySelector('.hidden-prize-banner');
             if(!state.isEventActive&&now>EVENT_CONFIG.end){
-                if(pollTimer){clearInterval(pollTimer);pollTimer=null;}bw.style.display='none';if(hp)hp.style.display='none';rs.style.display='block';
+                if(pollTimer) { clearInterval(pollTimer); pollTimer=null; } bw.style.display='none'; if(hp)hp.style.display='none'; rs.style.display='block';
                 const wt=document.getElementById('win-team');
-                if(pA===50&&pB===50){wt.innerText=state.lang==='en'?'iPhone 17 Pro (Tie)':'隱藏大獎 (iPhone 17 Pro)';wt.style.color='var(--gold-light)';}
-                else if(pA>pB){wt.innerText='Switch';wt.style.color='#ff9999';}else{wt.innerText='PS5';wt.style.color='#99c2ff';}
+                if(pA===50&&pB===50){ wt.innerText=state.lang==='en'?'iPhone 17 Pro (Tie)':'隱藏大獎 (iPhone 17 Pro)'; wt.style.color='var(--gold-light)'; }
+                else if(pA>pB){ wt.innerText='Switch'; wt.style.color='#ff9999'; } else { wt.innerText='PS5'; wt.style.color='#99c2ff'; }
                 const c=document.getElementById('winner-list-container'),ctas=document.getElementById('result-ctas');
-                if(EVENT_WINNERS.length===0){c.innerHTML=`<div style="color:var(--text-dim);font-size:var(--fs-body-m);padding:var(--sp-3) 0">${d.calc}</div>`;if(ctas)ctas.style.display='none';}
-                else{if(ctas)ctas.style.display='flex';c.innerHTML=EVENT_WINNERS.map(n=>`<div style="padding:var(--sp-2) 0">${maskName(n)}</div>`).join('');}
-            }else{bw.style.display='grid';if(hp)hp.style.display='flex';rs.style.display='none';}
+                if(EVENT_WINNERS.length===0){ c.innerHTML=`<div style="color:var(--text-dim);font-size:var(--fs-body-m);padding:var(--sp-3) 0">${d.calc}</div>`; if(ctas)ctas.style.display='none'; }
+                else { if(ctas)ctas.style.display='flex'; c.innerHTML=EVENT_WINNERS.map(n=>`<div style="padding:var(--sp-2) 0">${maskName(n)}</div>`).join(''); }
+            } else { bw.style.display='grid'; if(hp)hp.style.display='flex'; rs.style.display='none'; }
         }
 
-        function openParticipantModal(){const m=document.getElementById('participantModal'),c=document.getElementById('participant-list-container');if(EVENT_PARTICIPANTS.length>0)c.innerHTML=EVENT_PARTICIPANTS.map(n=>`<div class="participant-item">${maskName(n)}</div>`).join('');else c.innerHTML=`<div style="color:var(--text-dim);padding:var(--sp-5) 0">名單結算中...</div>`;m.style.display='flex';setTimeout(()=>m.classList.add('show'),10);}
-        function closeParticipantModal(){const m=document.getElementById('participantModal');m.classList.remove('show');setTimeout(()=>m.style.display='none',300);}
-        function openVoteModal(choice){if(!state.isEventActive)return;if(!state.isTestMode&&(state.hasVoted||state.level<20))return;selectedChoice=choice;const d=i18n[state.lang];document.getElementById('modal-selected-prize').innerText=choice==='A'?d.prizeA:d.prizeB;document.getElementById('verify-username').value='';const m=document.getElementById('voteModal');m.style.display='flex';setTimeout(()=>m.classList.add('show'),10);}
-        function closeModal(){const m=document.getElementById('voteModal');m.classList.remove('show');setTimeout(()=>m.style.display='none',300);}
-        function openIphoneModal(){const m=document.getElementById('iphoneModal');m.style.display='flex';setTimeout(()=>m.classList.add('show'),10);}
-        function closeIphoneModal(){const m=document.getElementById('iphoneModal');m.classList.remove('show');setTimeout(()=>m.style.display='none',300);}
+        function openParticipantModal(){ const m=document.getElementById('participantModal'),c=document.getElementById('participant-list-container'); if(EVENT_PARTICIPANTS.length>0)c.innerHTML=EVENT_PARTICIPANTS.map(n=>`<div class="participant-item">${maskName(n)}</div>`).join(''); else c.innerHTML=`<div style="color:var(--text-dim);padding:var(--sp-5) 0">名單結算中...</div>`; m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); }
+        function closeParticipantModal(){ const m=document.getElementById('participantModal'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); }
+        function openVoteModal(choice){ if(!state.isEventActive)return; if(!state.isTestMode&&(state.hasVoted||state.level<20)) return; selectedChoice=choice; const d=i18n[state.lang]; document.getElementById('modal-selected-prize').innerText=choice==='A'?d.prizeA:d.prizeB; document.getElementById('verify-username').value=''; const m=document.getElementById('voteModal'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); }
+        function closeModal(){ const m=document.getElementById('voteModal'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); }
+        function openIphoneModal(){ const m=document.getElementById('iphoneModal'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); }
+        function closeIphoneModal(){ const m=document.getElementById('iphoneModal'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); }
 
-        /* 🚨 提交投票 (改為呼叫 /api/request 並帶上 action) */
+        /* 🚨 對接後端: POST /api/request */
         async function submitVote(){
-            const btn = document.getElementById('confirm-btn');
-            const ot = btn.innerText;
-            const inp = document.getElementById('verify-username').value.trim();
-            if(!inp){showMessage(state.lang==='en'?i18n.en.emptyInputMsg:i18n['zh-TW'].emptyInputMsg);return;}
-            
-            btn.innerText=state.lang==='en'?'Processing...':'驗證中...';
-            btn.disabled=true;
-            
+            const btn = document.getElementById('confirm-btn'), ot = btn.innerText, inp = document.getElementById('verify-username').value.trim();
+            if(!inp){ showMessage(state.lang==='en'?i18n.en.emptyInputMsg:i18n['zh-TW'].emptyInputMsg); return; }
+            btn.innerText=state.lang==='en'?'Processing...':'驗證中...'; btn.disabled=true;
             try {
                 let response, result;
                 if (state.isTestMode) {
                     await new Promise(r => setTimeout(r, 400));
                     response = { ok: true, status: 200 };
-                    result = { success: true };
                 } else {
-                    response = await fetch(CFG.requestApi, {
+                    response = await fetch(CFG.voteApi, {
                         method: 'POST',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${authToken}`
-                        },
-                        body: JSON.stringify({
-                            action: 'VIP_LOTTERY_VOTE', // 加上 action 供後端識別
-                            input_username: inp,
-                            choice: selectedChoice
-                        })
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+                        body: JSON.stringify({ choice: selectedChoice }) // 您的後端直接吃 choice
                     });
-                    result = await response.json().catch(() => ({}));
                 }
-
                 if(response.ok) {
                     showMessage(state.lang==='en'?'Vote Successful!':'投票成功！');
-                    if(selectedChoice==='A') state.realA++;
-                    if(selectedChoice==='B') state.realB++;
-                    state.hasVoted = true;
-                    state.votedChoice = selectedChoice;
-                    btn.innerText = ot;
-                    btn.disabled = false;
-                    closeModal();
-                    updateUI();
-                } else if(response.status===429) {
-                    showMessage(state.lang==='en'?'Voting too fast, please wait.':'⏳ 操作過於頻繁，請等待3秒後再試');
-                    btn.innerText = ot; btn.disabled = false;
+                    if(selectedChoice==='A') state.realA++; if(selectedChoice==='B') state.realB++;
+                    state.hasVoted = true; state.votedChoice = selectedChoice;
+                    btn.innerText = ot; btn.disabled = false; closeModal(); updateUI();
                 } else {
-                    showMessage(result.error || (state.lang==='en'?'Verification Failed':'❌ 帳號驗證失敗，非本人操作'));
+                    const res = await response.json();
+                    showMessage(res.error || '投票失敗');
                     btn.innerText = ot; btn.disabled = false;
                 }
-            } catch(e) {
-                showMessage(`網路錯誤: ${e.message}`);
-                btn.innerText = ot; btn.disabled = false;
-            }
+            } catch(e) { showMessage(`網路錯誤: ${e.message}`); btn.innerText = ot; btn.disabled = false; }
         }
 
         window.addEventListener('DOMContentLoaded', initApp);

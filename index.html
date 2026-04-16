@@ -461,10 +461,11 @@
         const EVENT_WINNERS = ["ericli"];
         const EVENT_PARTICIPANTS =["User1", "User2", "User3", "Gamer99", "LuckyStar"];
         
-        const CFG = {
-            statsApi: 'https://swag-bff-api-905468082258.asia-east1.run.app/api/stats',
-            voteApi:  'https://swag-bff-api-905468082258.asia-east1.run.app/api/request'
-        };
+        const BASE_URL = 'https://swag-bff-api-905468082258.asia-east1.run.app'; 
+const CFG = {
+    statsApi: `${BASE_URL}/api/stats`,
+    voteApi:  `${BASE_URL}/api/request`
+};
         const POLL_INTERVAL = 15000;
         
         let authToken = null, iframeReadyInterval = null, devModeTimeout = null;
@@ -539,7 +540,13 @@
             if (dbgEl && !state.isAuthenticated && msgType) {
                 dbgEl.innerHTML += `<br><span style="color:#15EA48">📥 收到主站訊息: ${msgType}</span>`;
             }
-
+            if (msgType === 'SET_DOMAIN_CONFIG') {
+    const apiUrlPrefix = data.apiUrlPrefix || (data.payload && data.payload.apiUrlPrefix);
+    if (apiUrlPrefix) {
+        state.apiUrlPrefix = apiUrlPrefix;
+        if (dbgEl) dbgEl.innerHTML += `<br><span style="color:#60C4E8">🔧 收到環境配置: ${apiUrlPrefix}</span>`;
+    }
+}
             if (msgType === 'SET_TOKEN') {
                 const token = data.token || (data.payload && data.payload.token);
                 if (!token) {
@@ -559,7 +566,25 @@
                 setTimeout(fetchRealData, 100); 
             }
         });
-
+document.addEventListener('click', function(e) {
+    // 確保在 iframe 內才執行攔截
+    if (window.self !== window.top) {
+        const link = e.target.closest('a[target="_blank"]');
+        if (link) {
+            try {
+                const url = new URL(link.href);
+                // 如果是主站網域，取消預設的新開視窗，交由父層處理
+                if (url.hostname === 'swag.live' || url.hostname === 'www.swag.live') {
+                    e.preventDefault();
+                    window.parent.postMessage({ type: 'PWA_NAVIGATE', url: link.href }, '*');
+                }
+                // 外部或創作者網域 (creators.swag.live) 則預設放行
+            } catch (err) {
+                console.error('URL 解析錯誤', err);
+            }
+        }
+    }
+});
         function initApp() {
             changeLang('zh-TW'); 
             setupModalBackdropClose();
@@ -597,18 +622,23 @@
                 state.isAuthenticated = true; // 標記為已授權，隱藏 Loading
                 
                 if (res) {
-                    // 您的後端沒回傳 level，前端固定顯示 20 確保能投票，或從 user_id 判斷
-                    state.level = 20; 
-                    document.getElementById('user-level').innerText = state.level;
-                    
-                    // 根據後端回傳值更新狀態
-                    if (res.voted) {
-                        state.hasVoted = true;
-                        state.votedChoice = res.choice;
-                    }
-                    state.realA = res.totalA || 0; 
-                    state.realB = res.totalB || 0;
-                }
+    // 1. 儲存後端解析出來的真實 user_id
+    state.userId = res.user_id; 
+    
+    // 2. 由於 BFF API 目前沒有呼叫官方打賞/等級 API，我們暫時維持 level 20 讓邏輯通行
+    state.level = 20; 
+    
+    // 3. (選用) 將原本顯示「等級」的地方，改為顯示真實的 User ID 來確認資料正確讀取
+    document.getElementById('i18n-vip-lbl').innerText = '當前用戶：';
+    document.getElementById('user-level').innerText = maskName(state.userId);
+
+    if (res.voted) {
+        state.hasVoted = true;
+        state.votedChoice = res.choice;
+    }
+    state.realA = res.totalA || 0; 
+    state.realB = res.totalB || 0;
+}
             } catch(e) {
                 const dbgEl = document.getElementById('unauth-info');
                 if (dbgEl) dbgEl.innerHTML += `<br><span style="color:#CF0404">❌ API 連線失敗: ${e.message}</span>`;

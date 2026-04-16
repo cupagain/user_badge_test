@@ -760,44 +760,40 @@
 
         function maskName(n) { if(!n) return '***'; if(n.length<=2) return '***'; return n.substring(0,2)+'***'+n.substring(n.length-1); }
 
-        const i18n = {
+const i18n = {
             'zh-TW': {
-                mainTitle:'VIP 專屬抽獎池', prizeA:'Switch', prizeB:'PS5', btnA:'選擇 Switch', btnB:'選擇 PS5',
-                prizeQty:'僅抽出 1 名', hpQty:'僅抽出 1 名', vip:'您的等級：', upgradeCTA:'升級至 LV.20 即可投票',
-                statusEligible:'符合抽獎資格', statusVoted:'已完成本季投票', cancel:'取消', confirm:'確認送出', close:'關閉',
-                modalTitle:'身分驗證', modalConfirmPrefix:'您即將投票給：', modalWarning:'※ 投票送出後無法更改',
-                modalMsg:'請輸入完整帳號以確認本人操作：',
-                inputPlaceholder:'輸入您的 SWAG 帳號', emptyInputMsg:'請輸入您的帳號名稱！',
-                timeFormat:'<span class="time-label">投票時間</span><span class="time-value">4/1 00:00 - 4/30 23:59</span>',
-                hpBannerTxt:'票數平手將觸發隱藏大獎', hpBannerBtn:'查看詳情 ➔',
-                hpModalTitle:'隱藏大獎', hpModalNote:'※ 觸發時原定獎項取消',
-                hpModalDesc:'<p>當最終票數平手時觸發</p><p class="highlight">全體抽出 iPhone 17 Pro</p>',
-                ruleHeader:'活動規則',
-                rules:['<li class="rule-item">1. 獎項每季更新，每人每季限投一票。</li>','<li class="rule-item">2. 僅限 VIP 20 等（含）以上用戶參與投票。</li>','<li class="rule-item">3. 投票一旦送出即無法更改。</li>','<li class="rule-item">4. 若比例不同，僅從「最高票陣營」中抽出得主。</li>','<li class="rule-item">5. 若最終票數相同，將從全投票用戶中抽「隱藏大獎」。</li>','<li class="rule-item">6. 中獎用戶須於指定時間內親自至本公司領獎。</li>'],
-                disclaimer:'主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。',
-                resultTitle:'🎉 抽獎結果公佈', resultDescPre:'本次由', resultDescPost:'勝出！', calc:'名單結算中...',
-                participantTitle:'符合抽獎資格名單', participantNote:'※ 中獎者將透過官方系統發送專屬通知',
-                winnerLbl:'幸運得主', winnerNotice:'※ 將由專人通知至本公司領獎',
-                videoCta:'▶ 觀看抽獎影片', viewListBtn:'📋 查看符合資格名單', closeParticipant:'關閉'
+                mainTitle: 'VIP 專屬抽獎池', prizeA: 'Switch', prizeB: 'PS5', btnA: '選擇 Switch', btnB: '選擇 PS5',
+                prizeQty: '僅抽出 1 名', hpQty: '僅抽出 1 名', account: '帳號：', vip: 'VIP', upgradeMsg: '需達到 LV.20 即可參與投票', upgradeCTA: '立即升級參加抽獎',
+                statusEligible: '✅ 符合抽獎資格', statusVoted: '👑 已完成本季投票', cancel: '取消', confirm: '確認送出', close: '關閉', modalTitle: '確認投票嗎？', 
+                modalMsg: '送出後<span class="text-[#ff2d55]">無法更改</span>您的選擇',
+                hpCta: '隱藏大獎', hpModalTitle: '隱藏大獎', hpModalNote: '※ 觸發時原定獎項取消', hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>', ruleHeader: '活動規則',
+                rules:[
+                    '<li class="rule-item">1. 獎項每季更新，每人每季限投一票。</li>',
+                    '<li class="rule-item">2. 僅限 VIP 20 等（含）以上用戶參與投票。</li>',
+                    '<li class="rule-item">3. 投票一旦送出即無法更改。</li>',
+                    '<li class="rule-item">4. 若比例不同，僅從「最高票陣營」中抽出得主。</li>',
+                    '<li class="rule-item">5. 若最終票數相同，將從全投票用戶中抽「隱藏大獎」。</li>',
+                    '<li class="rule-item">6. 中獎用戶須於指定時間內親自至本公司領獎。</li>'
+                ],
+                disclaimer: '主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。',
+                resultTitle: '🎉 抽獎結果公佈', resultDescPre: '本次由', resultDescPost: '陣營勝出！', won: '獲得', calc: '名單結算中...'
             },
             'en': {
-                mainTitle:'VIP PRESTIGE POOL', prizeA:'Switch', prizeB:'PS5', btnA:'Vote Switch', btnB:'Vote PS5',
-                prizeQty:'1 Winner Only', hpQty:'1 Winner Only', vip:'Your Level: ', upgradeCTA:'Upgrade to LV.20 to Vote',
-                statusEligible:'Eligible to Vote', statusVoted:'Voted for this Quarter', cancel:'Cancel', confirm:'Submit Vote', close:'Close',
-                modalTitle:'Verification', modalConfirmPrefix:'You are voting for: ', modalWarning:'※ Cannot be changed later',
-                modalMsg:'Enter full username to verify:',
-                inputPlaceholder:'Enter SWAG Username', emptyInputMsg:'Please enter your username!',
-                timeFormat:'<span class="time-label">Voting Time</span><span class="time-value">Apr 1 - Apr 30</span>',
-                hpBannerTxt:'Tie Votes Trigger Hidden Prize', hpBannerBtn:'View Details ➔',
-                hpModalTitle:'Hidden Prize', hpModalNote:'※ Original prizes cancelled when triggered',
-                hpModalDesc:'<p>Triggered when final votes tie</p><p class="highlight">iPhone 17 Pro for ALL</p>',
-                ruleHeader:'Activity Rules',
-                rules:['<li class="rule-item">1. Prizes update quarterly. 1 vote per person.</li>','<li class="rule-item">2. Only VIP level 20 and above can participate.</li>','<li class="rule-item">3. Votes cannot be changed once submitted.</li>','<li class="rule-item">4. Draw takes place only in the majority pool.</li>','<li class="rule-item">5. If votes tie, "Hidden Prize" is drawn for all.</li>','<li class="rule-item">6. Winners must collect prizes in person at HQ.</li>'],
-                disclaimer:'The organizer reserves the right to change event details at any time.',
-                resultTitle:'🎉 Lucky Draw Results', resultDescPre:'Winner:', resultDescPost:'!', calc:'Calculating results...',
-                participantTitle:'Eligible Participants', participantNote:'※ Winners will be notified via official system',
-                winnerLbl:'Lucky Winner', winnerNotice:'※ You will be contacted to collect the prize at HQ',
-                videoCta:'▶ Watch Draw Video', viewListBtn:'📋 View Eligible Participants', closeParticipant:'Close'
+                mainTitle: 'VIP PRESTIGE POOL', prizeA: 'Switch', prizeB: 'PS5', btnA: 'Vote Switch', btnB: 'Vote PS5',
+                prizeQty: '1 Winner Only', hpQty: '1 Winner Only', account: 'Acc: ', vip: 'VIP', upgradeMsg: 'Reach LV.20 to participate', upgradeCTA: 'Upgrade Now',
+                statusEligible: '✅ Eligible to Vote', statusVoted: '👑 Voted for this Quarter', cancel: 'Cancel', confirm: 'Submit Vote', close: 'Close', modalTitle: 'Confirm Vote?', 
+                modalMsg: 'Selection <span class="text-[#ff2d55]">cannot be changed</span> after submission.',
+                hpCta: 'Hidden Prize', hpModalTitle: 'Hidden Prize', hpModalNote: '※ Original prizes cancelled when triggered', hpModalDesc: '<p>Triggered when final votes tie</p><p class="text-[#ff2d55] text-[20px] mt-1">iPhone 17 Pro for ALL</p>', ruleHeader: 'Activity Rules',
+                rules:[
+                    '<li class="rule-item">1. Prizes update quarterly. 1 vote per person.</li>',
+                    '<li class="rule-item">2. Only VIP level 20 and above can participate.</li>',
+                    '<li class="rule-item">3. Votes cannot be changed once submitted.</li>',
+                    '<li class="rule-item">4. Draw takes place only in the majority pool.</li>',
+                    '<li class="rule-item">5. If votes tie, "Hidden Prize" is drawn for all.</li>',
+                    '<li class="rule-item">6. Winners must collect prizes in person at HQ.</li>'
+                ],
+                disclaimer: 'The organizer reserves the right to change event details at any time.',
+                resultTitle: '🎉 Lucky Draw Results', resultDescPre: 'Winner:', resultDescPost: '!', won: 'Won', calc: 'Calculating results...'
             }
         };
 
@@ -1058,45 +1054,75 @@
         /* ══════════════════════════════════════════════
          * 送出投票 — Token 驗證，前端不送 user_id
          * ══════════════════════════════════════════════ */
-        async function submitVote(){
-            const btn=document.getElementById('confirm-btn'),
-                  ot=btn.innerText,
-                  inp=document.getElementById('verify-username').value.trim();
-            if(!inp){showMessage(state.lang==='en'?i18n.en.emptyInputMsg:i18n['zh-TW'].emptyInputMsg);return;}
-            btn.innerText=state.lang==='en'?'Processing...':'驗證中...';btn.disabled=true;
-            try{
-                let res;
-                if(state.isDevMode){
-                    await new Promise(r=>setTimeout(r,400));
-                    res = { ok:true, status:200, data:{ success:true } };
-                } else {
-                    res = await bffRequest('VIP_LOTTERY_VOTE', {
-                        input_username: inp,
+        async function submitVote() {
+            const btn = document.getElementById('confirm-btn');
+            const originalText = btn.innerText;
+            btn.innerText = state.lang === 'en' ? "Processing..." : "驗證中..."; 
+            btn.disabled = true;
+
+            // 🛠 測試模式：直接模擬成功，絕對不打後端 API 避免錯誤
+            if (state.isTestMode) {
+                setTimeout(() => {
+                    showMessage(state.lang === 'en' ? 'Vote Successful!' : '投票成功！');
+                    if (selectedChoice === 'A') state.realA++;
+                    if (selectedChoice === 'B') state.realB++;
+                    
+                    // 重新產生假 UID 讓你可以無限次狂按測試
+                    state.testUid = 'TEST_' + (state.uid || 'guest') + '_' + Math.floor(Math.random() * 999999);
+                    
+                    closeModal();
+                    updateUI();
+                    
+                    // 恢復按鈕狀態
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }, 400); // 稍微延遲模擬連線感
+                return;  // 👈 關鍵：直接中斷，不執行下方的 fetch
+            }
+
+            // 🛡️ 正式模式：打真實的 API
+            try {
+                const response = await fetch(CFG.handlerApi, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: state.uid, 
+                        username: state.username,
+                        action: 'VIP_LOTTERY_VOTE', 
                         choice: selectedChoice
-                    });
+                    })
+                });
+                
+                const result = await response.json().catch(() => ({}));
+                
+                if (response.ok) {
+                    showMessage(state.lang === 'en' ? 'Vote Successful!' : '投票成功！');
+                    if (selectedChoice === 'A') state.realA++;
+                    if (selectedChoice === 'B') state.realB++;
+                    
+                    localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
+                    state.hasVoted = true;
+                    state.votedChoice = selectedChoice;
+                    
+                    closeModal();
+                    updateUI();
+                    
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                } else if (response.status === 429) {
+                    showMessage(state.lang === 'en' ? 'Please wait.' : '⏳ 系統繁忙，請稍後再試');
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                } else {
+                    showMessage(`❌ ${result.error || '驗證失敗'}`);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    closeModal();
                 }
-                if(res.ok){
-                    showMessage(state.lang==='en'?'Vote Successful!':'投票成功！');
-                    if(selectedChoice==='A') state.realA++;
-                    if(selectedChoice==='B') state.realB++;
-                    if(!state.isDevMode){
-                        state.hasVoted=true;
-                        state.votedChoice=selectedChoice;
-                    }
-                    btn.innerText=ot;btn.disabled=false;
-                    closeModal();updateUI();
-                }
-                else if(res.status===429){
-                    showMessage(state.lang==='en'?'Voting too fast, please wait.':'⏳ 操作過於頻繁，請等待3秒後再試');
-                    btn.innerText=ot;btn.disabled=false;
-                }
-                else{
-                    showMessage(res.data?.error || (state.lang==='en'?'Verification Failed':'❌ 帳號驗證失敗，非本人操作'));
-                    btn.innerText=ot;btn.disabled=false;
-                }
-            }catch(e){
-                showMessage(state.lang==='en'?'Network error.':'連線不穩，請確認網路後重試！');
-                btn.innerText=ot;btn.disabled=false;
+            } catch (e) {
+                showMessage(state.lang === 'en' ? 'Network error.' : "連線不穩，請確認網路後重試！");
+                btn.innerText = originalText;
+                btn.disabled = false;
             }
         }
 

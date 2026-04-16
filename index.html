@@ -4,268 +4,288 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>VIP 專屬抽獎池 - ULTIMATE PRESTIGE</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#050505">
+    <meta name="theme-color" content="#191919">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
+        /* ══════════════════════════════════════════════
+         * DESIGN TOKENS — extracted from Figma JSON
+         * ══════════════════════════════════════════════ */
         :root {
-            --gold-primary: #bf953f;
-            --gold-light: #fcf6ba;
-            --gold-dark: #aa771c;
-            --accent-red: #ff2d55;
-            --accent-blue: #007aff;
-            --success-green: #10b981;
+            --surface:                  #191919;
+            --surface-container:        #232323;
+            --text-primary:             #FFFFFF;
+            --text-secondary:           #C8C8C8;
+            --text-dim:                 #9B9B9B;
+            --primary:                  #00D2BE;
+            --success:                  #15EA48;
+            --gold:                     #FFA500;
+            --gold-light:               #fcf6ba;
+            --gold-dark:                #aa771c;
+            --accent-red:               #ff2d55;
+            --accent-blue:              #007aff;
+            --outline:                  #474747;
+            --outline-subtle:           rgba(255,255,255,0.08);
+            --outline-gold:             rgba(191,149,63,0.30);
+            --shape-xs:                 4px;
+            --shape-s:                  8px;
+            --shape-m:                  12px;
+            --shape-l:                  16px;
+            --shape-xl:                 28px;
+            --shape-full:               1000px;
+            --sp-1: 2px; --sp-2: 4px; --sp-3: 8px; --sp-4: 12px; --sp-5: 16px; --sp-6: 24px; --sp-7: 32px; --sp-8: 40px;
+            --font-family:              'Noto Sans TC', 'PingFang TC', sans-serif;
+            --fw-bold:                  700;
+            --fw-black:                 900;
+            --fs-headline-l:            36px;
+            --fs-headline-s:            28px;
+            --fs-title-l:               22px;
+            --fs-title-s:               18px;
+            --fs-body-l:                16px;
+            --fs-body-m:                14px;
+            --fs-body-s:                12px;
+            --card-max-width:           600px;
+            --gold-gradient:            linear-gradient(to bottom, #ffffff 0%, var(--gold-light) 40%, var(--gold) 70%, var(--gold-dark) 100%);
+            --gold-shine:               linear-gradient(90deg, #bf953f, #fcf6ba, #bf953f);
         }
 
-        body {
-            background: radial-gradient(circle at 50% 0%, #17140d 0%, #050505 100%);
-            color: #ffffff;
-            font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            min-height: 100vh;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            padding: 15px 10px; margin: 0; overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
+        /* ── Dev Mode Banner (新加入) ── */
+        #dev-mode-banner {
+            display: none; position: fixed; top: 0; left: 0; width: 100%;
+            background: #ff2d55; color: white; text-align: center; padding: 8px;
+            font-size: 13px; font-weight: 900; z-index: 20000; letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(255,45,85,0.4);
         }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            background: radial-gradient(ellipse at 50% 0%, #17140d 0%, var(--surface) 100%);
+            color: var(--text-primary); font-family: var(--font-family); font-weight: 600;
+            font-size: var(--fs-body-m); line-height: 1.5; -webkit-font-smoothing: antialiased;
+            min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: var(--sp-5) var(--sp-3); overflow-x: hidden;
+        }
+
+        @keyframes goldShine { to { background-position: 200% center; } }
+        @keyframes smoothFlow { 0% { background-position: 200% center; } 100% { background-position: 0% center; } }
+        @keyframes pulseShine { 0% { left: -100%; } 15% { left: 200%; } 100% { left: 200%; } }
 
         .main-card {
-            background: rgba(10, 10, 10, 0.85); border: none;
-            border-radius: 36px; width: 100%; max-width: 600px; 
-            padding: clamp(25px, 5vw, 40px) clamp(15px, 4vw, 30px);
-            box-shadow: 0 20px 80px rgba(0,0,0,0.9); 
-            position: relative;
+            background: rgba(10,10,10,0.85); border-radius: var(--shape-xl); width: 100%; max-width: var(--card-max-width);
+            padding: clamp(var(--sp-6), 5vw, var(--sp-8)) clamp(var(--sp-5), 4vw, var(--sp-7));
+            box-shadow: 0 20px 80px rgba(0,0,0,0.9); position: relative; margin-top: 20px;
         }
 
-        .lang-controls { position: absolute; top: 14px; right: 14px; z-index: 50; display: flex; gap: 2px; background: rgba(0,0,0,0.5); padding: 3px; border-radius: 10px; border: 1px solid rgba(191,149,63,0.3); }
-        .lang-btn { font-size: 10px; font-weight: 900; color: #aaa; padding: 3px 8px; border-radius: 6px; transition: 0.3s; cursor: pointer; }
-        .lang-btn.active { background: var(--gold-primary); color: #000; box-shadow: 0 1px 3px rgba(191,149,63,0.5); }
+        .lang-controls {
+            position: absolute; top: var(--sp-4); right: var(--sp-4); z-index: 50; display: flex; gap: var(--sp-1);
+            background: rgba(0,0,0,0.5); padding: var(--sp-1); border-radius: var(--shape-s); border: 1px solid var(--outline-gold);
+        }
+        .lang-btn {
+            font-size: var(--fs-body-s); font-weight: var(--fw-black); color: var(--text-dim); padding: var(--sp-2) var(--sp-3);
+            border-radius: var(--shape-xs); border: none; background: none; cursor: pointer; transition: all 0.2s;
+            min-height: 40px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center;
+        }
+        .lang-btn.active { background: var(--gold); color: #000; box-shadow: 0 1px 3px rgba(191,149,63,0.5); }
 
         .title-prestige {
-            font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;
-            background: linear-gradient(to bottom, #ffffff 0%, var(--gold-light) 40%, var(--gold-primary) 70%, var(--gold-dark) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-align: center; font-size: clamp(1.8rem, 7vw, 3rem);
-            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8));
-            margin-top: 15px; margin-bottom: 20px;
-            white-space: nowrap;
+            font-weight: var(--fw-black); text-transform: uppercase; letter-spacing: 0.1em;
+            background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-align: center; font-size: clamp(var(--fs-headline-s), 7vw, var(--fs-headline-l));
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8)); margin-top: var(--sp-5); margin-bottom: var(--sp-6); white-space: nowrap;
         }
 
         .dashboard-card {
-            background: rgba(255, 255, 255, 0.03); 
-            border: 1px solid rgba(191, 149, 63, 0.3);
-            border-radius: 16px; padding: 12px 16px; width: 100%; 
-            margin-bottom: 25px; box-shadow: inset 0 0 20px rgba(191, 149, 63, 0.05);
-            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.03); border: 1px solid var(--outline-gold); border-radius: var(--shape-l); 
+            padding: var(--sp-4) var(--sp-5); width: 100%; margin-bottom: var(--sp-6);
+            box-shadow: inset 0 0 20px rgba(191,149,63,0.05); backdrop-filter: blur(10px);
         }
-        .dashboard-time { display: flex; justify-content: center; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; margin-bottom: 10px; }
-        .dashboard-user { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        
-        .level-badge { background: rgba(191, 149, 63, 0.15); color: #fcf6ba; border: 1px solid rgba(191, 149, 63, 0.4); font-weight: 900; padding: 2px 8px; border-radius: 6px; font-size: 14px; margin-left: 2px; }
-        
-        .status-badge { font-size: 12px; font-weight: 900; padding: 4px 12px; border-radius: 50px; border: 1px solid #ffffff33; letter-spacing: 1px; white-space: nowrap; }
-        .status-eligible { background: rgba(16, 185, 129, 0.15); color: var(--success-green); border-color: var(--success-green); }
-        
+        .dashboard-time { display: flex; justify-content: center; align-items: center; border-bottom: 1px solid var(--outline-subtle); padding-bottom: var(--sp-3); margin-bottom: var(--sp-3); font-size: var(--fs-body-s); font-weight: var(--fw-bold); color: var(--text-dim); letter-spacing: 0.1em; }
+        .dashboard-time .time-label { color: var(--text-dim); margin-right: var(--sp-3); }
+        .dashboard-time .time-value { color: var(--gold-light); }
+        .dashboard-user { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: var(--sp-3); }
+        .level-row { display: flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-body-m); font-weight: var(--fw-bold); color: var(--text-secondary); }
+        .level-badge { background: rgba(191,149,63,0.15); color: var(--gold-light); border: 1px solid rgba(191,149,63,0.4); font-weight: var(--fw-black); padding: var(--sp-1) var(--sp-3); border-radius: var(--shape-xs); font-size: var(--fs-body-m); }
+
+        .status-badge { font-size: var(--fs-body-s); font-weight: var(--fw-black); padding: var(--sp-2) var(--sp-4); border-radius: var(--shape-full); border: 1px solid var(--outline); letter-spacing: 0.05em; white-space: nowrap; }
+        .status-eligible { display: inline-block; background: rgba(0,210,190,0.12); color: var(--primary); border-color: var(--primary); }
+        .status-voted { display: inline-block; background: rgba(255,165,0,0.15); color: var(--gold); border-color: var(--gold); box-shadow: 0 0 12px rgba(255,165,0,0.15); }
+
         .upgrade-wrapper { display: none; }
-        .upgrade-cta { display: inline-block; padding: 6px 16px; border-radius: 50px; background: linear-gradient(90deg, #bf953f, #fcf6ba, #bf953f); background-size: 200% auto; color: #000; font-size: 12px; font-weight: 900; letter-spacing: 1px; text-decoration: none; box-shadow: 0 0 15px rgba(191, 149, 63, 0.4); animation: goldShine 3s linear infinite; }
-        @keyframes goldShine { to { background-position: 200% center; } }
+        .upgrade-cta { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: var(--sp-2) var(--sp-5); border-radius: var(--shape-full); background: var(--gold-shine); background-size: 200% auto; color: #000; font-size: var(--fs-body-s); font-weight: var(--fw-black); letter-spacing: 0.05em; text-decoration: none; box-shadow: 0 0 15px rgba(191,149,63,0.4); animation: goldShine 3s linear infinite; }
+        .unauth-info { text-align: center; color: var(--text-dim); font-weight: var(--fw-bold); font-size: var(--fs-body-m); padding: var(--sp-2) 0; }
 
-        .hidden-prize-banner {
-            display: flex; justify-content: space-between; align-items: center;
-            background: linear-gradient(90deg, #1f180a 0%, #5c450d 50%, #1f180a 100%);
-            background-size: 200% auto;
-            border: 1px solid rgba(191,149,63,0.3); border-radius: 14px;
-            padding: 12px 18px; margin-top: 15px; margin-bottom: 30px; cursor: pointer; transition: transform 0.2s; width: 100%;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-            animation: smoothFlow 3s linear infinite;
-        }
+        .hidden-prize-banner { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(90deg, #1f180a 0%, #5c450d 50%, #1f180a 100%); background-size: 200% auto; border: 1px solid var(--outline-gold); border-radius: var(--shape-m); padding: var(--sp-4) var(--sp-5); margin-top: var(--sp-5); margin-bottom: var(--sp-7); cursor: pointer; transition: transform 0.2s; width: 100%; box-shadow: 0 5px 20px rgba(0,0,0,0.5); animation: smoothFlow 3s linear infinite; min-height: 48px; }
         .hidden-prize-banner:active { transform: translateY(2px); }
-        .hp-icon-text { color: #fcf6ba; font-size: 13px; font-weight: 900; letter-spacing: 1px; }
-        .hp-arrow { color: #bf953f; font-size: 12px; font-weight: 900; background: rgba(191,149,63,0.15); padding: 4px 10px; border-radius: 20px; }
-        @keyframes smoothFlow { 0% { background-position: 200% center; } 100% { background-position: 0% center; } }
+        .hp-icon-text { color: var(--gold-light); font-size: var(--fs-body-m); font-weight: var(--fw-black); letter-spacing: 0.05em; }
+        .hp-arrow { color: var(--gold); font-size: var(--fs-body-s); font-weight: var(--fw-black); background: rgba(191,149,63,0.15); padding: var(--sp-2) var(--sp-3); border-radius: var(--shape-full); white-space: nowrap; }
 
-        .prize-container { position: relative; margin-bottom: 20px; width: 100%; }
-        .img-container { position: relative; display: flex; justify-content: center; align-items: center; height: 140px; margin-bottom: 10px; }
+        .prize-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-5); margin-bottom: var(--sp-6); position: relative; }
+        .prize-cell { text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .img-container { position: relative; display: flex; justify-content: center; align-items: center; height: 140px; margin-bottom: var(--sp-3); }
         .bg-glow { position: absolute; width: 110px; height: 110px; background: rgba(191,149,63,0.3); filter: blur(35px); border-radius: 50%; z-index: 1; pointer-events: none; }
-        
-        .img-switch { width: 120px; height: 120px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); position: relative; z-index: 2; object-fit: contain; transition: transform 0.3s;}
-        .img-ps5 { width: 145px; height: 145px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); position: relative; z-index: 2; object-fit: contain; transition: transform 0.3s;}
+        .img-switch { width: 120px; height: 120px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); position: relative; z-index: 2; object-fit: contain; transition: transform 0.3s; }
+        .img-ps5 { width: 145px; height: 145px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); position: relative; z-index: 2; object-fit: contain; transition: transform 0.3s; }
         .img-switch:hover, .img-ps5:hover { transform: scale(1.05); }
-        
-        .prize-title { font-size: 24px; font-weight: 900; color: #fff; letter-spacing: 1px; text-shadow: 0 3px 6px rgba(0,0,0,0.9); position: relative; z-index: 2; margin-bottom: 6px;}
-        .prize-qty-tag { background: rgba(191, 149, 63, 0.15); border: 1px solid rgba(191, 149, 63, 0.4); color: #fcf6ba; font-size: 11px; font-weight: 900; padding: 3px 12px; border-radius: 50px; display: inline-block; letter-spacing: 1px;}
+        .prize-title { font-size: var(--fs-title-l); font-weight: var(--fw-black); color: var(--text-primary); letter-spacing: 0.05em; text-shadow: 0 3px 6px rgba(0,0,0,0.9); margin-bottom: var(--sp-2); }
+        .prize-qty-tag { background: rgba(191,149,63,0.15); border: 1px solid rgba(191,149,63,0.4); color: var(--gold-light); font-size: var(--fs-body-s); font-weight: var(--fw-black); padding: var(--sp-1) var(--sp-4); border-radius: var(--shape-full); display: inline-block; letter-spacing: 0.05em; }
 
-        .progress-wrapper { position: relative; margin: 0 0 25px 0; width: 100%; }
-        .progress-container { 
-            width: 100%; height: 42px; background: #000; border-radius: 21px; 
-            border: 2px solid rgba(191, 149, 63, 0.3); position: relative; 
-            overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.8);
-        }
+        .progress-wrapper { position: relative; margin-bottom: var(--sp-6); width: 100%; }
+        .progress-container { width: 100%; height: 42px; background: #000; border-radius: 21px; border: 2px solid var(--outline-gold); position: relative; overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.8); }
         .bar-a { position: absolute; left: 0; top: 0; height: 100%; background: linear-gradient(90deg, #600, var(--accent-red)); transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center; z-index: 2; }
         .bar-b { position: absolute; right: 0; top: 0; height: 100%; background: linear-gradient(90deg, var(--accent-blue), #002244); transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center; z-index: 1; }
-        
-        .percent-text { font-weight: 900; font-size: 1.2rem; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.9); line-height: 1; letter-spacing: 1px;}
-        
-        .vs-label { 
-            position: absolute; top: 50%; transform: translate(-50%, -50%); 
-            color: #fcf6ba; font-weight: 900; font-size: 12px; z-index: 10; 
-            background: #0d0d0d; width: 30px; height: 30px; border-radius: 50%; 
-            display: flex; justify-content: center; align-items: center; 
-            border: 2px solid var(--gold-primary); box-shadow: 0 0 10px rgba(0,0,0,1); 
-        }
+        .percent-text { font-weight: var(--fw-black); font-size: var(--fs-title-s); color: var(--text-primary); text-shadow: 0 2px 4px rgba(0,0,0,0.9); letter-spacing: 0.05em; }
+        .vs-label { position: absolute; top: 50%; transform: translate(-50%, -50%); color: var(--gold-light); font-weight: var(--fw-black); font-size: var(--fs-body-s); z-index: 10; background: #0d0d0d; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 2px solid var(--gold); box-shadow: 0 0 10px rgba(0,0,0,1); }
+        .vote-counts { display: flex; justify-content: space-between; padding: 0 var(--sp-3); margin-top: var(--sp-4); font-size: var(--fs-body-s); font-weight: var(--fw-bold); color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; }
 
-        .btn-wrapper { margin-bottom: 10px; } 
-        .btn-premium { 
-            border-radius: 16px; font-weight: 900; font-size: 16px; letter-spacing: 1px; 
-            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer; 
-            border: 1px solid rgba(255,255,255,0.15); white-space: nowrap; padding: 20px 5px; width: 100%;
-            position: relative; overflow: hidden;
-            box-shadow: 0 6px 0 rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5); 
-            transform: translateY(0);
-        }
-        
-        .btn-premium::after {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.25), transparent);
-            transform: skewX(-20deg); animation: pulseShine 3s infinite;
-        }
-        @keyframes pulseShine { 0% { left: -100%; } 15% { left: 200%; } 100% { left: 200%; } }
-
-        .btn-a-red { background: linear-gradient(145deg, #800015, #300005); color: #ffb3b3; border-color: rgba(255, 45, 85, 0.4); }
-        .btn-a-red:hover:not(:disabled) { background: linear-gradient(145deg, #a0001a, #50000a); color: #fff; transform: translateY(-2px); box-shadow: 0 8px 0 rgba(0,0,0,0.8), 0 15px 25px rgba(255, 45, 85, 0.3); }
-        .btn-a-red:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 0px 0 rgba(0,0,0,0.8), 0 2px 5px rgba(255, 45, 85, 0.4); } 
-
-        .btn-b-blue { background: linear-gradient(145deg, #002b73, #000c24); color: #b3d4ff; border-color: rgba(0, 122, 255, 0.4); }
-        .btn-b-blue:hover:not(:disabled) { background: linear-gradient(145deg, #003a99, #00153d); color: #fff; transform: translateY(-2px); box-shadow: 0 8px 0 rgba(0,0,0,0.8), 0 15px 25px rgba(0, 122, 255, 0.3); }
-        .btn-b-blue:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 0px 0 rgba(0,0,0,0.8), 0 2px 5px rgba(0, 122, 255, 0.4); } 
-
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); margin-bottom: var(--sp-3); }
+        .btn-premium { border-radius: var(--shape-l); font-weight: var(--fw-black); font-size: var(--fs-body-l); font-family: var(--font-family); letter-spacing: 0.05em; transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer; border: 1px solid rgba(255,255,255,0.15); white-space: nowrap; padding: var(--sp-6) var(--sp-3); width: 100%; min-height: 48px; position: relative; overflow: hidden; box-shadow: 0 6px 0 rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5); transform: translateY(0); }
+        .btn-premium::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.25), transparent); transform: skewX(-20deg); animation: pulseShine 3s infinite; }
+        .btn-a-red { background: linear-gradient(145deg, #800015, #300005); color: #ffb3b3; border-color: rgba(255,45,85,0.4); }
+        .btn-a-red:hover:not(:disabled) { background: linear-gradient(145deg, #a0001a, #50000a); color: #fff; transform: translateY(-2px); box-shadow: 0 8px 0 rgba(0,0,0,0.8), 0 15px 25px rgba(255,45,85,0.3); }
+        .btn-a-red:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 0 0 rgba(0,0,0,0.8), 0 2px 5px rgba(255,45,85,0.4); }
+        .btn-b-blue { background: linear-gradient(145deg, #002b73, #000c24); color: #b3d4ff; border-color: rgba(0,122,255,0.4); }
+        .btn-b-blue:hover:not(:disabled) { background: linear-gradient(145deg, #003a99, #00153d); color: #fff; transform: translateY(-2px); box-shadow: 0 8px 0 rgba(0,0,0,0.8), 0 15px 25px rgba(0,122,255,0.3); }
+        .btn-b-blue:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 0 0 rgba(0,0,0,0.8), 0 2px 5px rgba(0,122,255,0.4); }
         .btn-locked { opacity: 0.5; cursor: not-allowed; filter: grayscale(0.8); border-color: transparent; box-shadow: 0 4px 0 rgba(0,0,0,0.4); }
-        .btn-locked::after { display: none; } 
-        
-        .btn-active-voted { 
-            opacity: 1 !important; border-color: var(--gold-light) !important; 
-            box-shadow: 0 2px 0 rgba(0,0,0,0.8), inset 0 0 20px rgba(191,149,63,0.5) !important; 
-            transform: translateY(4px); filter: none !important; color: #fff !important;
-        }
+        .btn-locked::after { display: none; }
+        .btn-active-voted { opacity: 1 !important; border-color: var(--gold-light) !important; box-shadow: 0 2px 0 rgba(0,0,0,0.8), inset 0 0 20px rgba(191,149,63,0.5) !important; transform: translateY(4px); filter: none !important; color: #fff !important; }
 
-        .rule-box { background: rgba(0, 0, 0, 0.4); border-radius: 20px; padding: 25px 20px; margin-top: 30px; border: 1px solid rgba(255,255,255,0.05); }
-        .rule-header { font-size: 16px; font-weight: 900; color: #fcf6ba; letter-spacing: 3px; text-align: center; margin-bottom: 16px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
-        .rule-item { color: #d1d5db !important; font-weight: 700; line-height: 2; font-size: 13px; word-break: keep-all; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        @media (max-width: 400px) { .rule-item { white-space: normal; word-break: break-word; } } 
+        .results-section { display: none; background: rgba(0,0,0,0.6); border: 1px solid var(--gold); border-radius: var(--shape-xl); padding: var(--sp-7) var(--sp-6); margin-top: var(--sp-6); text-align: center; box-shadow: inset 0 0 30px rgba(191,149,63,0.1); }
+        .result-title { color: var(--gold-light); font-size: var(--fs-title-l); font-weight: var(--fw-black); letter-spacing: 0.15em; margin-bottom: var(--sp-4); }
+        .result-desc { color: var(--text-secondary); font-weight: var(--fw-bold); font-size: var(--fs-body-m); margin-bottom: var(--sp-6); }
+        .win-team { color: var(--text-primary); font-size: var(--fs-title-s); font-weight: var(--fw-black); padding: 0 var(--sp-2); text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 4px; text-decoration-thickness: 2px; }
+        .winner-display-block { background: rgba(0,0,0,0.5); border: 1px solid var(--gold); border-radius: var(--shape-l); padding: var(--sp-6) var(--sp-5); margin-bottom: var(--sp-6); box-shadow: 0 0 20px rgba(191,149,63,0.3), inset 0 0 15px rgba(191,149,63,0.1); }
+        .winner-label { color: var(--text-dim); font-size: var(--fs-body-s); font-weight: var(--fw-bold); letter-spacing: 0.2em; margin-bottom: var(--sp-4); }
+        .winner-list { font-size: var(--fs-title-l); color: var(--gold-light); font-weight: var(--fw-black); letter-spacing: 0.1em; font-variant-numeric: tabular-nums; margin-bottom: var(--sp-5); }
+        .winner-notice { color: var(--success); font-size: var(--fs-body-s); font-weight: var(--fw-bold); background: rgba(21,234,72,0.08); padding: var(--sp-2) var(--sp-4); border-radius: var(--shape-s); display: inline-block; border: 1px solid rgba(21,234,72,0.25); }
+        .result-ctas { display: none; flex-direction: column; gap: var(--sp-4); }
+        .result-cta-link { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; padding: var(--sp-4) 0; border: 1px solid var(--gold); background: rgba(191,149,63,0.08); color: var(--gold-light); font-weight: var(--fw-bold); border-radius: var(--shape-m); font-size: var(--fs-body-m); letter-spacing: 0.1em; text-decoration: none; transition: background 0.2s, color 0.2s; font-family: var(--font-family); }
+        .result-cta-link:hover { background: var(--gold); color: #000; }
+        .result-cta-secondary { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; padding: var(--sp-4) 0; border: 1px solid var(--outline); background: none; color: var(--text-secondary); font-weight: var(--fw-bold); border-radius: var(--shape-m); font-size: var(--fs-body-m); letter-spacing: 0.1em; cursor: pointer; transition: background 0.2s; font-family: var(--font-family); }
+        .result-cta-secondary:hover { background: var(--null-hover); }
 
-        .results-section { display: none; background: rgba(0,0,0,0.6); border: 1px solid var(--gold-primary); border-radius: 24px; padding: 30px 20px; margin-top: 20px; text-align: center; box-shadow: inset 0 0 30px rgba(191,149,63,0.1); }
-        
-        .winner-display-block {
-            background: rgba(0,0,0,0.5); border: 1px solid var(--gold-primary); border-radius: 16px; 
-            padding: 20px 15px; margin-bottom: 25px;
-            box-shadow: 0 0 20px rgba(191, 149, 63, 0.3), inset 0 0 15px rgba(191, 149, 63, 0.1);
-        }
+        .rule-box { background: rgba(0,0,0,0.4); border-radius: var(--shape-xl); padding: var(--sp-6) var(--sp-5); margin-top: var(--sp-7); border: 1px solid var(--outline-subtle); }
+        .rule-header { font-size: var(--fs-body-l); font-weight: var(--fw-black); color: var(--gold-light); letter-spacing: 0.2em; text-align: center; margin-bottom: var(--sp-5); text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+        .rule-list { list-style: none; display: flex; flex-direction: column; gap: var(--sp-3); }
+        .rule-item { color: var(--text-secondary); font-weight: var(--fw-bold); line-height: 1.8; font-size: var(--fs-body-m); }
+        @media (max-width: 400px) { .rule-item { word-break: break-word; } }
 
-        .footer-divider { width: 80%; height: 1px; background: linear-gradient(90deg, transparent, rgba(191,149,63,0.2), transparent); margin: 35px auto 20px auto; }
-        .web-footer { max-width: 600px; width: 100%; padding-bottom: 40px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.25); line-height: 1.6; font-weight: bold;}
-        
-        #customMsg { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 20000; background: #0a0a0a; border: 1px solid var(--gold-primary); color: #fff; padding: 12px 24px; border-radius: 50px; font-weight: 900; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
+        .footer-divider { width: 80%; height: 1px; margin: var(--sp-8) auto var(--sp-6) auto; background: linear-gradient(90deg, transparent, var(--outline-gold), transparent); }
+        .web-footer { max-width: var(--card-max-width); width: 100%; padding-bottom: var(--sp-8); text-align: center; font-size: var(--fs-body-s); color: var(--text-disabled); line-height: 1.6; font-weight: var(--fw-bold); }
+
+        #customMsg { display: none; position: fixed; top: var(--sp-6); left: 50%; transform: translateX(-50%); z-index: 20000; background: var(--surface-container); border: 1px solid var(--gold); color: var(--text-primary); padding: var(--sp-4) var(--sp-6); border-radius: var(--shape-full); font-weight: var(--fw-black); font-size: var(--fs-body-m); box-shadow: 0 10px 30px rgba(0,0,0,0.8); opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
         #customMsg.show { display: block; opacity: 1; }
 
-        .modal-overlay { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay { display: none; position: fixed; inset: 0; z-index: 10000; background: var(--scrim); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: var(--sp-6); opacity: 0; transition: opacity 0.3s ease; }
         .modal-overlay.show { display: flex; opacity: 1; }
-        .modal-content { background: #0d0d0d; border: 1px solid var(--gold-primary); border-radius: 24px; padding: 30px 25px; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
-        
-        .iphone-modal-img { width: 150px; margin: 0 auto 20px auto; filter: drop-shadow(0 0 30px rgba(191,149,63,0.7)); display: block;}
-        
-        #test-mode-badge { display: none; position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: #ff2d55; color: white; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 900; z-index: 9999; box-shadow: 0 5px 15px rgba(255, 45, 85, 0.5); letter-spacing: 1px;}
+        .modal-content { background: var(--surface-container); border: 1px solid var(--gold); border-radius: var(--shape-xl); padding: var(--sp-7) var(--sp-6); max-width: var(--modal-width); width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
+        .modal-title { font-size: var(--fs-title-m); font-weight: var(--fw-black); color: var(--gold-light); margin-bottom: var(--sp-5); letter-spacing: 0.15em; }
+
+        .modal-btn-primary { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: var(--sp-3) var(--sp-6); background: var(--gold); color: #000; font-weight: var(--fw-black); border-radius: var(--shape-m); border: none; cursor: pointer; font-size: var(--fs-body-m); font-family: var(--font-family); transition: background 0.2s; box-shadow: 0 4px 16px rgba(191,149,63,0.3); }
+        .modal-btn-primary:hover { background: var(--gold-light); }
+        .modal-btn-secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: var(--sp-3) var(--sp-6); background: none; color: var(--text-dim); font-weight: var(--fw-bold); border: 1px solid var(--outline); border-radius: var(--shape-m); cursor: pointer; font-size: var(--fs-body-m); font-family: var(--font-family); transition: background 0.2s, color 0.2s; }
+        .modal-btn-secondary:hover { background: var(--null-hover); color: var(--text-primary); }
+        .modal-btn-outline-gold { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; padding: var(--sp-4) 0; background: none; border: 1px solid var(--gold); color: var(--gold); font-weight: var(--fw-bold); border-radius: var(--shape-m); cursor: pointer; font-size: var(--fs-body-m); font-family: var(--font-family); transition: background 0.2s, color 0.2s; }
+        .modal-btn-outline-gold:hover { background: var(--gold); color: #000; }
+
+        .iphone-modal-img { width: 150px; margin: 0 auto var(--sp-6) auto; filter: drop-shadow(0 0 30px rgba(191,149,63,0.7)); display: block; }
+        .iphone-modal-desc { font-size: var(--fs-body-l); color: var(--text-secondary); font-weight: var(--fw-bold); margin-bottom: var(--sp-4); }
+        .iphone-modal-desc .highlight { color: var(--accent-red); font-size: var(--fs-title-m); margin-top: var(--sp-2); display: block; }
+        .iphone-modal-note { font-size: var(--fs-body-s); color: var(--text-dim); font-weight: var(--fw-bold); margin-bottom: var(--sp-6); letter-spacing: 0.1em; }
+
+        .vote-confirm-box { background: rgba(0,0,0,0.4); border: 1px solid var(--outline-subtle); border-radius: var(--shape-m); padding: var(--sp-4); margin-bottom: var(--sp-5); }
+        .vote-confirm-prefix { font-size: var(--fs-body-s); color: var(--text-dim); font-weight: var(--fw-bold); margin-bottom: var(--sp-1); }
+        .vote-confirm-prize { font-size: var(--fs-title-l); color: var(--text-primary); font-weight: var(--fw-black); letter-spacing: 0.1em; }
+        .vote-confirm-warn { font-size: var(--fs-body-s); color: var(--accent-red); font-weight: var(--fw-bold); margin-top: var(--sp-2); }
+        .vote-modal-msg { font-size: var(--fs-body-m); color: var(--text-secondary); font-weight: var(--fw-bold); margin-bottom: var(--sp-3); text-align: left; padding: 0 var(--sp-1); }
+        .vote-modal-actions { display: flex; justify-content: center; gap: var(--sp-4); }
+
+        .participant-note { font-size: var(--fs-body-s); color: var(--text-dim); font-weight: var(--fw-bold); margin-bottom: var(--sp-5); }
+        .participant-scroll { overflow-y: auto; flex: 1; max-height: 40vh; background: rgba(0,0,0,0.5); border: 1px solid var(--outline-gold); border-radius: var(--shape-m); padding: var(--sp-5); margin-bottom: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-4); text-align: center; }
+        .participant-item { font-size: var(--fs-body-l); color: var(--gold-light); font-variant-numeric: tabular-nums; letter-spacing: 0.15em; border-bottom: 1px solid rgba(191,149,63,0.2); padding-bottom: var(--sp-3); }
     </style>
 </head>
 <body>
 
-    <div id="test-mode-badge">🛠 測試模式啟用中 (可無限次投票)</div>
+    <!-- 🛠️ Dev Mode Banner (本地預覽模式提示) -->
+    <div id="dev-mode-banner">🛠 本地預覽模式 (Dev Mode) - 顯示為虛擬測試數據</div>
     <div id="customMsg">系統訊息</div>
 
+    <!-- ═══ iPhone Hidden Prize Modal ═══ -->
     <div id="iphoneModal" class="modal-overlay">
-        <div class="modal-content" style="border: 2px solid var(--gold-primary); background: radial-gradient(circle at 50% 30%, #1a1508 0%, #050505 80%);">
-            <h2 id="i18n-hp-modal-title" class="text-2xl font-black text-[#fcf6ba] mb-5 tracking-widest whitespace-nowrap">隱藏大獎</h2>
+        <div class="modal-content" style="border-width:2px; background: radial-gradient(circle at 50% 30%, #1a1508 0%, #050505 80%);">
+            <h2 id="i18n-hp-modal-title" class="modal-title">隱藏大獎</h2>
             <img src="https://public.swag.live/notifications/custom/EL/iphone_17.png" class="iphone-modal-img" alt="iPhone 17 Pro" referrerpolicy="no-referrer">
-            <div id="i18n-hp-modal-desc" class="text-[16px] text-gray-200 font-bold mb-3 space-y-2 whitespace-nowrap">
+            <div id="i18n-hp-modal-desc" class="iphone-modal-desc">
                 <p>當最終票數平手時觸發</p>
-                <p class="text-[#ff2d55] text-xl">全體抽出 iPhone 17 Pro</p>
+                <p class="highlight">全體抽出 iPhone 17 Pro</p>
             </div>
-            <div class="mb-4"><span id="i18n-hp-qty" class="prize-qty-tag">僅抽出 1 名</span></div>
-            
-            <p id="i18n-hp-modal-note" class="text-[12px] text-gray-500 font-bold mb-6 tracking-wide">※ 觸發時原定獎項取消</p>
-            <button onclick="closeIphoneModal()" class="px-8 py-3 bg-transparent border border-[#bf953f] text-[#bf953f] font-bold rounded-xl hover:bg-[#bf953f] hover:text-black transition-colors text-sm w-full" id="i18n-btn-close">關閉</button>
+            <div style="margin-bottom:var(--sp-5)"><span id="i18n-hp-qty" class="prize-qty-tag">僅抽出 1 名</span></div>
+            <p id="i18n-hp-modal-note" class="iphone-modal-note">※ 觸發時原定獎項取消</p>
+            <button onclick="closeIphoneModal()" class="modal-btn-outline-gold" id="i18n-btn-close">關閉</button>
         </div>
     </div>
 
+    <!-- ═══ Participant List Modal ═══ -->
     <div id="participantModal" class="modal-overlay">
-        <div class="modal-content" style="max-height: 85vh; display: flex; flex-direction: column;">
-            <h2 id="i18n-participant-title" class="text-xl font-black text-[#fcf6ba] mb-2 whitespace-nowrap">符合抽獎資格名單</h2>
-            <p id="i18n-participant-note" class="text-[12px] text-gray-400 font-bold mb-5">※ 中獎者將透過官方系統發送專屬通知</p>
-            
-            <div id="participant-list-container" class="overflow-y-auto flex-1 bg-black/50 border border-[rgba(191,149,63,0.3)] rounded-xl p-4 mb-5 space-y-3 text-center" style="max-height: 40vh;">
-            </div>
-
-            <button onclick="closeParticipantModal()" class="px-6 py-3 bg-transparent border border-gray-600 text-gray-400 font-bold rounded-xl hover:bg-gray-800 hover:text-white transition-colors text-sm w-full" id="i18n-btn-close-participant">關閉</button>
+        <div class="modal-content" style="max-height:85vh;display:flex;flex-direction:column;">
+            <h2 id="i18n-participant-title" class="modal-title">符合抽獎資格名單</h2>
+            <p id="i18n-participant-note" class="participant-note">※ 中獎者將透過官方系統發送專屬通知</p>
+            <div id="participant-list-container" class="participant-scroll"></div>
+            <button onclick="closeParticipantModal()" class="modal-btn-secondary" style="width:100%" id="i18n-btn-close-participant">關閉</button>
         </div>
     </div>
 
+    <!-- ═══ Vote Confirmation Modal (隱藏了原本的 username input) ═══ -->
     <div id="voteModal" class="modal-overlay">
         <div class="modal-content">
-            <h2 id="i18n-modal-title" class="text-xl font-black text-[#fcf6ba] mb-4 whitespace-nowrap">身分驗證</h2>
-            
-            <div class="bg-black/40 border border-[rgba(255,255,255,0.1)] rounded-xl py-3 mb-5">
-                <p id="i18n-modal-confirm-prefix" class="text-xs text-gray-400 font-bold mb-1">您即將投票給：</p>
-                <p id="modal-selected-prize" class="text-2xl text-white font-black tracking-wider drop-shadow-md">---</p>
-                <p id="i18n-modal-warning" class="text-xs text-[#ff2d55] font-bold mt-1">※ 投票送出後無法更改</p>
+            <h2 id="i18n-modal-title" class="modal-title">身分驗證</h2>
+            <div class="vote-confirm-box">
+                <p id="i18n-modal-confirm-prefix" class="vote-confirm-prefix">您即將投票給：</p>
+                <p id="modal-selected-prize" class="vote-confirm-prize">---</p>
+                <p id="i18n-modal-warning" class="vote-confirm-warn">※ 投票送出後無法更改</p>
             </div>
-
-            <p id="i18n-modal-msg" class="text-sm text-gray-300 font-bold mb-2 text-left px-1">請輸入完整帳號以確認本人操作：</p>
-            
-            <input type="text" id="verify-username" placeholder="輸入您的 SWAG 帳號" class="w-full bg-black border border-[#bf953f] rounded-lg px-4 py-3 mb-6 text-white text-center font-bold focus:outline-none focus:ring-2 focus:ring-[#fcf6ba]">
-
-            <div class="flex justify-center gap-3">
-                <button onclick="closeModal()" class="px-6 py-2.5 text-gray-500 font-bold hover:text-white transition-colors text-sm whitespace-nowrap" id="i18n-btn-cancel">取消</button>
-                <button id="confirm-btn" onclick="submitVote()" class="px-8 py-2.5 bg-[#bf953f] text-black font-black rounded-xl hover:bg-[#fcf6ba] shadow-lg transition-colors text-sm whitespace-nowrap">確認送出</button>
+            <p id="i18n-modal-msg" class="vote-modal-msg" style="text-align: center;">確認要送出嗎？</p>
+            <div class="vote-modal-actions">
+                <button onclick="closeModal()" class="modal-btn-secondary" id="i18n-btn-cancel">取消</button>
+                <button id="confirm-btn" onclick="submitVote()" class="modal-btn-primary">確認送出</button>
             </div>
         </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════
+         MAIN CARD
+         ═══════════════════════════════════════════ -->
     <div class="main-card">
         <div class="lang-controls">
             <button id="lang-btn-tw" class="lang-btn active" onclick="changeLang('zh-TW')">繁中</button>
             <button id="lang-btn-en" class="lang-btn" onclick="changeLang('en')">EN</button>
         </div>
 
-        <header class="text-center flex flex-col items-center w-full">
+        <header style="text-align:center;display:flex;flex-direction:column;align-items:center;width:100%">
             <h1 id="i18n-main-title" class="title-prestige">VIP 專屬抽獎池</h1>
-            
             <div class="dashboard-card">
                 <div id="event-time-display" class="dashboard-time"></div>
-                
-                <div id="auth-info" class="dashboard-user" style="display: none;">
-                    <div class="flex items-center gap-1.5 text-[14px] font-bold text-gray-300">
-                        <span id="i18n-vip-lbl" class="shrink-0">您的等級：</span>
-                        <span id="user-level" class="level-badge shrink-0">--</span>
+                <div id="auth-info" class="dashboard-user" style="display:none;">
+                    <div class="level-row">
+                        <span id="i18n-vip-lbl">您的等級：</span>
+                        <span id="user-level" class="level-badge">--</span>
                     </div>
                     <div>
-                        <div id="user-status" class="status-badge" style="display: none;">驗證中...</div>
+                        <div id="user-status" class="status-badge" style="display:none;">驗證中...</div>
                         <div id="upgrade-wrapper" class="upgrade-wrapper">
                             <a href="https://swag.live/settings/vvip" target="_blank" id="upgrade-cta" class="upgrade-cta">升級至 LV.20 即可投票</a>
                         </div>
                     </div>
                 </div>
-
-                <div id="unauth-info" class="text-center text-gray-400 font-bold text-[13px] py-1" style="display: none;">
-                    請登入帳號 / Please Log In
-                </div>
+                <div id="unauth-info" class="unauth-info" style="display:none;">請登入帳號 / Please Log In</div>
             </div>
         </header>
 
-        <div class="grid grid-cols-2 gap-4 md:gap-6 prize-container">
-            <div class="text-center flex flex-col items-center">
+        <div class="prize-grid">
+            <div class="prize-cell">
                 <div class="img-container">
                     <div class="bg-glow"></div>
                     <img src="https://public.swag.live/notifications/custom/EL/switch.png" class="img-switch" alt="Switch" referrerpolicy="no-referrer">
@@ -273,7 +293,7 @@
                 <p id="i18n-prize-a" class="prize-title">Switch</p>
                 <span id="i18n-prize-a-qty" class="prize-qty-tag">僅抽出 1 名</span>
             </div>
-            <div class="text-center flex flex-col items-center">
+            <div class="prize-cell">
                 <div class="img-container">
                     <div class="bg-glow"></div>
                     <img src="https://public.swag.live/notifications/custom/EL/ps5.png" class="img-ps5" alt="PS5" referrerpolicy="no-referrer">
@@ -285,17 +305,17 @@
 
         <div class="progress-wrapper">
             <div class="progress-container">
-                <div id="bar-a" class="bar-a" style="width: 50%"><span id="percent-a" class="percent-text">50%</span></div>
-                <div id="bar-b" class="bar-b" style="width: 50%"><span id="percent-b" class="percent-text">50%</span></div>
-                <div id="vs-label" class="vs-label" style="left: 50%">VS</div>
+                <div id="bar-a" class="bar-a" style="width:50%"><span id="percent-a" class="percent-text">50%</span></div>
+                <div id="bar-b" class="bar-b" style="width:50%"><span id="percent-b" class="percent-text">50%</span></div>
+                <div id="vs-label" class="vs-label" style="left:50%">VS</div>
             </div>
-            <div class="flex justify-between px-2 mt-3 text-[12px] font-bold text-gray-400 tracking-widest uppercase whitespace-nowrap">
+            <div class="vote-counts">
                 <span id="count-a">-- 票</span>
                 <span id="count-b">-- 票</span>
             </div>
         </div>
 
-        <div id="btn-wrapper" class="grid grid-cols-2 gap-3 md:gap-5 btn-wrapper">
+        <div id="btn-wrapper" class="btn-grid">
             <button id="btn-vote-a" onclick="openVoteModal('A')" class="btn-premium btn-a-red btn-locked" disabled>選擇 Switch</button>
             <button id="btn-vote-b" onclick="openVoteModal('B')" class="btn-premium btn-b-blue btn-locked" disabled>選擇 PS5</button>
         </div>
@@ -306,27 +326,22 @@
         </div>
 
         <div id="results-section" class="results-section">
-            <h3 id="i18n-result-title" class="text-[#fcf6ba] text-2xl font-black tracking-widest mb-3">🎉 抽獎結果公佈</h3>
-            <p class="text-gray-300 font-bold text-sm mb-6">
+            <h3 id="i18n-result-title" class="result-title">🎉 抽獎結果公佈</h3>
+            <p class="result-desc">
                 <span id="i18n-result-desc-pre">本次由</span>
-                <span id="win-team" class="text-white text-lg px-1 font-black underline decoration-[#bf953f] decoration-2 underline-offset-4">---</span>
+                <span id="win-team" class="win-team">---</span>
                 <span id="i18n-result-desc-post">勝出！</span>
             </p>
-            
             <div class="winner-display-block">
-                <p class="text-gray-400 text-xs font-bold mb-3 tracking-widest" id="i18n-winner-lbl">幸運得主</p>
-                <div id="winner-list-container" class="text-2xl text-[#fcf6ba] font-mono tracking-wider font-black mb-4">
-                </div>
-                <p class="text-[#10b981] text-xs font-bold bg-[#10b981]/10 py-1.5 px-3 rounded-lg inline-block border border-[#10b981]/30" id="i18n-winner-notice">
-                    ※ 將由專人通知至本公司領獎
-                </p>
+                <p class="winner-label" id="i18n-winner-lbl">幸運得主</p>
+                <div id="winner-list-container" class="winner-list"></div>
+                <p class="winner-notice" id="i18n-winner-notice">※ 將由專人通知至本公司領獎</p>
             </div>
-
-            <div id="result-ctas" class="flex flex-col gap-3" style="display:none;">
-                <a href="https://swag.live/story/69bce37b1f37701036db53f2" target="_blank" class="w-full py-3 border border-[#bf953f] bg-[#bf953f]/10 text-[#fcf6ba] font-bold rounded-xl text-[13px] tracking-wider hover:bg-[#bf953f] hover:text-black transition-colors">
+            <div id="result-ctas" class="result-ctas">
+                <a href="https://swag.live/story/69bce37b1f37701036db53f2" target="_blank" class="result-cta-link">
                     <span id="i18n-video-cta">▶ 觀看抽獎影片</span>
                 </a>
-                <button onclick="openParticipantModal()" class="w-full py-3 border border-gray-600 text-gray-300 font-bold rounded-xl text-[13px] tracking-wider hover:bg-gray-800 transition-colors">
+                <button onclick="openParticipantModal()" class="result-cta-secondary">
                     <span id="i18n-view-list-btn">📋 查看符合抽獎資格名單</span>
                 </button>
             </div>
@@ -334,258 +349,199 @@
 
         <div class="rule-box">
             <h3 id="i18n-rule-header" class="rule-header">活動規則</h3>
-            <ul id="i18n-rules-list" class="space-y-2"></ul>
+            <ul id="i18n-rules-list" class="rule-list"></ul>
         </div>
-        
+
         <div class="footer-divider"></div>
         <footer class="web-footer">
-            <p id="i18n-disclaimer" class="px-4 break-keep">主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。</p>
+            <p id="i18n-disclaimer">主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。</p>
         </footer>
     </div>
 
     <script>
-        const EVENT_CONFIG = {
-            start: new Date('2026-03-10T00:00:00+08:00'),
-            end:   new Date('2026-03-19T23:59:59+08:00')
-        };
-
-        // 🌟 在這裡手動填寫「得獎者」名單 (活動結束後填寫)
-        const EVENT_WINNERS = ["ericli"];
-
-        // 🌟 在這裡手動填寫「符合資格」的所有參與者名單 (活動結束後填寫)
-        const EVENT_PARTICIPANTS = ["User1", "User2", "User3", "Gamer99", "LuckyStar"];
-
+        /* ══════════════════════════════════════════════
+         * 🚀 新版 BFF 架構 API 設定 (Token 驗證)
+         * ══════════════════════════════════════════════ */
         const CFG = {
             userInfoApi: 'https://swag-user-info-api-905468082258.asia-east1.run.app/api/badges',
-            handlerApi: 'https://vip-lottery-api-905468082258.asia-east1.run.app/api/request',
-            statsApi: 'https://vip-lottery-api-905468082258.asia-east1.run.app/api/stats'
+            statsApi: 'https://swag-bff-api-905468082258.asia-east1.run.app/api/stats',
+            voteApi: 'https://swag-bff-api-905468082258.asia-east1.run.app/api/request'
         };
 
-        // 輪詢間隔（毫秒）
+        const EVENT_CONFIG = {
+            start: new Date('2026-04-01T00:00:00+08:00'),
+            end:   new Date('2026-04-30T23:59:59+08:00')
+        };
+        const EVENT_WINNERS =["ericli"];
+        const EVENT_PARTICIPANTS =["User1", "User2", "User3", "Gamer99", "LuckyStar"];
         const POLL_INTERVAL = 15000;
-
-        let state = {
-            uid: null, testUid: null, level: 0,
-            hasVoted: false, votedChoice: null,
-            isEventActive: true, lang: 'zh-TW',
-            realA: 0, realB: 0,
-            isTestMode: false
+        
+        let state = { 
+            token: null, isDevMode: false, uid: null, level: 0, username: '---',
+            hasVoted: false, votedChoice: null, isEventActive: true, 
+            lang: 'zh-TW', realA: 0, realB: 0 
         };
-        let selectedChoice = null;
-        let pollTimer = null;
-        let resizeTimer = null;
+        let selectedChoice = null, pollTimer = null, resizeTimer = null;
 
-        // ✅ FIX: maskName 改善，處理短名稱邊界情況
-        function maskName(name) {
-            if (!name) return '***';
-            if (name.length <= 2) return '***';
-            return name.substring(0, 2) + '***' + name.substring(name.length - 1);
-        }
+        function maskName(n) { if(!n) return '***'; if(n.length<=2) return '***'; return n.substring(0,2)+'***'+n.substring(n.length-1); }
 
         const i18n = {
             'zh-TW': {
-                mainTitle: 'VIP 專屬抽獎池', prizeA: 'Switch', prizeB: 'PS5', btnA: '選擇 Switch', btnB: '選擇 PS5',
-                prizeQty: '僅抽出 1 名', hpQty: '僅抽出 1 名', vip: '您的等級：', upgradeCTA: '升級至 LV.20 即可投票',
-                statusEligible: '符合抽獎資格', statusVoted: '已完成本季投票', cancel: '取消', confirm: '確認送出', close: '關閉',
-                modalTitle: '身分驗證', modalConfirmPrefix: '您即將投票給：', modalWarning: '※ 投票送出後無法更改',
-                modalMsg: '請輸入完整帳號以確認本人操作：',
-                inputPlaceholder: '輸入您的 SWAG 帳號', emptyInputMsg: '請輸入您的帳號名稱！',
-                // ✅ FIX: 時間顯示與活動設定一致 (3/19)
-                timeFormat: '<span class="text-gray-400 text-xs font-bold tracking-widest mr-2">投票時間</span><span class="text-[#fcf6ba] text-xs font-bold tracking-wider">3/10 00:00 - 3/19 23:59</span>',
-                hpBannerTxt: '票數平手將觸發隱藏大獎', hpBannerBtn: '查看詳情 ➔',
-                hpModalTitle: '隱藏大獎', hpModalNote: '※ 觸發時原定獎項取消',
-                hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>',
-                ruleHeader: '活動規則',
-                rules:[
-                    '<li class="rule-item">1. 獎項每季更新，每人每季限投一票。</li>',
-                    '<li class="rule-item">2. 僅限 VIP 20 等（含）以上用戶參與投票。</li>',
-                    '<li class="rule-item">3. 投票一旦送出即無法更改。</li>',
-                    '<li class="rule-item">4. 若比例不同，僅從「最高票陣營」中抽出得主。</li>',
-                    '<li class="rule-item">5. 若最終票數相同，將從全投票用戶中抽「隱藏大獎」。</li>',
-                    '<li class="rule-item">6. 中獎用戶須於指定時間內親自至本公司領獎。</li>'
-                ],
-                disclaimer: '主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。',
-                resultTitle: '🎉 抽獎結果公佈', resultDescPre: '本次由', resultDescPost: '勝出！', calc: '名單結算中...',
-                participantTitle: '符合抽獎資格名單', participantNote: '※ 中獎者將透過官方系統發送專屬通知',
-                winnerLbl: '幸運得主', winnerNotice: '※ 將由專人通知至本公司領獎',
-                videoCta: '▶ 觀看抽獎影片', viewListBtn: '📋 查看符合資格名單', closeParticipant: '關閉'
+                mainTitle:'VIP 專屬抽獎池', prizeA:'Switch', prizeB:'PS5', btnA:'選擇 Switch', btnB:'選擇 PS5',
+                prizeQty:'僅抽出 1 名', hpQty:'僅抽出 1 名', vip:'您的等級：', upgradeCTA:'升級至 LV.20 即可投票',
+                statusEligible:'符合抽獎資格', statusVoted:'已完成本季投票', cancel:'取消', confirm:'確認送出', close:'關閉',
+                modalTitle:'身分驗證', modalConfirmPrefix:'您即將投票給：', modalWarning:'※ 投票送出後無法更改',
+                modalMsg:'確認要送出嗎？',
+                timeFormat:'<span class="time-label">投票時間</span><span class="time-value">3/10 00:00 - 3/30 23:59</span>',
+                hpBannerTxt:'票數平手將觸發隱藏大獎', hpBannerBtn:'查看詳情 ➔',
+                hpModalTitle:'隱藏大獎', hpModalNote:'※ 觸發時原定獎項取消',
+                hpModalDesc:'<p>當最終票數平手時觸發</p><p class="highlight">全體抽出 iPhone 17 Pro</p>',
+                ruleHeader:'活動規則',
+                rules:['<li class="rule-item">1. 獎項每季更新，每人每季限投一票。</li>','<li class="rule-item">2. 僅限 VIP 20 等（含）以上用戶參與投票。</li>','<li class="rule-item">3. 投票一旦送出即無法更改。</li>','<li class="rule-item">4. 若比例不同，僅從「最高票陣營」中抽出得主。</li>','<li class="rule-item">5. 若最終票數相同，將從全投票用戶中抽「隱藏大獎」。</li>','<li class="rule-item">6. 中獎用戶須於指定時間內親自至本公司領獎。</li>'],
+                disclaimer:'主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。',
+                resultTitle:'🎉 抽獎結果公佈', resultDescPre:'本次由', resultDescPost:'勝出！', calc:'名單結算中...',
+                participantTitle:'符合抽獎資格名單', participantNote:'※ 中獎者將透過官方系統發送專屬通知',
+                winnerLbl:'幸運得主', winnerNotice:'※ 將由專人通知至本公司領獎',
+                videoCta:'▶ 觀看抽獎影片', viewListBtn:'📋 查看符合資格名單', closeParticipant:'關閉'
             },
             'en': {
-                mainTitle: 'VIP PRESTIGE POOL', prizeA: 'Switch', prizeB: 'PS5', btnA: 'Vote Switch', btnB: 'Vote PS5',
-                prizeQty: '1 Winner Only', hpQty: '1 Winner Only', vip: 'Your Level: ', upgradeCTA: 'Upgrade to LV.20 to Vote',
-                statusEligible: 'Eligible to Vote', statusVoted: 'Voted for this Quarter', cancel: 'Cancel', confirm: 'Submit Vote', close: 'Close',
-                modalTitle: 'Verification', modalConfirmPrefix: 'You are voting for: ', modalWarning: '※ Cannot be changed later',
-                modalMsg: 'Enter full username to verify:',
-                inputPlaceholder: 'Enter SWAG Username', emptyInputMsg: 'Please enter your username!',
-                // ✅ FIX: 英文版日期修正為 Mar 19（與活動設定一致）
-                timeFormat: '<span class="text-gray-400 text-xs font-bold tracking-widest mr-2">Voting Time</span><span class="text-[#fcf6ba] text-xs font-bold tracking-wider">Mar 10 - Mar 19</span>',
-                hpBannerTxt: 'Tie Votes Trigger Hidden Prize', hpBannerBtn: 'View Details ➔',
-                hpModalTitle: 'Hidden Prize', hpModalNote: '※ Original prizes cancelled when triggered',
-                hpModalDesc: '<p>Triggered when final votes tie</p><p class="text-[#ff2d55] text-[20px] mt-1">iPhone 17 Pro for ALL</p>',
-                ruleHeader: 'Activity Rules',
-                rules:[
-                    '<li class="rule-item">1. Prizes update quarterly. 1 vote per person.</li>',
-                    '<li class="rule-item">2. Only VIP level 20 and above can participate.</li>',
-                    '<li class="rule-item">3. Votes cannot be changed once submitted.</li>',
-                    '<li class="rule-item">4. Draw takes place only in the majority pool.</li>',
-                    '<li class="rule-item">5. If votes tie, "Hidden Prize" is drawn for all.</li>',
-                    '<li class="rule-item">6. Winners must collect prizes in person at HQ.</li>'
-                ],
-                disclaimer: 'The organizer reserves the right to change event details at any time.',
-                resultTitle: '🎉 Lucky Draw Results', resultDescPre: 'Winner:', resultDescPost: '!', calc: 'Calculating results...',
-                participantTitle: 'Eligible Participants', participantNote: '※ Winners will be notified via official system',
-                winnerLbl: 'Lucky Winner', winnerNotice: '※ You will be contacted to collect the prize at HQ',
-                videoCta: '▶ Watch Draw Video', viewListBtn: '📋 View Eligible Participants', closeParticipant: 'Close'
+                mainTitle:'VIP PRESTIGE POOL', prizeA:'Switch', prizeB:'PS5', btnA:'Vote Switch', btnB:'Vote PS5',
+                prizeQty:'1 Winner Only', hpQty:'1 Winner Only', vip:'Your Level: ', upgradeCTA:'Upgrade to LV.20 to Vote',
+                statusEligible:'Eligible to Vote', statusVoted:'Voted for this Quarter', cancel:'Cancel', confirm:'Submit Vote', close:'Close',
+                modalTitle:'Verification', modalConfirmPrefix:'You are voting for: ', modalWarning:'※ Cannot be changed later',
+                modalMsg:'Proceed to submit your vote?',
+                timeFormat:'<span class="time-label">Voting Time</span><span class="time-value">Mar 10 - Mar 30</span>',
+                hpBannerTxt:'Tie Votes Trigger Hidden Prize', hpBannerBtn:'View Details ➔',
+                hpModalTitle:'Hidden Prize', hpModalNote:'※ Original prizes cancelled when triggered',
+                hpModalDesc:'<p>Triggered when final votes tie</p><p class="highlight">iPhone 17 Pro for ALL</p>',
+                ruleHeader:'Activity Rules',
+                rules:['<li class="rule-item">1. Prizes update quarterly. 1 vote per person.</li>','<li class="rule-item">2. Only VIP level 20 and above can participate.</li>','<li class="rule-item">3. Votes cannot be changed once submitted.</li>','<li class="rule-item">4. Draw takes place only in the majority pool.</li>','<li class="rule-item">5. If votes tie, "Hidden Prize" is drawn for all.</li>','<li class="rule-item">6. Winners must collect prizes in person at HQ.</li>'],
+                disclaimer:'The organizer reserves the right to change event details at any time.',
+                resultTitle:'🎉 Lucky Draw Results', resultDescPre:'Winner:', resultDescPost:'!', calc:'Calculating results...',
+                participantTitle:'Eligible Participants', participantNote:'※ Winners will be notified via official system',
+                winnerLbl:'Lucky Winner', winnerNotice:'※ You will be contacted to collect the prize at HQ',
+                videoCta:'▶ Watch Draw Video', viewListBtn:'📋 View Eligible Participants', closeParticipant:'Close'
             }
         };
 
-        function showMessage(msg) {
-            const el = document.getElementById('customMsg');
-            el.innerText = msg;
-            el.classList.add('show');
-            setTimeout(() => el.classList.remove('show'), 2500);
-        }
+        function showMessage(msg) { const el=document.getElementById('customMsg'); el.innerText=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2500); }
 
+        // 🌟 1. PWA 跨視窗攔截 (Iframe 內攔截 _blank)
         function setupPwaLinkInterceptor() {
-            if (window.self !== window.top) {
+            if(window.self !== window.top) {
                 document.addEventListener('click', function(e) {
-                    const link = e.target.closest('a[target="_blank"]');
-                    if (!link) return;
+                    const link = e.target.closest('a[target="_blank"]'); 
+                    if(!link) return;
                     try {
-                        const url = new URL(link.href);
-                        const hostname = url.hostname;
-                        if (hostname === 'swag.live' || hostname === 'www.swag.live') {
+                        const url = new URL(link.href); 
+                        if(url.hostname === 'swag.live' || url.hostname === 'www.swag.live'){
                             e.preventDefault();
                             window.parent.postMessage({ type: 'PWA_NAVIGATE', url: link.href }, '*');
                         }
-                    } catch (error) { console.warn('URL parsing error:', error); }
+                    } catch(err) {}
                 });
             }
         }
 
-        // ✅ FIX: 點擊 Modal 背景可關閉
         function setupModalBackdropClose() {
-            document.querySelectorAll('.modal-overlay').forEach(overlay => {
-                overlay.addEventListener('click', function(e) {
-                    if (e.target === overlay) {
+            document.querySelectorAll('.modal-overlay').forEach(overlay=>{
+                overlay.addEventListener('click', function(e) { 
+                    if(e.target===overlay) {
                         overlay.classList.remove('show');
-                        setTimeout(() => { overlay.style.display = 'none'; }, 300);
-                    }
+                        setTimeout(() => { overlay.style.display='none'; }, 300);
+                    } 
                 });
             });
         }
 
-        // ✅ FIX: 票數輪詢，讓畫面即時反映其他人投票
+        // 🌟 2. 輪詢最新票數 (使用 Token 授權)
         function startPolling() {
-            if (pollTimer) clearInterval(pollTimer);
-            if (!state.isEventActive) return;
-
+            if(pollTimer) clearInterval(pollTimer);
+            if(!state.isEventActive) return;
             pollTimer = setInterval(async () => {
+                if(!state.token) return;
                 try {
-                    const res = await fetch(`${CFG.statsApi}?user_id=${state.testUid}`).then(r => r.json());
-                    if (res) {
-                        state.realA = res.totalA || 0;
-                        state.realB = res.totalB || 0;
+                    const res = await fetch(CFG.statsApi, { headers: { 'Authorization': `Bearer ${state.token}` }});
+                    if(res.ok) {
+                        const data = await res.json();
+                        state.realA = data.totalA || 0;
+                        state.realB = data.totalB || 0;
                         updateChartOnly();
                     }
-                } catch (e) {
-                    console.warn('Polling error:', e);
-                }
+                } catch(e) {}
             }, POLL_INTERVAL);
         }
 
+        // 🌟 3. 初始化：三方握手與 Dev Mode
         async function initApp() {
-            const urlParams = new URLSearchParams(window.location.search);
-            let rawUid = urlParams.get('user_id') || urlParams.get('uid');
-
-            if (urlParams.get('test_mode') === '1') {
-                state.isTestMode = true;
-                state.uid = rawUid || 'guest_test';
-                state.testUid = 'TEST_' + state.uid + '_' + Math.floor(Math.random() * 999999);
-                document.getElementById('test-mode-badge').style.display = 'block';
-            } else {
-                state.uid = rawUid;
-                state.testUid = state.uid;
-            }
-
-            // ✅ FIX: 移除不存在的 langDropdown 參照，直接使用預設語系
-            changeLang('zh-TW');
-
+            changeLang('zh-TW'); 
             setupModalBackdropClose();
+            setupPwaLinkInterceptor();
 
-            if (!state.uid) {
-                document.getElementById('auth-info').style.display = 'none';
-                document.getElementById('unauth-info').style.display = 'block';
-                updateChartOnly();
+            // 判斷是否為 Dev Mode (本地開啟，非 Iframe)
+            if (window.self === window.top) {
+                state.isDevMode = true;
+                document.getElementById('dev-mode-banner').style.display = 'block';
+                state.token = "QA_TEST_TOKEN_999"; // 賦予測試假 Token
+                await fetchRealData();
                 return;
             }
 
-            document.getElementById('auth-info').style.display = 'flex';
-            document.getElementById('unauth-info').style.display = 'none';
-
-            if (state.isTestMode) {
-                state.level = 99;
-                document.getElementById('user-level').innerText = state.level;
-                // 測試模式先取一次票數，再 updateUI
-                try {
-                    const res = await fetch(`${CFG.statsApi}?user_id=${state.testUid}`).then(r => r.json());
-                    if (res) {
-                        state.realA = res.totalA || 0;
-                        state.realB = res.totalB || 0;
-                    }
-                } catch (e) {}
-                updateUI();
-            } else {
-                // ✅ FIX: 統一等所有非同步資料回來後再呼叫一次 updateUI，避免競態閃爍
-                try {
-                    const [userRes, statsRes] = await Promise.allSettled([
-                        fetch(`${CFG.userInfoApi}?user_id=${state.uid}`).then(r => r.json()),
-                        fetch(`${CFG.statsApi}?user_id=${state.testUid}`).then(r => r.json())
-                    ]);
-
-                    // 處理用戶等級
-                    if (userRes.status === 'fulfilled') {
-                        state.level = userRes.value.level || 0;
-                    }
-                    document.getElementById('user-level').innerText = state.level || '--';
-
-                    // 處理票數與投票狀態
-                    if (statsRes.status === 'fulfilled' && statsRes.value) {
-                        const res = statsRes.value;
-                        // server 記錄優先於 localStorage
-                        if (res.voted) {
-                            state.hasVoted = true;
-                            state.votedChoice = res.choice;
-                            localStorage.setItem(`vip_vote_${state.uid}`, res.choice);
-                        } else {
-                            // server 沒記錄則 fallback localStorage（防止清除 server 資料的邊緣情況）
-                            const localVote = localStorage.getItem(`vip_vote_${state.uid}`);
-                            if (localVote) {
-                                state.hasVoted = true;
-                                state.votedChoice = localVote;
-                            }
-                        }
-                        state.realA = res.totalA || 0;
-                        state.realB = res.totalB || 0;
-                    } else {
-                        // stats API 失敗時，仍嘗試從 localStorage 讀取
-                        const localVote = localStorage.getItem(`vip_vote_${state.uid}`);
-                        if (localVote) {
-                            state.hasVoted = true;
-                            state.votedChoice = localVote;
-                        }
-                    }
-                } catch (e) {
-                    console.warn('initApp fetch error:', e);
-                    document.getElementById('user-level').innerText = '--';
+            // 正常 Iframe 模式：接收 Token
+            window.addEventListener('message', (event) => {
+                if (event.data && event.data.type === 'SET_TOKEN') {
+                    state.token = event.data.token;
+                    fetchRealData();
                 }
+            });
 
-                // ✅ FIX: 所有資料就緒後統一呼叫一次 updateUI
-                updateUI();
+            // 如果沒收到 Token，每 3 秒發送一次請求
+            const tokenInterval = setInterval(() => {
+                if (state.token) { clearInterval(tokenInterval); return; }
+                window.parent.postMessage({ type: 'IFRAME_READY' }, '*');
+            }, 3000);
+            setTimeout(() => window.parent.postMessage({ type: 'IFRAME_READY' }, '*'), 100);
+        }
+
+        // 🌟 4. 打後端 API 取得真實票數與個人狀態
+        async function fetchRealData() {
+            try {
+                const res = await fetch(CFG.statsApi, {
+                    headers: { 'Authorization': `Bearer ${state.token}` }
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    state.uid = data.user_id;
+                    state.realA = data.totalA || 0;
+                    state.realB = data.totalB || 0;
+                    state.hasVoted = data.voted;
+                    state.votedChoice = data.choice;
+
+                    // 取得 User 等級與名稱
+                    if (state.uid && !state.uid.startsWith("TEST_")) {
+                        const userRes = await fetch(`${CFG.userInfoApi}?user_id=${state.uid}`).then(r => r.json()).catch(()=>({}));
+                        state.level = userRes.level || 0;
+                        state.username = userRes.username || state.uid.substring(0, 6);
+                    } else if (state.isDevMode) {
+                        state.level = 99;
+                        state.username = "QA_Tester";
+                    }
+
+                    document.getElementById('user-name').innerText = state.username;
+                    document.getElementById('user-level').innerText = state.level;
+                    document.getElementById('auth-info').style.display = 'flex';
+                    document.getElementById('unauth-info').style.display = 'none';
+
+                    updateUI();
+                    startPolling();
+                } else {
+                    document.getElementById('unauth-info').innerText = "驗證失敗，請重新登入";
+                    document.getElementById('unauth-info').style.display = 'block';
+                }
+            } catch(e) {
+                console.error("Fetch Data Error", e);
             }
-
-            startPolling();
-            setupPwaLinkInterceptor();
         }
 
         function checkEventTime() {
@@ -596,19 +552,15 @@
         function renderStatus(type, text) {
             const el = document.getElementById('user-status');
             el.className = 'status-badge status-' + type;
-            el.style.display = 'block';
+            el.style.display = 'inline-block'; 
             el.innerText = text;
         }
 
         function changeLang(lang) {
-            state.lang = lang;
-            const d = i18n[lang] || i18n['zh-TW'];
-
+            state.lang = lang; const d = i18n[lang] || i18n['zh-TW'];
             document.getElementById('lang-btn-tw').classList.toggle('active', lang === 'zh-TW');
             document.getElementById('lang-btn-en').classList.toggle('active', lang === 'en');
-
             document.getElementById('event-time-display').innerHTML = d.timeFormat;
-
             try {
                 document.getElementById('i18n-main-title').innerText = d.mainTitle;
                 document.getElementById('i18n-vip-lbl').innerText = d.vip;
@@ -619,15 +571,12 @@
                 document.getElementById('i18n-prize-b').innerText = d.prizeB;
                 document.getElementById('i18n-prize-a-qty').innerText = d.prizeQty;
                 document.getElementById('i18n-prize-b-qty').innerText = d.prizeQty;
-
                 document.getElementById('i18n-hp-banner-txt').innerText = d.hpBannerTxt;
                 document.getElementById('i18n-hp-banner-btn').innerText = d.hpBannerBtn;
-
                 document.getElementById('i18n-modal-title').innerText = d.modalTitle;
                 document.getElementById('i18n-modal-confirm-prefix').innerText = d.modalConfirmPrefix;
                 document.getElementById('i18n-modal-warning').innerText = d.modalWarning;
                 document.getElementById('i18n-modal-msg').innerHTML = d.modalMsg;
-                document.getElementById('verify-username').placeholder = d.inputPlaceholder;
                 document.getElementById('i18n-btn-cancel').innerText = d.cancel;
                 document.getElementById('confirm-btn').innerText = d.confirm;
                 document.getElementById('i18n-btn-close').innerText = d.close;
@@ -637,71 +586,45 @@
                 document.getElementById('i18n-hp-modal-note').innerText = d.hpModalNote;
                 document.getElementById('i18n-rule-header').innerText = d.ruleHeader;
                 document.getElementById('i18n-disclaimer').innerText = d.disclaimer;
-
                 document.getElementById('i18n-result-title').innerText = d.resultTitle;
                 document.getElementById('i18n-result-desc-pre').innerText = d.resultDescPre;
                 document.getElementById('i18n-result-desc-post').innerText = d.resultDescPost;
-
                 document.getElementById('i18n-participant-title').innerText = d.participantTitle;
                 document.getElementById('i18n-participant-note').innerText = d.participantNote;
                 document.getElementById('i18n-video-cta').innerText = d.videoCta;
                 document.getElementById('i18n-view-list-btn').innerText = d.viewListBtn;
                 document.getElementById('i18n-btn-close-participant').innerText = d.closeParticipant;
-
                 document.getElementById('i18n-winner-lbl').innerText = d.winnerLbl;
                 document.getElementById('i18n-winner-notice').innerText = d.winnerNotice;
-
-                if (selectedChoice) {
-                    document.getElementById('modal-selected-prize').innerText = selectedChoice === 'A' ? d.prizeA : d.prizeB;
-                }
-
-                if (!state.uid) {
-                    document.getElementById('unauth-info').innerText = lang === 'en' ? 'Please Log In' : '請登入帳號';
-                }
-
-                const list = document.getElementById('i18n-rules-list');
-                list.innerHTML = d.rules.join('');
-            } catch (error) {}
-
+                if(selectedChoice) document.getElementById('modal-selected-prize').innerText = selectedChoice === 'A' ? d.prizeA : d.prizeB;
+                document.getElementById('i18n-rules-list').innerHTML = d.rules.join('');
+            } catch(e) {}
             updateUI();
         }
 
         function updateUI() {
-            checkEventTime();
-            if (!state.uid) { updateChartOnly(); return; }
-
-            const d = i18n[state.lang];
-            const btnA = document.getElementById('btn-vote-a');
-            const btnB = document.getElementById('btn-vote-b');
-            const upgWrap = document.getElementById('upgrade-wrapper');
-            const statusBadge = document.getElementById('user-status');
-
-            if (state.isTestMode) {
-                statusBadge.style.display = 'none';
-                upgWrap.style.display = 'none';
+            checkEventTime(); 
+            if(!state.token) { updateChartOnly(); return; }
+            
+            const d = i18n[state.lang], btnA = document.getElementById('btn-vote-a'), btnB = document.getElementById('btn-vote-b'), upgWrap = document.getElementById('upgrade-wrapper'), statusBadge = document.getElementById('user-status');
+            
+            statusBadge.style.display = 'none'; upgWrap.style.display = 'none';
+            
+            if (state.isDevMode) {
+                renderStatus('eligible', '🛠 DEV: ' + d.statusEligible); 
                 btnA.disabled = btnB.disabled = false;
-                btnA.classList.remove('btn-locked', 'btn-active-voted');
-                btnB.classList.remove('btn-locked', 'btn-active-voted');
+                btnA.classList.remove('btn-locked','btn-active-voted');
+                btnB.classList.remove('btn-locked','btn-active-voted');
             } else {
-                if (state.level < 20 && !state.hasVoted) {
-                    statusBadge.style.display = 'none';
-                    upgWrap.style.display = 'block';
-                } else {
-                    upgWrap.style.display = 'none';
-                }
-
+                if (state.level < 20 && !state.hasVoted) { upgWrap.style.display = 'block'; }
+                
                 if (state.hasVoted) {
-                    renderStatus('eligible', d.statusVoted);
+                    renderStatus('voted', d.statusVoted);
                     btnA.disabled = btnB.disabled = true;
-
-                    // ✅ FIX: 兩顆按鈕都保留顏色 class，再疊加 voted 樣式
                     btnA.className = 'btn-premium btn-a-red btn-locked';
                     btnB.className = 'btn-premium btn-b-blue btn-locked';
-                    if (state.votedChoice === 'A') {
-                        btnA.classList.add('btn-active-voted');
-                    } else {
-                        btnB.classList.add('btn-active-voted');
-                    }
+                    if (state.votedChoice === 'A') btnA.classList.add('btn-active-voted'); 
+                    else btnB.classList.add('btn-active-voted');
                 } else if (state.isEventActive && state.level >= 20) {
                     renderStatus('eligible', d.statusEligible);
                     btnA.disabled = btnB.disabled = false;
@@ -713,251 +636,97 @@
                     btnB.classList.add('btn-locked');
                 }
             }
-
             updateChartOnly();
         }
 
         function updateChartOnly() {
-            const d = i18n[state.lang];
-            const countA = state.realA;
-            const countB = state.realB;
-
-            const total = countA + countB;
-            let pA = total > 0 ? Math.round((countA / total) * 100) : 50;
-            let pB = 100 - pA;
-
+            const d = i18n[state.lang], cA = state.realA, cB = state.realB, total = cA + cB;
+            let pA = total > 0 ? Math.round((cA / total) * 100) : 50, pB = 100 - pA;
+            
             document.getElementById('bar-a').style.width = pA + '%';
             document.getElementById('bar-b').style.width = pB + '%';
-
-            const percentAEl = document.getElementById('percent-a');
-            const percentBEl = document.getElementById('percent-b');
-            const vsLabel = document.getElementById('vs-label');
-
-            if (pA === 100) {
-                percentAEl.innerText = `100% ${d.prizeA}`;
-                percentBEl.innerText = '';
-                if (vsLabel) vsLabel.style.display = 'none';
-            } else if (pB === 100) {
-                percentBEl.innerText = `100% ${d.prizeB}`;
-                percentAEl.innerText = '';
-                if (vsLabel) vsLabel.style.display = 'none';
-            } else {
-                percentAEl.innerText = pA > 0 ? pA + '%' : '';
-                percentBEl.innerText = pB > 0 ? pB + '%' : '';
-                if (vsLabel) {
-                    vsLabel.style.display = 'flex';
-                    vsLabel.style.left = pA + '%';
-                }
-            }
-
-            const voteTxt = state.lang === 'en' ? ' Votes' : ' 票';
-            document.getElementById('count-a').innerText = `${countA.toLocaleString()}${voteTxt}`;
-            document.getElementById('count-b').innerText = `${countB.toLocaleString()}${voteTxt}`;
-
-            const now = new Date();
-            const btnWrapper = document.getElementById('btn-wrapper');
-            const resultsSection = document.getElementById('results-section');
-            const hpBanner = document.querySelector('.hidden-prize-banner');
-
+            const pAEl = document.getElementById('percent-a'), pBEl = document.getElementById('percent-b'), vs = document.getElementById('vs-label');
+            
+            if (pA === 100) { pAEl.innerText = `100% ${d.prizeA}`; pBEl.innerText = ''; if(vs) vs.style.display = 'none'; }
+            else if (pB === 100) { pBEl.innerText = `100% ${d.prizeB}`; pAEl.innerText = ''; if(vs) vs.style.display = 'none'; }
+            else { pAEl.innerText = pA > 0 ? pA + '%' : ''; pBEl.innerText = pB > 0 ? pB + '%' : ''; if(vs) { vs.style.display = 'flex'; vs.style.left = pA + '%'; } }
+            
+            const vt = state.lang === 'en' ? ' Votes' : ' 票';
+            document.getElementById('count-a').innerText = `${cA.toLocaleString()}${vt}`;
+            document.getElementById('count-b').innerText = `${cB.toLocaleString()}${vt}`;
+            
+            const now = new Date(), bw = document.getElementById('btn-wrapper'), rs = document.getElementById('results-section'), hp = document.querySelector('.hidden-prize-banner');
             if (!state.isEventActive && now > EVENT_CONFIG.end) {
-                // 活動結束：停止輪詢、顯示結果
                 if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
-                btnWrapper.style.display = 'none';
-                if (hpBanner) hpBanner.style.display = 'none';
-                resultsSection.style.display = 'block';
-
-                const winTeamEl = document.getElementById('win-team');
-
-                if (pA === 50 && pB === 50) {
-                    winTeamEl.innerText = state.lang === 'en' ? 'iPhone 17 Pro (Tie)' : '隱藏大獎 (iPhone 17 Pro)';
-                    winTeamEl.style.color = '#fcf6ba';
-                } else if (pA > pB) {
-                    winTeamEl.innerText = 'Switch';
-                    winTeamEl.style.color = '#ff9999';
-                } else {
-                    winTeamEl.innerText = 'PS5';
-                    winTeamEl.style.color = '#99c2ff';
-                }
-
-                const container = document.getElementById('winner-list-container');
-                const ctas = document.getElementById('result-ctas');
-
-                if (EVENT_WINNERS.length === 0) {
-                    container.innerHTML = `<div class="text-gray-400 font-bold py-2 text-sm">${d.calc}</div>`;
-                    if (ctas) ctas.style.display = 'none';
-                } else {
-                    if (ctas) ctas.style.display = 'flex';
-                    container.innerHTML = EVENT_WINNERS.map(name =>
-                        `<div class="py-1">${maskName(name)}</div>`
-                    ).join('');
-                }
+                bw.style.display = 'none'; if(hp) hp.style.display = 'none'; rs.style.display = 'block';
+                const wt = document.getElementById('win-team');
+                if (pA === 50 && pB === 50) { wt.innerText = state.lang === 'en' ? 'iPhone 17 Pro (Tie)' : '隱藏大獎 (iPhone 17 Pro)'; wt.style.color = 'var(--gold-light)'; }
+                else if (pA > pB) { wt.innerText = 'Switch'; wt.style.color = '#ff9999'; }
+                else { wt.innerText = 'PS5'; wt.style.color = '#99c2ff'; }
+                const c = document.getElementById('winner-list-container'), ctas = document.getElementById('result-ctas');
+                if (EVENT_WINNERS.length === 0) { c.innerHTML = `<div style="color:var(--text-dim);font-size:var(--fs-body-m);padding:var(--sp-3) 0">${d.calc}</div>`; if(ctas) ctas.style.display = 'none'; }
+                else { if(ctas) ctas.style.display = 'flex'; c.innerHTML = EVENT_WINNERS.map(n => `<div style="padding:var(--sp-2) 0">${maskName(n)}</div>`).join(''); }
             } else {
-                btnWrapper.style.display = 'grid';
-                if (hpBanner) hpBanner.style.display = 'flex';
-                resultsSection.style.display = 'none';
+                bw.style.display = 'grid'; if(hp) hp.style.display = 'flex'; rs.style.display = 'none';
             }
         }
 
-        function openParticipantModal() {
-            const modal = document.getElementById('participantModal');
-            const container = document.getElementById('participant-list-container');
-
-            if (EVENT_PARTICIPANTS.length > 0) {
-                container.innerHTML = EVENT_PARTICIPANTS.map(name =>
-                    `<div class="text-[15px] text-[#fcf6ba] font-mono tracking-widest border-b border-[rgba(191,149,63,0.2)] pb-2">${maskName(name)}</div>`
-                ).join('');
-            } else {
-                container.innerHTML = `<div class="text-gray-400 text-sm py-4">名單結算中...</div>`;
-            }
-
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('show'), 10);
+        function openParticipantModal() { const m=document.getElementById('participantModal'),c=document.getElementById('participant-list-container'); if(EVENT_PARTICIPANTS.length>0) c.innerHTML=EVENT_PARTICIPANTS.map(n=>`<div class="participant-item">${maskName(n)}</div>`).join(''); else c.innerHTML=`<div style="color:var(--text-dim);padding:var(--sp-5) 0">名單結算中...</div>`; m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); }
+        function closeParticipantModal() { const m=document.getElementById('participantModal'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); }
+        
+        function openVoteModal(choice) { 
+            if (!state.isEventActive) return; 
+            if (!state.isDevMode && (state.hasVoted || state.level < 20)) return; 
+            selectedChoice = choice; 
+            const d = i18n[state.lang]; 
+            document.getElementById('modal-selected-prize').innerText = choice === 'A' ? d.prizeA : d.prizeB; 
+            const m = document.getElementById('voteModal'); m.style.display = 'flex'; setTimeout(() => m.classList.add('show'), 10); 
         }
+        function closeModal() { const m=document.getElementById('voteModal'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); }
+        
+        function openIphoneModal() { const m=document.getElementById('iphoneModal'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); }
+        function closeIphoneModal() { const m=document.getElementById('iphoneModal'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); }
 
-        function closeParticipantModal() {
-            const modal = document.getElementById('participantModal');
-            modal.classList.remove('show');
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
-
-        function openVoteModal(choice) {
-            if (!state.isEventActive) return;
-            if (!state.isTestMode && (state.hasVoted || state.level < 20)) return;
-            selectedChoice = choice;
-
-            const d = i18n[state.lang];
-            const prizeName = choice === 'A' ? d.prizeA : d.prizeB;
-            document.getElementById('modal-selected-prize').innerText = prizeName;
-            document.getElementById('verify-username').value = '';
-
-            const modal = document.getElementById('voteModal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('show'), 10);
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('voteModal');
-            modal.classList.remove('show');
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
-
-        function openIphoneModal() {
-            const modal = document.getElementById('iphoneModal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('show'), 10);
-        }
-
-        function closeIphoneModal() {
-            const modal = document.getElementById('iphoneModal');
-            modal.classList.remove('show');
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
-
-        function getDeviceId() {
-            let did = localStorage.getItem('vip_device_id');
-            if (!did) {
-                did = 'dev_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
-                localStorage.setItem('vip_device_id', did);
-            }
-            return did;
-        }
-
-        // ⚠️ 注意：此簽名僅為客戶端防護層，真正的安全驗證請在後端實作
-        async function generateSignature(uid, timestamp) {
-            const text = uid + timestamp + "VIP_SWAG_2026_SECRET_KEY";
-            const encoder = new TextEncoder();
-            const data = encoder.encode(text);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
+        // 🌟 5. 執行投票 (發送 Token 給 BFF)
         async function submitVote() {
-            const btn = document.getElementById('confirm-btn');
-            const originalText = btn.innerText;
-            const inputUsername = document.getElementById('verify-username').value.trim();
-
-            if (!inputUsername) {
-                const warnMsg = state.lang === 'en' ? i18n['en'].emptyInputMsg : i18n['zh-TW'].emptyInputMsg;
-                showMessage(warnMsg);
-                return;
-            }
-
-            btn.innerText = state.lang === 'en' ? 'Processing...' : '驗證中...';
+            const btn = document.getElementById('confirm-btn'), ot = btn.innerText;
+            btn.innerText = state.lang === 'en' ? 'Processing...' : '驗證中...'; 
             btn.disabled = true;
 
             try {
-                let response, result;
-
-                if (state.isTestMode) {
-                    // 🛠 測試模式：模擬成功，不驗證帳號
-                    await new Promise(r => setTimeout(r, 400));
-                    response = { ok: true, status: 200 };
-                    result = { success: true };
-                } else {
-                    const currentTimestamp = Date.now().toString();
-                    const secureSignature = await generateSignature(state.testUid, currentTimestamp);
-                    const deviceId = getDeviceId();
-
-                    response = await fetch(CFG.handlerApi, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            user_id: state.testUid,
-                            input_username: inputUsername,
-                            action: 'VIP_LOTTERY_VOTE',
-                            choice: selectedChoice,
-                            timestamp: currentTimestamp,
-                            signature: secureSignature,
-                            device_id: deviceId
-                        })
-                    });
-                    result = await response.json().catch(() => ({}));
-                }
-
+                const response = await fetch(CFG.voteApi, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${state.token}` // 帶上 Token
+                    },
+                    body: JSON.stringify({ choice: selectedChoice })
+                });
+                
+                const result = await response.json().catch(() => ({}));
+                
                 if (response.ok) {
                     showMessage(state.lang === 'en' ? 'Vote Successful!' : '投票成功！');
                     if (selectedChoice === 'A') state.realA++;
                     if (selectedChoice === 'B') state.realB++;
-
-                    if (!state.isTestMode) {
-                        localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
-                        state.hasVoted = true;
-                        state.votedChoice = selectedChoice;
-                    } else {
-                        // 測試模式：產生新的 testUid，讓下一票可以繼續投
-                        state.testUid = 'TEST_' + state.uid + '_' + Math.floor(Math.random() * 999999);
-                    }
-
-                    // ✅ 確保按鈕恢復，讓測試模式可以無限次投票
-                    btn.innerText = originalText;
-                    btn.disabled = false;
-
-                    closeModal();
-                    updateUI();
+                    state.hasVoted = true;
+                    state.votedChoice = selectedChoice;
+                    closeModal(); updateUI();
                 } else if (response.status === 429) {
-                    showMessage(state.lang === 'en' ? 'Voting too fast, please wait.' : '⏳ 操作過於頻繁，請等待3秒後再試');
-                    btn.innerText = originalText;
-                    btn.disabled = false;
+                    showMessage(state.lang === 'en' ? 'Voting too fast, please wait.' : '⏳ 操作過於頻繁，請稍候');
                 } else {
-                    showMessage(result.error || (state.lang === 'en' ? 'Verification Failed' : '❌ 帳號驗證失敗，非本人操作'));
-                    btn.innerText = originalText;
-                    btn.disabled = false;
+                    showMessage(`❌ ${result.error || (state.lang === 'en' ? 'Verification Failed' : '帳號驗證失敗，請重試')}`);
+                    closeModal();
                 }
-            } catch (e) {
+            } catch(e) {
                 showMessage(state.lang === 'en' ? 'Network error.' : '連線不穩，請確認網路後重試！');
-                btn.innerText = originalText;
-                btn.disabled = false;
+            } finally {
+                btn.innerText = ot; btn.disabled = false;
             }
         }
 
         window.addEventListener('DOMContentLoaded', initApp);
-
-        // ✅ FIX: resize 加上 debounce，避免頻繁觸發
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(updateChartOnly, 100);
-        });
+        window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(updateChartOnly, 100); });
     </script>
 </body>
 </html>
